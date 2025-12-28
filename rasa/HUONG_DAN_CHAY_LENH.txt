@@ -1,0 +1,103 @@
+========================================
+   HUONG DAN CHAY RASA CHATBOT
+========================================
+
+CACH 1: DUNG FILE BATCH (DON GIAN NHAT)
+----------------------------------------
+Double-click vao: rasa\RUN_RASA_SERVER.bat
+Hoac: rasa\start_rasa.bat
+
+File nay se tu dong:
+- Kich hoat venv
+- Train model (neu chua co)
+- Chay Rasa server
+
+
+CACH 2: CHAY BANG LENH THU CONG (PowerShell)
+----------------------------------------
+
+Buoc 1: Mo PowerShell
+
+Buoc 2: Vao thu muc rasa
+cd C:\laragon\www\quanlidatlichyte\rasa
+
+Buoc 3: Kich hoat virtual environment
+venv\Scripts\activate
+
+Buoc 4: Kiem tra Rasa da cai dat chua
+rasa --version
+
+Buoc 5: TRAIN MODEL (BAT BUOC - chi can lam 1 lan hoac khi sua data)
+rasa train
+
+Luu y: Qua trinh train mat 1-5 phut. Khi xong se co thong bao:
+"Your Rasa model is trained and saved at 'models/...'"
+
+Buoc 6: Chay Rasa server
+rasa run --enable-api --cors "*" --port 5006
+
+
+CACH 3: CHAY BANG LENH NHANH (1 DONG) - PowerShell
+----------------------------------------
+cd C:\laragon\www\quanlidatlichyte\rasa; venv\Scripts\activate; rasa run --enable-api --cors "*" --port 5006
+
+Luu y: 
+- Trong PowerShell dung dau ";" thay vi "&&"
+- Neu chua train model, can train truoc: rasa train
+
+
+KIEM TRA RASA DA CHAY
+----------------------------------------
+Mo trinh duyet: http://localhost:5006/status
+
+Neu thay JSON response -> Rasa da chay thanh cong!
+
+
+TEST RASA CHAT
+----------------------------------------
+Cach 1: Dung Rasa Shell (Terminal moi)
+cd C:\laragon\www\quanlidatlichyte\rasa
+venv\Scripts\activate
+rasa shell
+
+Cach 2: Test qua API (Postman hoac curl)
+URL: http://localhost:5006/webhooks/rest/webhook
+Method: POST
+Headers: Content-Type: application/json
+Body:
+{
+  "sender": "user123",
+  "message": "xin chao"
+}
+
+
+DUNG SERVER
+----------------------------------------
+Nhan Ctrl+C trong cua so PowerShell
+
+
+LOI THUONG GAP
+----------------------------------------
+
+1. "rasa: command not found"
+   -> Chua kich hoat venv hoac chua cai Rasa
+   -> Chay: venv\Scripts\activate
+   -> Sau do: pip install rasa==3.6.0
+
+2. "Port 5006 already in use" hoac "OSError: [Errno 10048]"
+   -> Tim process dang dung port: netstat -ano | findstr :5006
+   -> Dung process: taskkill /F /PID <PID>
+   -> Hoac doi port khac: rasa run --enable-api --cors "*" --port 5007
+   -> Cap nhat .env: RASA_URL=http://localhost:5006
+
+3. "Model not found"
+   -> Train model: rasa train
+
+4. "ModuleNotFoundError" hoac "No module named 'xxx'"
+   -> Cai lai dependencies: pip install -r requirements.txt
+   -> Neu thieu modules cho channels (fbmessenger, slack_sdk, aiogram, etc.):
+      pip install fbmessenger "slack-sdk<4.0.0,>=3.19.2" "aiogram<2.26" "mattermostwrapper<2.3,>=2.2" "rocketchat_API<1.31.0,>=0.6.31" "twilio<8.3,>=6.26" "webexteamssdk<1.7.0,>=1.1.1" "google-auth<3"
+   -> Neu thieu TensorFlow (BAT BUOC - can cho ca chay server va train):
+      pip install "tensorflow-intel==2.11.1" "tensorflow-addons<0.20,>=0.18" "tensorflow_hub<0.13.0,>=0.12.0" "tensorflow-io-gcs-filesystem<0.32,>=0.23.1"
+   -> Luu y: TensorFlow la BAT BUOC, khong chi khi train model
+

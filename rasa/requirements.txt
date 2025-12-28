@@ -1,0 +1,6 @@
+rasa==3.6.0
+rasa-sdk==3.6.0
+
+# Optional dependencies (có thể bỏ qua nếu không dùng)
+# psycopg2-binary  # Chỉ cần nếu dùng PostgreSQL tracker store
+

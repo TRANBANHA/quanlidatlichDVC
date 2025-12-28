@@ -1,0 +1,163 @@
+version: "3.1"
+
+nlu:
+- intent: greet
+  examples: |
+    - xin chào
+    - chào bạn
+    - hello
+    - hi
+    - chào
+    - xin chào bạn
+    - chào admin
+    - chào cán bộ
+    - chào hỗ trợ
+
+- intent: goodbye
+  examples: |
+    - tạm biệt
+    - bye
+    - goodbye
+    - hẹn gặp lại
+    - cảm ơn
+    - cám ơn
+    - tạm biệt nhé
+    - bye bye
+
+- intent: affirm
+  examples: |
+    - có
+    - đúng
+    - đúng rồi
+    - vâng
+    - dạ
+    - ok
+    - được
+    - đồng ý
+    - chắc chắn
+    - có chứ
+
+- intent: deny
+  examples: |
+    - không
+    - không phải
+    - sai rồi
+    - không đúng
+    - không cần
+    - không muốn
+    - thôi
+
+- intent: mood_great
+  examples: |
+    - tốt
+    - rất tốt
+    - tuyệt vời
+    - ok
+    - ổn
+    - tốt lắm
+
+- intent: mood_unhappy
+  examples: |
+    - không tốt
+    - tệ
+    - buồn
+    - không ổn
+    - có vấn đề
+
+- intent: bot_challenge
+  examples: |
+    - bạn là ai
+    - bạn là gì
+    - bạn là bot à
+    - bạn là người hay máy
+    - bạn có phải robot không
+    - ai đang chat với tôi
+    - có phải bot không
+
+- intent: ask_booking
+  examples: |
+    - làm sao để đặt lịch
+    - cách đặt lịch
+    - đặt lịch như thế nào
+    - quy trình đặt lịch
+    - tôi muốn đặt lịch
+    - đăng ký dịch vụ
+    - đặt hẹn
+    - làm thế nào để đăng ký
+    - hướng dẫn đặt lịch
+    - tôi cần đặt lịch
+
+- intent: ask_document
+  examples: |
+    - cần giấy tờ gì
+    - chuẩn bị gì
+    - cần mang gì
+    - giấy tờ cần thiết
+    - hồ sơ cần có
+    - cần những gì
+    - tài liệu cần thiết
+    - cần chuẩn bị những gì
+
+- intent: ask_status
+  examples: |
+    - tra cứu hồ sơ
+    - kiểm tra trạng thái
+    - xem hồ sơ
+    - hồ sơ của tôi
+    - trạng thái hồ sơ
+    - hồ sơ đã xử lý chưa
+    - kiểm tra tiến độ
+    - tra cứu
+
+- intent: ask_time
+  examples: |
+    - mất bao lâu
+    - thời gian xử lý
+    - bao lâu thì xong
+    - khi nào có kết quả
+    - thời gian làm việc
+    - làm trong bao lâu
+    - mất thời gian bao lâu
+
+- intent: ask_location
+  examples: |
+    - địa chỉ ở đâu
+    - đến đâu để làm
+    - nơi làm việc
+    - địa điểm
+    - ở đâu
+    - địa chỉ
+    - chỗ nào
+
+- intent: ask_fee
+  examples: |
+    - phí bao nhiêu
+    - giá bao nhiêu
+    - có mất phí không
+    - chi phí
+    - phí dịch vụ
+    - tốn bao nhiêu tiền
+    - có phải trả tiền không
+
+- intent: ask_help
+  examples: |
+    - giúp tôi
+    - hỗ trợ
+    - tư vấn
+    - hướng dẫn
+    - bạn giúp gì được
+    - bạn làm được gì
+    - cần giúp đỡ
+    - hỗ trợ gì
+
+- intent: ask_contact
+  examples: |
+    - liên hệ
+    - số điện thoại
+    - hotline
+    - email
+    - cách liên hệ
+    - liên lạc
+    - số liên hệ
+    - thông tin liên hệ
+

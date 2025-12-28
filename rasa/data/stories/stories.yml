@@ -1,0 +1,81 @@
+version: "3.1"
+
+stories:
+
+- story: happy path
+  steps:
+  - intent: greet
+  - action: utter_greet
+  - intent: mood_great
+  - action: utter_happy
+
+- story: sad path 1
+  steps:
+  - intent: greet
+  - action: utter_greet
+  - intent: mood_unhappy
+  - action: utter_cheer_up
+  - action: utter_did_that_help
+  - intent: affirm
+  - action: utter_happy
+
+- story: sad path 2
+  steps:
+  - intent: greet
+  - action: utter_greet
+  - intent: mood_unhappy
+  - action: utter_cheer_up
+  - action: utter_did_that_help
+  - intent: deny
+  - action: utter_goodbye
+
+- story: say goodbye
+  steps:
+  - intent: goodbye
+  - action: utter_goodbye
+
+- story: bot challenge
+  steps:
+  - intent: bot_challenge
+  - action: utter_iamabot
+
+- story: ask booking
+  steps:
+  - intent: ask_booking
+  - action: utter_ask_booking
+
+- story: ask document
+  steps:
+  - intent: ask_document
+  - action: utter_ask_document
+
+- story: ask status
+  steps:
+  - intent: ask_status
+  - action: utter_ask_status
+
+- story: ask time
+  steps:
+  - intent: ask_time
+  - action: utter_ask_time
+
+- story: ask location
+  steps:
+  - intent: ask_location
+  - action: utter_ask_location
+
+- story: ask fee
+  steps:
+  - intent: ask_fee
+  - action: utter_ask_fee
+
+- story: ask help
+  steps:
+  - intent: ask_help
+  - action: utter_ask_help
+
+- story: ask contact
+  steps:
+  - intent: ask_contact
+  - action: utter_ask_contact
+

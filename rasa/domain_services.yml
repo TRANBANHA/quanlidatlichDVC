@@ -1,0 +1,800 @@
+version: "3.1"
+
+# Additional intents and responses for services
+# This file will be merged with domain.yml
+
+intents:
+  - ask_dang_ky_khai_sinh
+  - ask_cccd_gap_chip
+  - ask_giay_xac_nhan_cu_tru
+  - ask_doi_cmnd_sang_cccd
+  - ask_mat_giay_khai_sinh
+  - ask_uy_quyen_ho_so
+  - ask_gia_tri_phap_ly_online
+  - ask_thay_doi_ho_khau_online
+  - ask_thoi_han_giai_quyet
+  - ask_ho_so_bi_tu_choi
+  - ask_khai_bao_tam_tru
+  - ask_xem_thong_tin_ca_nhan
+  - ask_tra_cuu_ho_tich
+  - ask_nop_ho_so_noi_khac
+  - ask_dang_ky_ket_hon_online
+  - ask_giay_xac_nhan_doc_than
+  - ask_sua_ten_khai_sinh
+  - ask_chuyen_ho_khau
+  - ask_phi_ho_so_online
+  - ask_huy_ho_so
+  - ask_theo_doi_tien_trinh
+  - ask_nhan_ket_qua_buu_dien
+  - ask_xac_thuc_tai_khoan
+  - ask_xem_ho_so_cu
+  - ask_sua_thong_tin_sai
+  - ask_cap_lai_gplx
+  - ask_nop_thue_dat
+  - ask_lam_lai_so_ho_khau
+  - ask_giay_phep_xay_dung
+  - ask_dang_ky_kinh_doanh
+  - ask_tam_tru_dai_han
+  - ask_giay_xac_nhan_viec_lam
+  - ask_giay_phep_su_kien
+  - ask_ket_hon_nguoi_nuoc_ngoai
+  - ask_giay_xac_nhan_hanh_kiem
+  - ask_giay_chung_nhan_dat
+  - ask_doi_ho_chieu
+  - ask_giay_phep_kinh_doanh_thuc_pham
+  - ask_dang_ky_khai_tu
+  - ask_giay_phep_quang_cao
+  - ask_xac_nhan_ho_ngheo
+  - ask_ma_so_thue_ca_nhan
+  - ask_giay_phep_hanh_nghe_y
+  - ask_doi_ten_cong_ty
+  - ask_giay_phep_tam_nhap_tai_xuat
+  - ask_dang_ky_tam_vang
+  - ask_giay_phep_nuoi_cho_meo
+  - ask_giay_phep_moi_truong
+  - ask_nhan_con_nuoi
+  - ask_huy_ho_so_sai
+  - ask_tao_tai_khoan
+  - ask_quen_mat_khau
+  - ask_chinh_sua_ho_so_sau_nop
+  - ask_danh_gia_dich_vu
+  - ask_dang_nhap_google
+  - ask_khong_nhan_email
+  - ask_in_giay_hen
+  - ask_nop_ho_so_thay_nguoi_khac
+  - ask_xem_lich_hen
+  - ask_dang_ky_nhieu_dich_vu
+  - ask_huy_lich_hen
+  - ask_cap_nhat_thong_tin
+  - ask_tai_ho_so_da_gui
+  - ask_gop_y_khieu_nai
+  - ask_su_dung_dien_thoai
+  - ask_chuyen_ngon_ngu
+  - ask_thong_bao_zalo
+  - ask_tai_hoa_don
+  - ask_quen_ma_ho_so
+  - ask_thay_doi_dia_chi_nhan
+  - ask_luu_ho_so_nhap
+  - ask_thu_phi_ho_so
+  - ask_xem_lich_su_danh_gia
+  - ask_xuat_du_lieu_excel
+  - ask_khong_dang_nhap_duoc
+  - ask_trang_web_loi
+  - ask_loi_tai_file
+  - ask_loi_xac_thuc
+  - ask_khong_nhan_otp
+  - ask_loi_404_pdf
+  - ask_khong_thanh_toan_duoc
+  - ask_loi_font_chu
+  - ask_server_error
+  - ask_treo_bieu_mau
+  - ask_app_mobile_loi
+  - ask_khong_in_duoc
+  - ask_file_not_supported
+  - ask_khong_thay_nut_gui
+  - ask_man_hinh_trang
+  - ask_he_thong_cham
+  - ask_nhieu_tai_khoan
+  - ask_access_denied
+  - ask_lien_he_ho_tro
+  - ask_chua_nhan_phan_hoi
+  - ask_cap_nhat_trinh_duyet
+  - ask_mat_ket_noi
+  - ask_khong_mo_link
+  - ask_treo_khi_thanh_toan
+  - ask_gop_y_cai_tien
+  - ask_giay_phep_xay_dung_nha
+  - ask_dang_ky_thai_san
+  - ask_giay_chung_nhan_ket_hon
+  - ask_dang_ky_thuong_tru
+  - ask_chuyen_doi_muc_dich_dat
+  - ask_mat_gplx
+  - ask_giay_xac_nhan_hon_nhan
+  - ask_khai_tu_nuoc_ngoai
+  - ask_giay_phep_kinh_doanh_ruou
+  - ask_giay_chung_nhan_nha
+  - ask_cap_lai_khai_sinh
+  - ask_bao_ho_thuong_hieu
+  - ask_nhan_cha_con
+  - ask_chuyen_nhuong_dat
+  - ask_giay_phep_van_chuyen
+  - ask_giay_phep_san_xuat
+  - ask_ma_so_ma_vach
+  - ask_giay_chung_nhan_an_toan_thuc_pham
+  - ask_giay_phep_xa_thai
+  - ask_ket_hon_nuoc_ngoai
+  - ask_dinh_danh_dien_tu
+  - ask_ky_so_van_ban
+  - ask_tra_cuu_ma_so_thue
+  - ask_lich_su_nop_thue
+  - ask_hoa_don_dien_tu
+  - ask_nop_bao_cao_thue
+  - ask_tra_cuu_quy_hoach
+  - ask_dau_gia_tai_san
+  - ask_bhxh_tu_nguyen
+  - ask_khieu_nai_quyet_dinh
+  - ask_gplx_quoc_te
+  - ask_thi_cong_chuc
+  - ask_tra_cuu_doanh_nghiep
+  - ask_xac_nhan_thu_nhap
+  - ask_dang_ky_dich_vu_tinh
+  - ask_nhan_email_ket_qua
+  - ask_cap_nhat_so_dien_thoai
+  - ask_thay_doi_email
+  - ask_tai_app
+  - ask_huong_dan_su_dung
+  - ask_tro_cap_that_nghiep
+  - ask_vay_von_uu_dai
+  - ask_the_bhyt_mien_phi
+  - ask_ho_tro_mai_tang
+  - ask_che_do_thai_san
+  - ask_tro_cap_khuyet_tat
+  - ask_nha_o_xa_hoi
+  - ask_giay_chung_nhan_ho_ngheo
+  - ask_bhyt_ho_gia_dinh
+  - ask_hoc_bong_ho_ngheo
+  - ask_ho_tro_thien_tai
+  - ask_giay_xac_nhan_bhxh
+  - ask_luong_huu_truoc_tuoi
+  - ask_tro_cap_mot_lan
+  - ask_tinh_bh_that_nghiep
+  - ask_khai_thue_tncn
+  - ask_mien_giam_thue
+  - ask_thoi_han_nop_thue_mon_bai
+  - ask_dang_ky_mst_doanh_nghiep
+  - ask_thue_chuyen_nhuong_dat
+  - ask_thue_cho_thue_nha
+  - ask_hoan_thue_gtgt
+  - ask_gia_han_nop_thue
+  - ask_tra_cuu_nghia_vu_thue
+  - ask_khai_thue_khong_phat_sinh
+  - ask_khai_thue_dien_tu
+  - ask_giay_chung_nhan_mst
+  - ask_khieu_nai_quyet_dinh_thue
+  - ask_bao_cao_tai_chinh
+  - ask_chu_ky_so
+  - ask_giay_phep_quang_cao_mang_xa_hoi
+  - ask_thanh_lap_chi_nhanh
+  - ask_giay_phep_lao_dong_nguoi_nuoc_ngoai
+  - ask_dang_ky_ban_quyen
+  - ask_giay_phep_su_kien_van_hoa
+  - ask_giay_phep_khai_thac_nuoc
+  - ask_dau_thau_qua_mang
+  - ask_giay_chung_nhan_xuat_xu
+  - ask_giay_phep_nhap_khau_thiet_bi_y_te
+  - ask_dang_ky_thuong_hieu
+  - ask_giay_phep_van_tai
+  - ask_giay_phep_pccc
+  - ask_bhxh_bat_buoc
+  - ask_giay_chung_nhan_dang_ky_doanh_nghiep
+  - ask_giay_phep_xay_dung_cong_trinh
+  - ask_so_huu_tri_tue
+  - ask_giay_phep_san_xuat_phim
+  - ask_giay_phep_khao_sat_dia_chat
+  - ask_an_sinh_xa_hoi
+  - ask_giay_phep_tan_so
+  - ask_giay_chung_nhan_kinh_doanh_gas
+  - ask_tich_diem_thue
+  - ask_giay_phep_xu_ly_nuoc_thai
+  - ask_giay_phep_kinh_doanh_khach_san
+  - ask_bao_hiem_nong_nghiep
+  - ask_giay_phep_trang_thong_tin
+  - ask_giay_chung_nhan_vsattp
+  - ask_ho_tro_lai_suat
+  - ask_giay_phep_bien_quang_cao
+
+responses:
+  utter_ask_dang_ky_khai_sinh:
+    - text: "Bạn cần mang theo Giấy chứng sinh, CMND/CCCD của cha mẹ, Sổ hộ khẩu hoặc giấy tờ xác nhận nơi cư trú. Nếu đăng ký online, cần tải lên bản scan các giấy tờ này."
+
+  utter_ask_cccd_gap_chip:
+    - text: "Có, bạn có thể đăng ký lịch làm CCCD tại phường hoặc thông qua hệ thống dịch vụ công trực tuyến. Hệ thống sẽ cho phép chọn ngày giờ hẹn và nhận thông báo qua email."
+
+  utter_ask_giay_xac_nhan_cu_tru:
+    - text: "Bạn đăng nhập hệ thống dịch vụ công, chọn mục \"Cấp giấy xác nhận cư trú\", điền thông tin cá nhân, tải giấy tờ cần thiết, và chờ cán bộ xác nhận. Kết quả được gửi qua email hoặc nhận trực tiếp."
+
+  utter_ask_doi_cmnd_sang_cccd:
+    - text: "Không cần mang sổ hộ khẩu bản giấy. Cơ quan công an sẽ tra cứu thông tin trên cơ sở dữ liệu dân cư quốc gia."
+
+  utter_ask_mat_giay_khai_sinh:
+    - text: "Bạn đến UBND phường nơi đã đăng ký khai sinh trước đây, mang theo CMND/CCCD và giấy tờ tùy thân khác. Có thể nộp đơn xin cấp lại trực tuyến."
+
+  utter_ask_uy_quyen_ho_so:
+    - text: "Có, nhưng phải có giấy ủy quyền hợp pháp hoặc văn bản chứng minh mối quan hệ, kèm theo giấy tờ tùy thân của cả hai bên."
+
+  utter_ask_gia_tri_phap_ly_online:
+    - text: "Có, miễn là thông tin khai báo chính xác và có xác nhận điện tử hợp lệ (chữ ký số hoặc xác thực qua mã OTP)."
+
+  utter_ask_thay_doi_ho_khau_online:
+    - text: "Có thể, nếu địa phương của bạn đã kết nối với cơ sở dữ liệu dân cư. Bạn cần đăng nhập hệ thống, chọn \"Thay đổi thông tin cư trú\"."
+
+  utter_ask_thoi_han_giai_quyet:
+    - text: "Tùy loại hồ sơ, thường trong 3–7 ngày làm việc. Hệ thống sẽ thông báo tiến trình xử lý theo thời gian thực."
+
+  utter_ask_ho_so_bi_tu_choi:
+    - text: "Bạn sẽ nhận thông báo lý do từ chối và có thể chỉnh sửa, bổ sung giấy tờ rồi nộp lại ngay trên hệ thống."
+
+  utter_ask_khai_bao_tam_tru:
+    - text: "Có, chủ nhà hoặc người thuê đều có thể khai báo tạm trú trực tuyến bằng mã định danh cá nhân."
+
+  utter_ask_xem_thong_tin_ca_nhan:
+    - text: "Có, sau khi đăng nhập, bạn chọn \"Thông tin của tôi\" để xem các dữ liệu đã lưu trữ."
+
+  utter_ask_tra_cuu_ho_tich:
+    - text: "Truy cập phần \"Tra cứu hồ sơ hộ tịch\" trên hệ thống, nhập số hồ sơ hoặc mã định danh để xem kết quả."
+
+  utter_ask_nop_ho_so_noi_khac:
+    - text: "Chỉ khi hồ sơ không yêu cầu cư trú tại địa phương. Một số thủ tục cho phép nộp tại bất kỳ nơi nào trong tỉnh."
+
+  utter_ask_dang_ky_ket_hon_online:
+    - text: "Có thể đăng ký trước thông tin trực tuyến, sau đó đến UBND xác nhận trực tiếp và ký tên để hoàn tất."
+
+  utter_ask_giay_xac_nhan_doc_than:
+    - text: "Chọn dịch vụ \"Cấp giấy xác nhận tình trạng hôn nhân\" trên hệ thống, điền thông tin, và nhận kết quả qua email hoặc trực tiếp."
+
+  utter_ask_sua_ten_khai_sinh:
+    - text: "Có, bạn gửi hồ sơ yêu cầu cải chính hộ tịch kèm giấy tờ chứng minh tên đúng (như học bạ, CMND)."
+
+  utter_ask_chuyen_ho_khau:
+    - text: "Đăng nhập hệ thống, chọn \"Chuyển nơi cư trú\", nhập thông tin địa chỉ mới, và đính kèm giấy tờ xác nhận nơi đến."
+
+  utter_ask_phi_ho_so_online:
+    - text: "Một số thủ tục miễn phí, còn lại có thể nộp lệ phí trực tuyến qua cổng thanh toán điện tử của nhà nước."
+
+  utter_ask_huy_ho_so:
+    - text: "Có, trước khi cán bộ xử lý, bạn có thể chọn \"Hủy hồ sơ\" trong phần \"Quản lý hồ sơ\"."
+
+  utter_ask_theo_doi_tien_trinh:
+    - text: "Vào mục \"Tra cứu hồ sơ\", nhập mã hồ sơ hoặc số CCCD để xem trạng thái và thời gian dự kiến hoàn tất."
+
+  utter_ask_nhan_ket_qua_buu_dien:
+    - text: "Có, bạn chỉ cần chọn phương thức \"Nhận kết quả tại nhà\" khi nộp hồ sơ và nhập địa chỉ nhận."
+
+  utter_ask_xac_thuc_tai_khoan:
+    - text: "Sau khi đăng ký, bạn xác thực bằng mã OTP gửi về điện thoại hoặc định danh qua CCCD gắn chip."
+
+  utter_ask_xem_ho_so_cu:
+    - text: "Có, hệ thống lưu trữ lịch sử hồ sơ trong phần \"Hồ sơ của tôi\" để bạn dễ dàng tra cứu lại."
+
+  utter_ask_sua_thong_tin_sai:
+    - text: "Có thể sửa trước khi gửi hồ sơ. Sau khi gửi, cần gửi yêu cầu chỉnh sửa hoặc nộp lại hồ sơ mới."
+
+  utter_ask_cap_lai_gplx:
+    - text: "Bạn có thể truy cập hệ thống dịch vụ công, chọn \"Cấp lại giấy phép lái xe\", nhập số GPLX cũ, tải ảnh chân dung, bản scan CCCD và giấy khám sức khỏe, sau đó chờ xác nhận từ Sở Giao thông Vận tải."
+
+  utter_ask_nop_thue_dat:
+    - text: "Bạn truy cập mục \"Nộp thuế điện tử\" trên hệ thống, đăng nhập tài khoản, nhập mã hồ sơ đất đai hoặc số sổ đỏ, kiểm tra thông tin và thanh toán qua cổng eTax hoặc ngân hàng liên kết."
+
+  utter_ask_lam_lai_so_ho_khau:
+    - text: "Hiện nay hộ khẩu giấy đã được thay bằng dữ liệu điện tử. Bạn chỉ cần xác nhận lại thông tin trên hệ thống quản lý cư trú để cập nhật."
+
+  utter_ask_giay_phep_xay_dung:
+    - text: "Có. Bạn cần nộp bản vẽ thiết kế, giấy chứng nhận quyền sử dụng đất, CMND/CCCD và bản kê khai chi tiết. Kết quả được gửi về sau 15–20 ngày làm việc."
+
+  utter_ask_dang_ky_kinh_doanh:
+    - text: "Vào mục \"Đăng ký hộ kinh doanh\", điền thông tin chủ hộ, địa chỉ, loại hình kinh doanh, tải bản sao CMND và địa chỉ trụ sở. Kết quả trả về qua email sau khi được duyệt."
+
+  utter_ask_tam_tru_dai_han:
+    - text: "Chọn dịch vụ \"Đăng ký tạm trú dài hạn\" và điền thông tin cá nhân, địa chỉ, thời hạn tạm trú. Sau khi duyệt, bạn có thể in giấy xác nhận từ hệ thống."
+
+  utter_ask_giay_xac_nhan_viec_lam:
+    - text: "Có. Bạn nộp đơn online kèm giấy tờ chứng minh công việc (hợp đồng, xác nhận công ty). Cán bộ phường sẽ duyệt và cấp giấy điện tử."
+
+  utter_ask_giay_phep_su_kien:
+    - text: "Bạn nộp hồ sơ trực tuyến gồm kế hoạch sự kiện, giấy phép địa điểm, phương án đảm bảo an ninh. Sau khi xét duyệt, giấy phép sẽ được gửi qua email."
+
+  utter_ask_ket_hon_nguoi_nuoc_ngoai:
+    - text: "Không hoàn toàn online, nhưng bạn có thể khai báo trước thông tin. Hai bên vẫn phải đến trực tiếp UBND để xác minh giấy tờ hợp pháp."
+
+  utter_ask_giay_xac_nhan_hanh_kiem:
+    - text: "Chọn dịch vụ \"Cấp phiếu lý lịch tư pháp\" hoặc \"Giấy xác nhận nhân thân\", nộp online qua Cổng dịch vụ công quốc gia, sau đó nhận tại nhà."
+
+  utter_ask_giay_chung_nhan_dat:
+    - text: "Hồ sơ gồm: Đơn đề nghị cấp sổ, giấy tờ về quyền sử dụng đất, bản vẽ sơ đồ thửa đất, CCCD. Nộp online và nhận kết quả qua email hoặc trực tiếp."
+
+  utter_ask_doi_ho_chieu:
+    - text: "Bạn truy cập trang quản lý xuất nhập cảnh, điền thông tin cá nhân, tải ảnh, chọn hình thức nhận kết quả qua bưu điện hoặc tại nơi làm thủ tục."
+
+  utter_ask_giay_phep_kinh_doanh_thuc_pham:
+    - text: "Đăng nhập hệ thống, chọn \"Cấp giấy phép an toàn thực phẩm\", nộp hồ sơ gồm giấy đăng ký kinh doanh, hợp đồng thuê mặt bằng, chứng chỉ vệ sinh."
+
+  utter_ask_dang_ky_khai_tu:
+    - text: "Bạn chọn \"Đăng ký khai tử\" trên hệ thống, nhập thông tin người mất, tải giấy chứng tử từ bệnh viện, xác nhận và chờ kết quả phê duyệt."
+
+  utter_ask_giay_phep_quang_cao:
+    - text: "Cần nộp bản thiết kế quảng cáo, vị trí đặt bảng, giấy phép địa điểm. Sau khi thẩm định, giấy phép được cấp online."
+
+  utter_ask_xac_nhan_ho_ngheo:
+    - text: "Nộp đơn trực tuyến kèm các giấy tờ chứng minh thu nhập. Cán bộ sẽ thẩm tra và thông báo kết quả qua hệ thống."
+
+  utter_ask_ma_so_thue_ca_nhan:
+    - text: "Có, bạn chỉ cần CCCD và email. Sau khi đăng ký, mã số thuế sẽ được gửi về email trong 1–3 ngày."
+
+  utter_ask_giay_phep_hanh_nghe_y:
+    - text: "Bạn nộp hồ sơ điện tử gồm bằng cấp chuyên môn, giấy chứng nhận hành nghề, sơ yếu lý lịch và bản sao CCCD."
+
+  utter_ask_doi_ten_cong_ty:
+    - text: "Vào hệ thống đăng ký doanh nghiệp, chọn \"Thay đổi thông tin đăng ký kinh doanh\", nhập tên mới, ký số và nộp hồ sơ online."
+
+  utter_ask_giay_phep_tam_nhap_tai_xuat:
+    - text: "Chọn dịch vụ \"Giấy phép xuất nhập khẩu\", nộp bản khai hàng hóa, hợp đồng và giấy phép kinh doanh liên quan."
+
+  utter_ask_dang_ky_tam_vang:
+    - text: "Được. Vào mục \"Tạm vắng\", điền lý do, địa điểm và thời gian. Kết quả xác nhận sẽ gửi qua email."
+
+  utter_ask_giay_phep_nuoi_cho_meo:
+    - text: "Không cần, nhưng bạn nên đăng ký tiêm phòng và khai báo vật nuôi để quản lý an toàn dịch bệnh."
+
+  utter_ask_giay_phep_moi_truong:
+    - text: "Có, bạn nộp báo cáo đánh giá tác động môi trường, kế hoạch xử lý rác thải. Sau khi phê duyệt, giấy phép sẽ được gửi online."
+
+  utter_ask_nhan_con_nuoi:
+    - text: "Bạn chọn dịch vụ \"Đăng ký nhận con nuôi\", nộp hồ sơ cá nhân, giấy xác nhận sức khỏe, thu nhập, nhân thân. Cán bộ thẩm định trước khi duyệt."
+
+  utter_ask_huy_ho_so_sai:
+    - text: "Vào phần \"Quản lý hồ sơ\", chọn hồ sơ cần hủy, nhấn \"Yêu cầu hủy\". Cán bộ sẽ xác nhận trong 24h."
+
+  utter_ask_tao_tai_khoan:
+    - text: "Nhấn \"Đăng ký\", nhập họ tên, email, số CCCD, số điện thoại, sau đó xác thực qua mã OTP để kích hoạt tài khoản."
+
+  utter_ask_quen_mat_khau:
+    - text: "Nhấn \"Quên mật khẩu\", nhập email hoặc số điện thoại, hệ thống sẽ gửi liên kết đặt lại mật khẩu."
+
+  utter_ask_chinh_sua_ho_so_sau_nop:
+    - text: "Bạn chỉ có thể chỉnh sửa khi hồ sơ chưa được tiếp nhận. Nếu đã duyệt, bạn phải nộp lại hồ sơ mới."
+
+  utter_ask_danh_gia_dich_vu:
+    - text: "Sau khi hồ sơ được xử lý xong, bạn sẽ nhận thông báo mời đánh giá mức độ hài lòng từ 1–5 sao kèm nhận xét."
+
+  utter_ask_dang_nhap_google:
+    - text: "Có, bạn chọn \"Đăng nhập bằng Google\", hệ thống sẽ tự động xác thực và tạo tài khoản liên kết."
+
+  utter_ask_khong_nhan_email:
+    - text: "Kiểm tra thư mục Spam hoặc Junk. Nếu vẫn không thấy, nhấn \"Gửi lại mã xác nhận\"."
+
+  utter_ask_in_giay_hen:
+    - text: "Sau khi nộp hồ sơ, chọn mục \"Giấy hẹn\" và tải về file PDF để in."
+
+  utter_ask_nop_ho_so_thay_nguoi_khac:
+    - text: "Có, nếu bạn có giấy ủy quyền và đăng nhập bằng tài khoản cá nhân của mình."
+
+  utter_ask_xem_lich_hen:
+    - text: "Vào \"Lịch của tôi\", hệ thống sẽ hiển thị ngày, giờ, địa điểm tiếp nhận hồ sơ."
+
+  utter_ask_dang_ky_nhieu_dich_vu:
+    - text: "Có, bạn có thể thêm nhiều hồ sơ vào giỏ dịch vụ trước khi gửi đi."
+
+  utter_ask_huy_lich_hen:
+    - text: "Vào mục \"Lịch hẹn\", chọn hồ sơ và nhấn \"Hủy lịch\". Bạn có thể đặt lại thời gian khác."
+
+  utter_ask_cap_nhat_thong_tin:
+    - text: "Chọn \"Hồ sơ cá nhân\", nhấn \"Chỉnh sửa\", sau đó lưu thay đổi. Một số mục cần xác thực lại bằng OTP."
+
+  utter_ask_tai_ho_so_da_gui:
+    - text: "Có, bạn có thể tải bản sao hồ sơ đã nộp và kết quả xử lý để lưu trữ."
+
+  utter_ask_gop_y_khieu_nai:
+    - text: "Có, vào mục \"Phản hồi người dân\", nhập nội dung, đính kèm bằng chứng (nếu có) và gửi trực tiếp."
+
+  utter_ask_su_dung_dien_thoai:
+    - text: "Có, giao diện được tối ưu cho thiết bị di động, bạn có thể thao tác như trên máy tính."
+
+  utter_ask_chuyen_ngon_ngu:
+    - text: "Ở góc trên cùng, chọn biểu tượng ngôn ngữ và chuyển sang \"English\"."
+
+  utter_ask_thong_bao_zalo:
+    - text: "Hiện hệ thống hỗ trợ thông báo qua email và SMS. Zalo sẽ được tích hợp trong phiên bản tiếp theo."
+
+  utter_ask_tai_hoa_don:
+    - text: "Sau khi thanh toán, vào \"Lịch sử thanh toán\", chọn hóa đơn và tải bản PDF."
+
+  utter_ask_quen_ma_ho_so:
+    - text: "Bạn có thể tra lại trong mục \"Hồ sơ của tôi\" hoặc tìm theo thời gian nộp."
+
+  utter_ask_thay_doi_dia_chi_nhan:
+    - text: "Chọn hồ sơ đang xử lý, nhấn \"Chỉnh sửa thông tin nhận kết quả\" và nhập địa chỉ mới."
+
+  utter_ask_luu_ho_so_nhap:
+    - text: "Có, hệ thống tự động lưu bản nháp để bạn tiếp tục sau."
+
+  utter_ask_thu_phi_ho_so:
+    - text: "Không, chỉ thu phí khi dịch vụ yêu cầu lệ phí hành chính theo quy định."
+
+  utter_ask_xem_lich_su_danh_gia:
+    - text: "Có, phần \"Đánh giá của tôi\" hiển thị toàn bộ phản hồi bạn đã gửi."
+
+  utter_ask_xuat_du_lieu_excel:
+    - text: "Trong mục \"Hồ sơ của tôi\", chọn \"Xuất dữ liệu\" để tải danh sách dưới dạng Excel hoặc CSV."
+
+  utter_ask_khong_dang_nhap_duoc:
+    - text: "Kiểm tra kết nối mạng, thử lại sau vài phút hoặc chọn \"Quên mật khẩu\" để đặt lại tài khoản."
+
+  utter_ask_trang_web_loi:
+    - text: "Hãy xóa cache trình duyệt, tải lại trang hoặc thử truy cập bằng thiết bị khác."
+
+  utter_ask_loi_tai_file:
+    - text: "Kiểm tra dung lượng tệp (không quá 10MB) và định dạng (PDF, JPG, PNG). Nếu vẫn lỗi, thử nộp lại sau."
+
+  utter_ask_loi_xac_thuc:
+    - text: "Có thể phiên đăng nhập của bạn hết hạn. Vui lòng đăng xuất và đăng nhập lại."
+
+  utter_ask_khong_nhan_otp:
+    - text: "Kiểm tra tín hiệu điện thoại và đảm bảo số điện thoại đúng. Nếu vẫn không nhận, chọn \"Gửi lại OTP\"."
+
+  utter_ask_loi_404_pdf:
+    - text: "Nghĩa là tài liệu chưa được tải lên hoặc bị xóa tạm thời. Bạn nên thử lại sau hoặc liên hệ hỗ trợ."
+
+  utter_ask_khong_thanh_toan_duoc:
+    - text: "Hãy kiểm tra thẻ ngân hàng, hạn mức, hoặc thử chuyển sang phương thức thanh toán khác."
+
+  utter_ask_loi_font_chu:
+    - text: "Hãy cài đặt lại ngôn ngữ hiển thị của trình duyệt và tải lại trang."
+
+  utter_ask_server_error:
+    - text: "Đây là lỗi phía máy chủ, bạn chỉ cần đợi vài phút rồi truy cập lại."
+
+  utter_ask_treo_bieu_mau:
+    - text: "Do trình duyệt quá tải, bạn nên lưu lại bản nháp rồi tải lại trang."
+
+  utter_ask_app_mobile_loi:
+    - text: "Hãy cập nhật phiên bản mới nhất từ App Store hoặc Google Play."
+
+  utter_ask_khong_in_duoc:
+    - text: "Kiểm tra máy in hoặc tải file PDF về và in từ máy tính."
+
+  utter_ask_file_not_supported:
+    - text: "Bạn nên đổi định dạng file sang PDF hoặc JPG trước khi tải lên."
+
+  utter_ask_khong_thay_nut_gui:
+    - text: "Kiểm tra xem bạn đã điền đầy đủ thông tin và tải đủ tài liệu chưa. Nút chỉ xuất hiện khi hoàn tất tất cả bước."
+
+  utter_ask_man_hinh_trang:
+    - text: "Do trình duyệt lỗi bộ nhớ, bạn chỉ cần khởi động lại và đăng nhập lại."
+
+  utter_ask_he_thong_cham:
+    - text: "Đúng, bạn nên nộp hồ sơ vào buổi sáng sớm hoặc tối muộn để tránh nghẽn mạng."
+
+  utter_ask_nhieu_tai_khoan:
+    - text: "Có thể, nhưng nên dùng chế độ \"ẩn danh\" hoặc đăng xuất tài khoản cũ trước khi đăng nhập tài khoản mới."
+
+  utter_ask_access_denied:
+    - text: "Nghĩa là bạn không có quyền truy cập phần đó, vui lòng kiểm tra lại vai trò người dùng."
+
+  utter_ask_lien_he_ho_tro:
+    - text: "Qua mục \"Hỗ trợ trực tuyến\" hoặc số điện thoại hiển thị ở cuối trang web."
+
+  utter_ask_chua_nhan_phan_hoi:
+    - text: "Phản hồi được xử lý trong 1–3 ngày làm việc. Bạn có thể kiểm tra trạng thái phản hồi trong mục \"Phản hồi người dân\"."
+
+  utter_ask_cap_nhat_trinh_duyet:
+    - text: "Nghĩa là phiên bản trình duyệt của bạn quá cũ. Hãy cập nhật lên bản mới để đảm bảo bảo mật và tương thích."
+
+  utter_ask_mat_ket_noi:
+    - text: "Hồ sơ được lưu tự động, bạn chỉ cần đăng nhập lại để tiếp tục."
+
+  utter_ask_khong_mo_link:
+    - text: "Hãy sao chép liên kết và dán vào trình duyệt mới. Một số ứng dụng chặn link tự động."
+
+  utter_ask_treo_khi_thanh_toan:
+    - text: "Không cần lo, hệ thống sẽ tự hoàn tiền nếu giao dịch không thành công. Bạn có thể thử lại sau."
+
+  utter_ask_gop_y_cai_tien:
+    - text: "Bạn có thể gửi qua mục \"Góp ý cải tiến\" trên giao diện chính, nội dung sẽ được chuyển đến bộ phận phát triển."
+
+  utter_ask_giay_phep_xay_dung_nha:
+    - text: "Bạn cần nộp hồ sơ gồm: đơn đề nghị, giấy chứng nhận quyền sử dụng đất, bản vẽ thiết kế, và giấy tờ chứng minh nhân thân tại UBND cấp huyện."
+
+  utter_ask_dang_ky_thai_san:
+    - text: "Người lao động nộp giấy chứng sinh, đơn đề nghị, bản sao hợp đồng lao động cho cơ quan BHXH để được hưởng chế độ thai sản."
+
+  utter_ask_giay_chung_nhan_ket_hon:
+    - text: "Bạn cần mang theo CMND/CCCD, giấy đăng ký kết hôn (nếu có), sổ hộ khẩu và ảnh chân dung đến UBND nơi đăng ký."
+
+  utter_ask_dang_ky_thuong_tru:
+    - text: "Bạn cần có chỗ ở hợp pháp, nộp hồ sơ đăng ký thường trú gồm: đơn, CMND/CCCD, giấy tờ nhà ở tại công an phường."
+
+  utter_ask_chuyen_doi_muc_dich_dat:
+    - text: "Bạn nộp đơn đề nghị, giấy chứng nhận quyền sử dụng đất, phương án sử dụng đất tại Phòng Tài nguyên và Môi trường."
+
+  utter_ask_mat_gplx:
+    - text: "Bạn cần làm đơn trình báo, mang CMND/CCCD, ảnh thẻ đến cơ quan công an nơi cấp giấy phép lái xe để làm lại."
+
+  utter_ask_giay_xac_nhan_hon_nhan:
+    - text: "Bạn có thể xin cấp tại UBND phường nơi cư trú với các giấy tờ: CMND/CCCD, sổ hộ khẩu, đơn đề nghị."
+
+  utter_ask_khai_tu_nuoc_ngoai:
+    - text: "Bạn cần giấy báo tử được hợp pháp hóa lãnh sự, bản sao giấy tờ tùy thân của người khai tử, và đơn đề nghị."
+
+  utter_ask_giay_phep_kinh_doanh_ruou:
+    - text: "Bạn cần giấy phép kinh doanh, giấy chứng nhận đủ điều kiện về phòng cháy nổ, và đơn đề nghị tại cơ quan cấp phép."
+
+  utter_ask_giay_chung_nhan_nha:
+    - text: "Bạn nộp hồ sơ gồm: giấy chứng nhận quyền sử dụng đất, giấy tờ xây dựng, CMND/CCCD tại cơ quan đăng ký nhà đất."
+
+  utter_ask_cap_lai_khai_sinh:
+    - text: "Bạn đến UBND nơi đăng ký khai sinh ban đầu, mang theo CMND/CCCD và đơn đề nghị cấp lại."
+
+  utter_ask_bao_ho_thuong_hieu:
+    - text: "Bạn nộp hồ sơ đăng ký nhãn hiệu tại Cục Sở hữu trí tuệ gồm: mẫu nhãn hiệu, danh mục sản phẩm, và giấy tờ pháp lý."
+
+  utter_ask_nhan_cha_con:
+    - text: "Bạn cần giấy khai sinh của con, CMND/CCCD của cha mẹ, và văn bản thừa nhận quan hệ cha con."
+
+  utter_ask_chuyen_nhuong_dat:
+    - text: "Hai bên cần có hợp đồng chuyển nhượng, giấy chứng nhận quyền sử dụng đất, và nộp hồ sơ tại cơ quan đăng ký đất đai."
+
+  utter_ask_giay_phep_van_chuyen:
+    - text: "Bạn cần giấy phép kinh doanh vận tải, phương tiện đạt tiêu chuẩn kỹ thuật, và đơn đề nghị tại cơ quan GTVT."
+
+  utter_ask_giay_phep_san_xuat:
+    - text: "Bạn nộp hồ sơ gồm: giấy phép kinh doanh, giấy chứng nhận cơ sở đủ điều kiện, phương án sản xuất tại cơ quan chức năng."
+
+  utter_ask_ma_so_ma_vach:
+    - text: "Bạn đăng ký với Tổng cục Tiêu chuẩn Đo lường Chất lượng, cung cấp thông tin sản phẩm và giấy tờ doanh nghiệp."
+
+  utter_ask_giay_chung_nhan_an_toan_thuc_pham:
+    - text: "Bạn cần giấy chứng nhận đủ điều kiện cơ sở, giấy khám sức khỏe nhân viên, và hồ sơ tại cơ quan y tế."
+
+  utter_ask_giay_phep_xa_thai:
+    - text: "Bạn cần báo cáo đánh giá tác động môi trường, phương án xử lý nước thải, và nộp tại Sở Tài nguyên Môi trường."
+
+  utter_ask_ket_hon_nuoc_ngoai:
+    - text: "Bạn cần giấy tờ tùy thân hợp lệ, giấy xác nhận tình trạng hôn nhân, và các giấy tờ có dịch thuật công chứng."
+
+  utter_ask_dinh_danh_dien_tu:
+    - text: "Bạn truy cập Cổng Dịch vụ công Quốc gia, cung cấp thông tin cá nhân và xác thực qua CCCD gắn chip."
+
+  utter_ask_ky_so_van_ban:
+    - text: "Có, bạn cần có chữ ký số và phần mềm hỗ trợ ký điện tử theo quy định."
+
+  utter_ask_tra_cuu_ma_so_thue:
+    - text: "Bạn truy cập Cổng thông tin thuế, sử dụng tài khoản định danh điện tử hoặc CCCD để tra cứu."
+
+  utter_ask_lich_su_nop_thue:
+    - text: "Bạn đăng nhập tài khoản trên Cổng thuế điện tử, vào mục tra cứu lịch sử nộp thuế."
+
+  utter_ask_hoa_don_dien_tu:
+    - text: "Bạn đăng ký qua Cổng thuế điện tử, cung cấp thông tin doanh nghiệp và được cấp tài khoản sử dụng."
+
+  utter_ask_nop_bao_cao_thue:
+    - text: "Có, bạn có thể nộp báo cáo thuế qua Cổng thuế điện tử với tài khoản đã đăng ký."
+
+  utter_ask_tra_cuu_quy_hoach:
+    - text: "Bạn truy cập Cổng thông tin quy hoạch đất đai của tỉnh/thành phố, nhập thông tin địa chỉ cần tra cứu."
+
+  utter_ask_dau_gia_tai_san:
+    - text: "Bạn truy cập Cổng thông tin đấu giá tài sản của cơ quan có thẩm quyền để xem các thông báo đấu giá."
+
+  utter_ask_bhxh_tu_nguyen:
+    - text: "Bạn đăng ký qua Cổng BHXH điện tử hoặc đến trực tiếp cơ quan BHXH nơi cư trú."
+
+  utter_ask_khieu_nai_quyet_dinh:
+    - text: "Có, bạn có thể gửi đơn khiếu nại qua Cổng Dịch vụ công với đầy đủ thông tin và bằng chứng."
+
+  utter_ask_gplx_quoc_te:
+    - text: "Có, bạn đăng ký qua Cổng Giao thông điện tử, cung cấp thông tin và nộp lệ phí online."
+
+  utter_ask_thi_cong_chuc:
+    - text: "Bạn truy cập Cổng thông tin tuyển dụng công chức của cơ quan có thẩm quyền để đăng ký thi."
+
+  utter_ask_tra_cuu_doanh_nghiep:
+    - text: "Bạn truy cập Cổng thông tin doanh nghiệp quốc gia, nhập mã số thuế hoặc tên doanh nghiệp cần tra cứu."
+
+  utter_ask_xac_nhan_thu_nhap:
+    - text: "Có, bạn có thể xin qua Cổng thuế điện tử với tài khoản định danh điện tử."
+
+  utter_ask_dang_ky_dich_vu_tinh:
+    - text: "Bạn truy cập Cổng Dịch vụ công cấp tỉnh, đăng ký tài khoản và chọn dịch vụ cần sử dụng."
+
+  utter_ask_nhan_email_ket_qua:
+    - text: "Bạn đăng ký nhận email thông báo trong phần cài đặt tài khoản trên Cổng Dịch vụ công."
+
+  utter_ask_cap_nhat_so_dien_thoai:
+    - text: "Bạn đăng nhập tài khoản, vào mục thông tin cá nhân, chọn chỉnh sửa số điện thoại và xác thực."
+
+  utter_ask_thay_doi_email:
+    - text: "Có, bạn vào phần cài đặt thông báo trong tài khoản để thay đổi địa chỉ email nhận thông tin."
+
+  utter_ask_tai_app:
+    - text: "Bạn tải ứng dụng \"Dịch vụ công\" từ App Store hoặc Google Play, sau đó đăng nhập bằng tài khoản."
+
+  utter_ask_huong_dan_su_dung:
+    - text: "Bạn truy cập mục \"Hướng dẫn sử dụng\" trên Cổng Dịch vụ công hoặc xem video hướng dẫn trên kênh chính thức."
+
+  utter_ask_tro_cap_that_nghiep:
+    - text: "Bạn phải đóng BHXH từ đủ 12 tháng trở lên trong 24 tháng gần nhất, và có đơn đề nghị hưởng trợ cấp."
+
+  utter_ask_vay_von_uu_dai:
+    - text: "Có, bạn liên hệ Ngân hàng Chính sách xã hội tại địa phương với giấy chứng nhận hộ nghèo và phương án vay vốn."
+
+  utter_ask_the_bhyt_mien_phi:
+    - text: "Bạn đến UBND phường với giấy chứng nhận hộ nghèo/cận nghèo, CMND/CCCD để được cấp thẻ BHYT miễn phí."
+
+  utter_ask_ho_tro_mai_tang:
+    - text: "Người thân nộp giấy báo tử, đơn đề nghị và giấy tờ chứng minh quan hệ cho cơ quan BHXH."
+
+  utter_ask_che_do_thai_san:
+    - text: "Lao động nữ được nghỉ thai sản 6 tháng, hưởng 100% lương từ quỹ BHXH."
+
+  utter_ask_tro_cap_khuyet_tat:
+    - text: "Bạn cần giấy xác nhận khuyết tật, đơn đề nghị và CMND/CCCD đến UBND phường để làm thủ tục."
+
+  utter_ask_nha_o_xa_hoi:
+    - text: "Bạn phải thuộc hộ nghèo/cận nghèo, có đăng ký hộ khẩu thường trú và chưa có nhà ở tại địa phương."
+
+  utter_ask_giay_chung_nhan_ho_ngheo:
+    - text: "Bạn nộp đơn đề nghị, các giấy tờ chứng minh thu nhập tại UBND phường để được xét duyệt."
+
+  utter_ask_bhyt_ho_gia_dinh:
+    - text: "Bạn đến cơ quan BHXH nơi cư trú với sổ hộ khẩu, CMND/CCCD của các thành viên để đăng ký."
+
+  utter_ask_hoc_bong_ho_ngheo:
+    - text: "Bạn liên hệ Phòng Giáo dục địa phương với giấy chứng nhận hộ nghèo và kết quả học tập của con em."
+
+  utter_ask_ho_tro_thien_tai:
+    - text: "Có, bạn cần báo cáo thiệt hại với UBND phường và được hỗ trợ theo quy định của Nhà nước."
+
+  utter_ask_giay_xac_nhan_bhxh:
+    - text: "Bạn có thể xin tại cơ quan BHXH nơi đóng với CMND/CCCD và đơn đề nghị."
+
+  utter_ask_luong_huu_truoc_tuoi:
+    - text: "Bạn phải có đủ 15 năm đóng BHXH trở lên và thuộc các trường hợp đặc biệt theo quy định."
+
+  utter_ask_tro_cap_mot_lan:
+    - text: "Bạn nộp đơn đề nghị và các giấy tờ liên quan tại cơ quan BHXH nơi đóng trước khi nghỉ hưu."
+
+  utter_ask_tinh_bh_that_nghiep:
+    - text: "Mức hưởng = 60% mức lương bình quân đóng BHXH của 6 tháng liền kề trước khi thất nghiệp."
+
+  utter_ask_khai_thue_tncn:
+    - text: "Bạn khai trên tờ khai thuế TNCN, kèm theo các chứng từ khấu trừ thuế và nộp cho cơ quan thuế."
+
+  utter_ask_mien_giam_thue:
+    - text: "Bạn cần giấy tờ chứng minh thu nhập dưới mức chịu thuế, hoặc các giấy tờ ưu đãi theo quy định."
+
+  utter_ask_thoi_han_nop_thue_mon_bai:
+    - text: "Chậm nhất ngày 30/1 hàng năm cho doanh nghiệp, và theo thông báo của cơ quan thuế cho hộ kinh doanh."
+
+  utter_ask_dang_ky_mst_doanh_nghiep:
+    - text: "Bạn nộp hồ sơ đăng ký doanh nghiệp tại Phòng Đăng ký kinh doanh, mã số thuế sẽ được cấp cùng lúc."
+
+  utter_ask_thue_chuyen_nhuong_dat:
+    - text: "Có, bạn phải nộp thuế thu nhập cá nhân và các loại phí, lệ phí theo quy định khi chuyển nhượng."
+
+  utter_ask_thue_cho_thue_nha:
+    - text: "Thuế TNCN = 10% trên tổng doanh thu cho thuê, trừ các khoản được giảm trừ theo quy định."
+
+  utter_ask_hoan_thue_gtgt:
+    - text: "Bạn nộp hồ sơ hoàn thuế gồm: tờ khai, hóa đơn, chứng từ liên quan tại cơ quan thuế quản lý."
+
+  utter_ask_gia_han_nop_thue:
+    - text: "Bạn nộp đơn xin gia hạn nộp thuế tại cơ quan thuế trước thời hạn nộp, nêu rõ lý do chính đáng."
+
+  utter_ask_tra_cuu_nghia_vu_thue:
+    - text: "Bạn tra cứu trên Cổng thuế điện tử hoặc đến trực tiếp cơ quan thuế với CMND/CCCD/mã số thuế."
+
+  utter_ask_khai_thue_khong_phat_sinh:
+    - text: "Không, nhưng bạn vẫn phải nộp tờ khai thuế để xác nhận không phát sinh thu nhập chịu thuế."
+
+  utter_ask_khai_thue_dien_tu:
+    - text: "Bạn đăng nhập Cổng thuế điện tử, chọn chức năng kê khai thuế và điền đầy đủ thông tin theo hướng dẫn."
+
+  utter_ask_giay_chung_nhan_mst:
+    - text: "Bạn nộp đơn đề nghị cấp giấy chứng nhận mã số thuế tại cơ quan thuế quản lý trực tiếp."
+
+  utter_ask_khieu_nai_quyet_dinh_thue:
+    - text: "Bạn nộp đơn khiếu nại đến cơ quan thuế đã ra quyết định trong thời hạn 30 ngày kể từ ngày nhận quyết định."
+
+  utter_ask_bao_cao_tai_chinh:
+    - text: "Chậm nhất ngày 31/3 hàng năm cho năm tài chính kết thúc ngày 31/12."
+
+  utter_ask_chu_ky_so:
+    - text: "Bạn mua chữ ký số từ nhà cung cấp được cấp phép, sau đó đăng ký với cơ quan thuế và BHXH."
+
+  utter_ask_giay_phep_quang_cao_mang_xa_hoi:
+    - text: "Bạn nộp hồ sơ tại Sở Thông tin và Truyền thông với nội dung quảng cáo và thông tin trang mạng xã hội."
+
+  utter_ask_thanh_lap_chi_nhanh:
+    - text: "Bạn nộp hồ sơ tại Phòng Đăng ký kinh doanh gồm: quyết định thành lập, điều lệ, và giấy tờ chi nhánh."
+
+  utter_ask_giay_phep_lao_dong_nguoi_nuoc_ngoai:
+    - text: "Bạn nộp hồ sơ tại Sở Lao động TBXH gồm: hồ sơ người lao động, hợp đồng, và giấy tờ doanh nghiệp."
+
+  utter_ask_dang_ky_ban_quyen:
+    - text: "Bạn nộp hồ sơ tại Cục Bản quyền tác giả với bản sao tác phẩm và giấy tờ chứng minh quyền sở hữu."
+
+  utter_ask_giay_phep_su_kien_van_hoa:
+    - text: "Bạn nộp hồ sơ tại Sở Văn hóa Thể thao với kế hoạch tổ chức, phương án đảm bảo an ninh trật tự."
+
+  utter_ask_giay_phep_khai_thac_nuoc:
+    - text: "Bạn nộp hồ sơ tại UBND cấp tỉnh với báo cáo khảo sát, phương án khai thác và bảo vệ tài nguyên nước."
+
+  utter_ask_dau_thau_qua_mang:
+    - text: "Bạn đăng ký tài khoản trên hệ thống mạng đấu thầu quốc gia, nộp hồ sơ dự thầu theo hướng dẫn."
+
+  utter_ask_giay_chung_nhan_xuat_xu:
+    - text: "Bạn nộp hồ sơ tại cơ quan cấp C/O với hợp đồng mua bán, chứng từ xuất xứ hàng hóa."
+
+  utter_ask_giay_phep_nhap_khau_thiet_bi_y_te:
+    - text: "Bạn nộp hồ sơ tại Bộ Y tế với giấy phép lưu hành, catalog kỹ thuật và giấy tờ chất lượng thiết bị."
+
+  utter_ask_dang_ky_thuong_hieu:
+    - text: "Bạn nộp hồ sơ đăng ký nhãn hiệu tại Cục Sở hữu trí tuệ với mẫu nhãn hiệu và danh mục sản phẩm."
+
+  utter_ask_giay_phep_van_tai:
+    - text: "Bạn nộp hồ sơ tại Sở Giao thông Vận tải với giấy phép kinh doanh, phương tiện đạt chuẩn và hồ sơ tài xế."
+
+  utter_ask_giay_phep_pccc:
+    - text: "Bạn cần giấy chứng nhận PCCC, bản vẽ thoát hiểm, phương án PCCC tại cơ quan cảnh sát PCCC."
+
+  utter_ask_bhxh_bat_buoc:
+    - text: "Bạn đăng ký với cơ quan BHXH trong vòng 30 ngày kể từ ngày ký hợp đồng lao động đầu tiên."
+
+  utter_ask_giay_chung_nhan_dang_ky_doanh_nghiep:
+    - text: "Bạn nộp hồ sơ tại Phòng Đăng ký kinh doanh gồm: điều lệ, danh sách thành viên, và giấy tờ pháp lý."
+
+  utter_ask_giay_phep_xay_dung_cong_trinh:
+    - text: "Bạn nộp hồ sơ tại UBND cấp tỉnh với thiết kế kỹ thuật, giấy phép quy hoạch và báo cáo đánh giá tác động."
+
+  utter_ask_so_huu_tri_tue:
+    - text: "Bạn nộp hồ sơ tại Cục Sở hữu trí tuệ với bản mô tả sáng chế, yêu cầu bảo hộ và giấy tờ chứng minh."
+
+  utter_ask_giay_phep_san_xuat_phim:
+    - text: "Bạn nộp hồ sơ tại Cục Điện ảnh với kịch bản, kế hoạch sản xuất và giấy tờ nhân sự tham gia."
+
+  utter_ask_giay_phep_khao_sat_dia_chat:
+    - text: "Bạn nộp hồ sơ tại UBND cấp tỉnh với phương án khảo sát, giấy phép hành nghề và thiết bị sử dụng."
+
+  utter_ask_an_sinh_xa_hoi:
+    - text: "Bạn đăng ký tại UBND phường với giấy chứng nhận hộ nghèo/cận nghèo và các giấy tờ liên quan."
+
+  utter_ask_giay_phep_tan_so:
+    - text: "Bạn nộp hồ sơ tại Cục Tần số vô tuyến điện với phương án sử dụng tần số và thiết bị phát sóng."
+
+  utter_ask_giay_chung_nhan_kinh_doanh_gas:
+    - text: "Bạn nộp hồ sơ tại Sở Công Thương với giấy chứng nhận đủ điều kiện PCCC, kho chứa và nhân viên vận hành."
+
+  utter_ask_tich_diem_thue:
+    - text: "Bạn đăng ký qua Cổng thuế điện tử với tài khoản doanh nghiệp và thông tin đăng ký tích điểm."
+
+  utter_ask_giay_phep_xu_ly_nuoc_thai:
+    - text: "Bạn nộp hồ sơ tại Sở Tài nguyên Môi trường với báo cáo vận hành, kết quả quan trắc và nhật ký vận hành."
+
+  utter_ask_giay_phep_kinh_doanh_khach_san:
+    - text: "Bạn cần giấy phép kinh doanh, giấy chứng nhận PCCC, giấy chứng nhận vệ sinh an toàn thực phẩm."
+
+  utter_ask_bao_hiem_nong_nghiep:
+    - text: "Bạn đăng ký tại cơ quan BHXH với hợp đồng bảo hiểm, giấy tờ nông nghiệp và chứng minh thu nhập."
+
+  utter_ask_giay_phep_trang_thong_tin:
+    - text: "Bạn nộp hồ sơ tại Bộ Thông tin và Truyền thông với tên miền, nội dung website và thông tin chủ quản."
+
+  utter_ask_giay_chung_nhan_vsattp:
+    - text: "Bạn nộp hồ sơ tại cơ quan y tế với giấy chứng nhận đủ điều kiện cơ sở, sổ khám sức khỏe nhân viên."
+
+  utter_ask_ho_tro_lai_suat:
+    - text: "Bạn đăng ký tại ngân hàng chính sách với phương án sử dụng vốn và giấy tờ đối tượng được hỗ trợ."
+
+  utter_ask_giay_phep_bien_quang_cao:
+    - text: "Bạn nộp hồ sơ tại UBND cấp quận với thiết kế biển, vị trí lắp đặt và giấy tờ an toàn kỹ thuật."
+

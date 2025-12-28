@@ -1,0 +1,1390 @@
+version: "3.1"
+
+nlu:
+# Giấy tờ và hộ tịch
+- intent: ask_dang_ky_khai_sinh
+  examples: |
+    - Tôi cần giấy tờ gì để đăng ký khai sinh cho con?
+    - Giấy tờ đăng ký khai sinh
+    - Cần gì để đăng ký khai sinh
+    - Thủ tục đăng ký khai sinh
+
+- intent: ask_cccd_gap_chip
+  examples: |
+    - Tôi có thể làm CCCD gắn chip ở phường không?
+    - Làm CCCD gắn chip ở đâu
+    - Đăng ký CCCD gắn chip
+    - Làm thẻ CCCD gắn chip
+
+- intent: ask_giay_xac_nhan_cu_tru
+  examples: |
+    - Làm sao để xin giấy xác nhận cư trú?
+    - Xin giấy xác nhận cư trú
+    - Cách xin giấy xác nhận cư trú
+    - Thủ tục xin giấy xác nhận cư trú
+
+- intent: ask_doi_cmnd_sang_cccd
+  examples: |
+    - Có cần hộ khẩu khi đổi CMND sang CCCD không?
+    - Đổi CMND sang CCCD cần gì
+    - Thủ tục đổi CMND sang CCCD
+    - Giấy tờ đổi CMND sang CCCD
+
+- intent: ask_mat_giay_khai_sinh
+  examples: |
+    - Tôi bị mất giấy khai sinh, phải làm lại thế nào?
+    - Làm lại giấy khai sinh
+    - Cấp lại giấy khai sinh
+    - Mất giấy khai sinh làm sao
+
+- intent: ask_uy_quyen_ho_so
+  examples: |
+    - Tôi có thể ủy quyền người khác nộp hồ sơ không?
+    - Ủy quyền nộp hồ sơ
+    - Có thể nhờ người khác nộp hồ sơ không
+    - Thủ tục ủy quyền nộp hồ sơ
+
+- intent: ask_gia_tri_phap_ly_online
+  examples: |
+    - Hồ sơ online có giá trị pháp lý như nộp trực tiếp không?
+    - Giá trị pháp lý hồ sơ online
+    - Hồ sơ online có hợp pháp không
+    - Hồ sơ điện tử có giá trị không
+
+- intent: ask_thay_doi_ho_khau_online
+  examples: |
+    - Tôi có thể thay đổi thông tin hộ khẩu online không?
+    - Thay đổi hộ khẩu online
+    - Cập nhật hộ khẩu online
+    - Sửa thông tin hộ khẩu online
+
+- intent: ask_thoi_han_giai_quyet
+  examples: |
+    - Thời hạn giải quyết hồ sơ là bao lâu?
+    - Bao lâu thì có kết quả
+    - Thời gian xử lý hồ sơ
+    - Mất bao lâu để xử lý hồ sơ
+
+- intent: ask_ho_so_bi_tu_choi
+  examples: |
+    - Nếu hồ sơ bị từ chối thì sao?
+    - Hồ sơ bị từ chối phải làm sao
+    - Xử lý hồ sơ bị từ chối
+    - Hồ sơ không đạt yêu cầu
+
+- intent: ask_khai_bao_tam_tru
+  examples: |
+    - Có cần khai báo tạm trú khi ở trọ không?
+    - Khai báo tạm trú
+    - Thủ tục tạm trú
+    - Đăng ký tạm trú
+
+- intent: ask_xem_thong_tin_ca_nhan
+  examples: |
+    - Tôi có thể xem thông tin cá nhân trên hệ thống không?
+    - Xem thông tin cá nhân
+    - Tra cứu thông tin cá nhân
+    - Kiểm tra thông tin cá nhân
+
+- intent: ask_tra_cuu_ho_tich
+  examples: |
+    - Cách kiểm tra thông tin hộ tịch online?
+    - Tra cứu hộ tịch online
+    - Kiểm tra hộ tịch
+    - Xem thông tin hộ tịch
+
+- intent: ask_nop_ho_so_noi_khac
+  examples: |
+    - Tôi có thể nộp hồ sơ ở nơi khác không?
+    - Nộp hồ sơ ở địa phương khác
+    - Có thể nộp hồ sơ ở nơi khác không
+    - Nộp hồ sơ ngoài địa phương
+
+- intent: ask_dang_ky_ket_hon_online
+  examples: |
+    - Tôi có thể đăng ký kết hôn online không?
+    - Đăng ký kết hôn online
+    - Thủ tục kết hôn online
+    - Làm giấy kết hôn online
+
+- intent: ask_giay_xac_nhan_doc_than
+  examples: |
+    - Tôi muốn xin giấy xác nhận độc thân thì làm sao?
+    - Xin giấy xác nhận độc thân
+    - Giấy xác nhận tình trạng hôn nhân
+    - Chứng nhận độc thân
+
+- intent: ask_sua_ten_khai_sinh
+  examples: |
+    - Tôi bị sai tên trong giấy khai sinh, sửa được không?
+    - Sửa tên trong giấy khai sinh
+    - Cải chính giấy khai sinh
+    - Thay đổi tên khai sinh
+
+- intent: ask_chuyen_ho_khau
+  examples: |
+    - Tôi muốn làm giấy chuyển hộ khẩu thì làm sao?
+    - Chuyển hộ khẩu
+    - Thủ tục chuyển hộ khẩu
+    - Làm giấy chuyển hộ khẩu
+
+- intent: ask_phi_ho_so_online
+  examples: |
+    - Có mất phí khi làm hồ sơ online không?
+    - Phí hồ sơ online
+    - Có phải trả tiền không
+    - Chi phí hồ sơ online
+
+- intent: ask_huy_ho_so
+  examples: |
+    - Tôi có thể hủy hồ sơ đã nộp không?
+    - Hủy hồ sơ
+    - Rút hồ sơ
+    - Hủy đơn đã nộp
+
+- intent: ask_theo_doi_tien_trinh
+  examples: |
+    - Tôi có thể theo dõi tiến trình xử lý ở đâu?
+    - Theo dõi tiến trình hồ sơ
+    - Kiểm tra tiến độ xử lý
+    - Xem trạng thái hồ sơ
+
+- intent: ask_nhan_ket_qua_buu_dien
+  examples: |
+    - Tôi có thể nhận kết quả qua bưu điện không?
+    - Nhận kết quả qua bưu điện
+    - Gửi kết quả về nhà
+    - Nhận kết quả tại nhà
+
+- intent: ask_xac_thuc_tai_khoan
+  examples: |
+    - Làm sao để xác thực tài khoản công dân?
+    - Xác thực tài khoản
+    - Kích hoạt tài khoản
+    - Xác minh tài khoản
+
+- intent: ask_xem_ho_so_cu
+  examples: |
+    - Tôi có thể xem lại các hồ sơ cũ đã xử lý không?
+    - Xem hồ sơ cũ
+    - Lịch sử hồ sơ
+    - Tra cứu hồ sơ đã nộp
+
+- intent: ask_sua_thong_tin_sai
+  examples: |
+    - Nếu tôi nhập sai thông tin, có thể sửa không?
+    - Sửa thông tin đã nhập
+    - Chỉnh sửa hồ sơ
+    - Sửa lỗi thông tin
+
+- intent: ask_cap_lai_gplx
+  examples: |
+    - Tôi muốn xin cấp lại giấy phép lái xe thì làm thế nào?
+    - Cấp lại giấy phép lái xe
+    - Làm lại bằng lái xe
+    - Thủ tục cấp lại GPLX
+
+- intent: ask_nop_thue_dat
+  examples: |
+    - Làm sao để nộp thuế đất trực tuyến?
+    - Nộp thuế đất online
+    - Thanh toán thuế đất
+    - Đóng thuế đất trực tuyến
+
+- intent: ask_lam_lai_so_ho_khau
+  examples: |
+    - Tôi muốn làm lại sổ hộ khẩu bị rách thì sao?
+    - Làm lại sổ hộ khẩu
+    - Cấp lại sổ hộ khẩu
+    - Sổ hộ khẩu bị rách
+
+- intent: ask_giay_phep_xay_dung
+  examples: |
+    - Tôi có thể xin cấp phép xây dựng nhà ở online không?
+    - Cấp phép xây dựng online
+    - Giấy phép xây dựng
+    - Thủ tục xin phép xây dựng
+
+- intent: ask_dang_ky_kinh_doanh
+  examples: |
+    - Làm sao để đăng ký kinh doanh cá thể?
+    - Đăng ký kinh doanh
+    - Thủ tục đăng ký kinh doanh
+    - Làm giấy phép kinh doanh
+
+- intent: ask_tam_tru_dai_han
+  examples: |
+    - Tôi muốn cấp giấy chứng nhận tạm trú dài hạn thì làm sao?
+    - Tạm trú dài hạn
+    - Giấy tạm trú dài hạn
+    - Đăng ký tạm trú dài hạn
+
+- intent: ask_giay_xac_nhan_viec_lam
+  examples: |
+    - Có thể xin giấy xác nhận việc làm tại phường không?
+    - Giấy xác nhận việc làm
+    - Chứng nhận việc làm
+    - Xác nhận công việc
+
+- intent: ask_giay_phep_su_kien
+  examples: |
+    - Thủ tục xin cấp phép tổ chức sự kiện ngoài trời thế nào?
+    - Giấy phép sự kiện
+    - Cấp phép tổ chức sự kiện
+    - Thủ tục sự kiện
+
+- intent: ask_ket_hon_nguoi_nuoc_ngoai
+  examples: |
+    - Tôi có thể đăng ký kết hôn với người nước ngoài online không?
+    - Kết hôn với người nước ngoài
+    - Thủ tục kết hôn có yếu tố nước ngoài
+    - Đăng ký kết hôn quốc tế
+
+- intent: ask_giay_xac_nhan_hanh_kiem
+  examples: |
+    - Làm sao để xin giấy xác nhận hạnh kiểm?
+    - Giấy xác nhận hạnh kiểm
+    - Phiếu lý lịch tư pháp
+    - Chứng nhận nhân thân
+
+- intent: ask_giay_chung_nhan_dat
+  examples: |
+    - Tôi muốn cấp giấy chứng nhận quyền sử dụng đất mới thì sao?
+    - Cấp sổ đỏ
+    - Giấy chứng nhận quyền sử dụng đất
+    - Thủ tục cấp sổ đỏ
+
+- intent: ask_doi_ho_chieu
+  examples: |
+    - Làm sao để đổi hộ chiếu hết hạn?
+    - Đổi hộ chiếu
+    - Gia hạn hộ chiếu
+    - Làm lại hộ chiếu
+
+- intent: ask_giay_phep_kinh_doanh_thuc_pham
+  examples: |
+    - Tôi muốn xin cấp phép kinh doanh thực phẩm thì sao?
+    - Giấy phép kinh doanh thực phẩm
+    - Cấp phép an toàn thực phẩm
+    - Thủ tục kinh doanh thực phẩm
+
+- intent: ask_dang_ky_khai_tu
+  examples: |
+    - Thủ tục đăng ký khai tử cho người thân thế nào?
+    - Đăng ký khai tử
+    - Thủ tục khai tử
+    - Làm giấy khai tử
+
+- intent: ask_giay_phep_quang_cao
+  examples: |
+    - Tôi muốn xin cấp phép quảng cáo ngoài trời?
+    - Giấy phép quảng cáo
+    - Cấp phép quảng cáo ngoài trời
+    - Thủ tục quảng cáo
+
+- intent: ask_xac_nhan_ho_ngheo
+  examples: |
+    - Tôi muốn xác nhận hộ nghèo thì sao?
+    - Xác nhận hộ nghèo
+    - Giấy chứng nhận hộ nghèo
+    - Chứng nhận hộ nghèo
+
+- intent: ask_ma_so_thue_ca_nhan
+  examples: |
+    - Tôi có thể đăng ký mã số thuế cá nhân online không?
+    - Đăng ký mã số thuế
+    - Mã số thuế cá nhân
+    - Thủ tục mã số thuế
+
+- intent: ask_giay_phep_hanh_nghe_y
+  examples: |
+    - Làm sao để xin giấy phép hành nghề y tư nhân?
+    - Giấy phép hành nghề y
+    - Cấp phép hành nghề y tế
+    - Thủ tục hành nghề y
+
+- intent: ask_doi_ten_cong_ty
+  examples: |
+    - Tôi muốn đổi tên công ty thì làm sao?
+    - Đổi tên công ty
+    - Thay đổi tên doanh nghiệp
+    - Sửa tên công ty
+
+- intent: ask_giay_phep_tam_nhap_tai_xuat
+  examples: |
+    - Làm sao để xin cấp giấy phép tạm nhập tái xuất hàng hóa?
+    - Giấy phép tạm nhập tái xuất
+    - Thủ tục xuất nhập khẩu
+    - Cấp phép xuất nhập khẩu
+
+- intent: ask_dang_ky_tam_vang
+  examples: |
+    - Tôi muốn đăng ký tạm vắng online được không?
+    - Đăng ký tạm vắng
+    - Thủ tục tạm vắng
+    - Khai báo tạm vắng
+
+- intent: ask_giay_phep_nuoi_cho_meo
+  examples: |
+    - Tôi cần giấy phép nuôi chó mèo trong khu dân cư không?
+    - Giấy phép nuôi chó mèo
+    - Đăng ký vật nuôi
+    - Thủ tục nuôi chó mèo
+
+- intent: ask_giay_phep_moi_truong
+  examples: |
+    - Tôi có thể xin cấp phép môi trường online không?
+    - Giấy phép môi trường
+    - Cấp phép môi trường
+    - Thủ tục môi trường
+
+- intent: ask_nhan_con_nuoi
+  examples: |
+    - Tôi muốn làm thủ tục nhận con nuôi thế nào?
+    - Thủ tục nhận con nuôi
+    - Đăng ký nhận con nuôi
+    - Làm giấy nhận con nuôi
+
+- intent: ask_huy_ho_so_sai
+  examples: |
+    - Làm sao để hủy hồ sơ sai thông tin?
+    - Hủy hồ sơ sai
+    - Rút lại hồ sơ
+    - Hủy đơn sai
+
+- intent: ask_tao_tai_khoan
+  examples: |
+    - Tôi muốn tạo tài khoản trên hệ thống thì làm sao?
+    - Tạo tài khoản
+    - Đăng ký tài khoản
+    - Đăng ký người dùng
+
+- intent: ask_quen_mat_khau
+  examples: |
+    - Tôi quên mật khẩu thì phải làm sao?
+    - Quên mật khẩu
+    - Lấy lại mật khẩu
+    - Đặt lại mật khẩu
+
+- intent: ask_chinh_sua_ho_so_sau_nop
+  examples: |
+    - Tôi có thể chỉnh sửa hồ sơ sau khi nộp không?
+    - Sửa hồ sơ đã nộp
+    - Chỉnh sửa hồ sơ
+    - Sửa lại hồ sơ
+
+- intent: ask_danh_gia_dich_vu
+  examples: |
+    - Tôi muốn đánh giá dịch vụ thì làm sao?
+    - Đánh giá dịch vụ
+    - Góp ý dịch vụ
+    - Phản hồi dịch vụ
+
+- intent: ask_dang_nhap_google
+  examples: |
+    - Có thể dùng tài khoản Google để đăng nhập không?
+    - Đăng nhập bằng Google
+    - Dùng Google đăng nhập
+    - Liên kết Google
+
+- intent: ask_khong_nhan_email
+  examples: |
+    - Tôi không nhận được email xác nhận thì sao?
+    - Không nhận được email
+    - Email không đến
+    - Gửi lại email
+
+- intent: ask_in_giay_hen
+  examples: |
+    - Làm sao để in giấy hẹn online?
+    - In giấy hẹn
+    - Tải giấy hẹn
+    - Giấy hẹn online
+
+- intent: ask_nop_ho_so_thay_nguoi_khac
+  examples: |
+    - Tôi có thể nộp hồ sơ thay người khác không?
+    - Nộp hồ sơ thay người khác
+    - Nhờ người khác nộp
+    - Ủy quyền nộp hồ sơ
+
+- intent: ask_xem_lich_hen
+  examples: |
+    - Tôi muốn xem lịch hẹn của mình thì sao?
+    - Xem lịch hẹn
+    - Lịch hẹn của tôi
+    - Kiểm tra lịch hẹn
+
+- intent: ask_dang_ky_nhieu_dich_vu
+  examples: |
+    - Có thể đăng ký nhiều dịch vụ cùng lúc không?
+    - Đăng ký nhiều dịch vụ
+    - Nộp nhiều hồ sơ
+    - Đăng ký cùng lúc
+
+- intent: ask_huy_lich_hen
+  examples: |
+    - Tôi muốn hủy lịch hẹn đã đặt?
+    - Hủy lịch hẹn
+    - Đổi lịch hẹn
+    - Rút lịch hẹn
+
+- intent: ask_cap_nhat_thong_tin
+  examples: |
+    - Làm sao để cập nhật thông tin cá nhân?
+    - Cập nhật thông tin
+    - Sửa thông tin cá nhân
+    - Thay đổi thông tin
+
+- intent: ask_tai_ho_so_da_gui
+  examples: |
+    - Hệ thống có hỗ trợ tải hồ sơ đã gửi không?
+    - Tải hồ sơ đã gửi
+    - Download hồ sơ
+    - Xuất hồ sơ
+
+- intent: ask_gop_y_khieu_nai
+  examples: |
+    - Tôi có thể gửi góp ý hoặc khiếu nại online không?
+    - Gửi góp ý
+    - Khiếu nại online
+    - Phản hồi người dân
+
+- intent: ask_su_dung_dien_thoai
+  examples: |
+    - Có thể sử dụng hệ thống bằng điện thoại không?
+    - Dùng điện thoại
+    - App mobile
+    - Ứng dụng điện thoại
+
+- intent: ask_chuyen_ngon_ngu
+  examples: |
+    - Tôi muốn chuyển ngôn ngữ hiển thị sang tiếng Anh?
+    - Chuyển ngôn ngữ
+    - Đổi ngôn ngữ
+    - Tiếng Anh
+
+- intent: ask_thong_bao_zalo
+  examples: |
+    - Có thể nhận thông báo qua Zalo không?
+    - Thông báo Zalo
+    - Nhận thông báo Zalo
+    - Liên kết Zalo
+
+- intent: ask_tai_hoa_don
+  examples: |
+    - Làm sao để tải hóa đơn điện tử?
+    - Tải hóa đơn
+    - Download hóa đơn
+    - Xuất hóa đơn
+
+- intent: ask_quen_ma_ho_so
+  examples: |
+    - Tôi quên mã hồ sơ thì sao?
+    - Quên mã hồ sơ
+    - Tìm lại mã hồ sơ
+    - Tra cứu mã hồ sơ
+
+- intent: ask_thay_doi_dia_chi_nhan
+  examples: |
+    - Tôi muốn thay đổi địa chỉ nhận kết quả?
+    - Đổi địa chỉ nhận kết quả
+    - Sửa địa chỉ nhận
+    - Thay đổi nơi nhận
+
+- intent: ask_luu_ho_so_nhap
+  examples: |
+    - Có thể lưu hồ sơ đang soạn dở không?
+    - Lưu hồ sơ nháp
+    - Lưu tạm hồ sơ
+    - Lưu bản nháp
+
+- intent: ask_thu_phi_ho_so
+  examples: |
+    - Hệ thống có thu phí khi nộp hồ sơ không?
+    - Có thu phí không
+    - Phí dịch vụ
+    - Lệ phí hồ sơ
+
+- intent: ask_xem_lich_su_danh_gia
+  examples: |
+    - Tôi có thể xem lịch sử đánh giá dịch vụ của mình không?
+    - Xem lịch sử đánh giá
+    - Đánh giá của tôi
+    - Lịch sử phản hồi
+
+- intent: ask_xuat_du_lieu_excel
+  examples: |
+    - Làm sao để xuất dữ liệu hồ sơ ra file Excel?
+    - Xuất Excel
+    - Tải file Excel
+    - Export dữ liệu
+
+- intent: ask_khong_dang_nhap_duoc
+  examples: |
+    - Tôi không đăng nhập được, phải làm sao?
+    - Không đăng nhập được
+    - Lỗi đăng nhập
+    - Không vào được tài khoản
+
+- intent: ask_trang_web_loi
+  examples: |
+    - Trang web bị lỗi không hiển thị?
+    - Lỗi trang web
+    - Không hiển thị
+    - Website bị lỗi
+
+- intent: ask_loi_tai_file
+  examples: |
+    - Tôi bị lỗi khi tải tệp lên?
+    - Lỗi tải file
+    - Không tải được file
+    - Upload lỗi
+
+- intent: ask_loi_xac_thuc
+  examples: |
+    - Hệ thống báo "Lỗi xác thực người dùng"?
+    - Lỗi xác thực
+    - Xác thực không thành công
+    - Lỗi đăng nhập
+
+- intent: ask_khong_nhan_otp
+  examples: |
+    - Tôi không nhận được OTP qua SMS?
+    - Không nhận được OTP
+    - OTP không đến
+    - Gửi lại OTP
+
+- intent: ask_loi_404_pdf
+  examples: |
+    - Khi tải file PDF, hệ thống báo lỗi 404 là gì?
+    - Lỗi 404 PDF
+    - Không tải được PDF
+    - File PDF lỗi
+
+- intent: ask_khong_thanh_toan_duoc
+  examples: |
+    - Tôi không thể thanh toán online?
+    - Không thanh toán được
+    - Lỗi thanh toán
+    - Thanh toán thất bại
+
+- intent: ask_loi_font_chu
+  examples: |
+    - Giao diện bị lỗi font chữ?
+    - Lỗi font chữ
+    - Chữ bị lỗi
+    - Hiển thị sai font
+
+- intent: ask_server_error
+  examples: |
+    - Hệ thống hiển thị "Server Error" nghĩa là gì?
+    - Server Error
+    - Lỗi máy chủ
+    - Lỗi server
+
+- intent: ask_treo_bieu_mau
+  examples: |
+    - Tôi bị treo khi điền biểu mẫu?
+    - Treo khi điền form
+    - Biểu mẫu bị treo
+    - Không điền được form
+
+- intent: ask_app_mobile_loi
+  examples: |
+    - Ứng dụng mobile không hoạt động?
+    - App không chạy
+    - Ứng dụng lỗi
+    - Mobile app lỗi
+
+- intent: ask_khong_in_duoc
+  examples: |
+    - Tôi không thể in kết quả?
+    - Không in được
+    - Lỗi in ấn
+    - In không được
+
+- intent: ask_file_not_supported
+  examples: |
+    - Hệ thống báo "File not supported"?
+    - File không hỗ trợ
+    - Định dạng file sai
+    - File không đúng
+
+- intent: ask_khong_thay_nut_gui
+  examples: |
+    - Tôi không thấy nút gửi hồ sơ?
+    - Không có nút gửi
+    - Nút gửi không hiện
+    - Không tìm thấy nút gửi
+
+- intent: ask_man_hinh_trang
+  examples: |
+    - Màn hình hiển thị trắng sau khi đăng nhập?
+    - Màn hình trắng
+    - Không hiển thị gì
+    - Trang trắng
+
+- intent: ask_he_thong_cham
+  examples: |
+    - Hệ thống bị chậm khi truy cập giờ cao điểm?
+    - Hệ thống chậm
+    - Tải chậm
+    - Phản hồi chậm
+
+- intent: ask_nhieu_tai_khoan
+  examples: |
+    - Tôi có thể sử dụng nhiều tài khoản trên cùng máy không?
+    - Nhiều tài khoản
+    - Đăng nhập nhiều tài khoản
+    - Dùng chung máy
+
+- intent: ask_access_denied
+  examples: |
+    - Tôi bị lỗi "Access denied"?
+    - Access denied
+    - Không có quyền truy cập
+    - Bị từ chối truy cập
+
+- intent: ask_lien_he_ho_tro
+  examples: |
+    - Tôi có thể liên hệ hỗ trợ kỹ thuật ở đâu?
+    - Liên hệ hỗ trợ
+    - Hỗ trợ kỹ thuật
+    - Hotline hỗ trợ
+
+- intent: ask_chua_nhan_phan_hoi
+  examples: |
+    - Tôi gửi phản hồi nhưng chưa thấy trả lời?
+    - Chưa nhận phản hồi
+    - Phản hồi chưa được trả lời
+    - Chờ phản hồi
+
+- intent: ask_cap_nhat_trinh_duyet
+  examples: |
+    - Hệ thống yêu cầu cập nhật trình duyệt là sao?
+    - Cập nhật trình duyệt
+    - Trình duyệt cũ
+    - Nâng cấp browser
+
+- intent: ask_mat_ket_noi
+  examples: |
+    - Tôi bị mất kết nối giữa chừng khi nộp hồ sơ?
+    - Mất kết nối
+    - Mạng bị ngắt
+    - Kết nối bị đứt
+
+- intent: ask_khong_mo_link
+  examples: |
+    - Tôi không thể mở liên kết xác nhận email?
+    - Không mở được link
+    - Link email không hoạt động
+    - Liên kết lỗi
+
+- intent: ask_treo_khi_thanh_toan
+  examples: |
+    - Hệ thống bị treo trong khi thanh toán?
+    - Treo khi thanh toán
+    - Thanh toán bị treo
+    - Lỗi thanh toán
+
+- intent: ask_gop_y_cai_tien
+  examples: |
+    - Tôi muốn góp ý cải tiến hệ thống thì gửi ở đâu?
+    - Góp ý cải tiến
+    - Đề xuất cải tiến
+    - Ý kiến đóng góp
+
+- intent: ask_giay_phep_xay_dung_nha
+  examples: |
+    - Làm thế nào để xin cấp giấy phép xây dựng nhà ở riêng lẻ?
+    - Giấy phép xây dựng nhà
+    - Cấp phép xây dựng nhà ở
+    - Thủ tục xây dựng nhà
+
+- intent: ask_dang_ky_thai_san
+  examples: |
+    - Thủ tục đăng ký thai sản cho lao động nữ như thế nào?
+    - Đăng ký thai sản
+    - Thủ tục thai sản
+    - Chế độ thai sản
+
+- intent: ask_giay_chung_nhan_ket_hon
+  examples: |
+    - Tôi muốn xin cấp giấy chứng nhận kết hôn thì cần giấy tờ gì?
+    - Giấy chứng nhận kết hôn
+    - Chứng nhận kết hôn
+    - Thủ tục kết hôn
+
+- intent: ask_dang_ky_thuong_tru
+  examples: |
+    - Làm sao để đăng ký thường trú tại thành phố mới?
+    - Đăng ký thường trú
+    - Thủ tục thường trú
+    - Chuyển thường trú
+
+- intent: ask_chuyen_doi_muc_dich_dat
+  examples: |
+    - Thủ tục chuyển đổi mục đích sử dụng đất thế nào?
+    - Chuyển đổi mục đích đất
+    - Thay đổi mục đích sử dụng đất
+    - Thủ tục chuyển đổi đất
+
+- intent: ask_mat_gplx
+  examples: |
+    - Tôi cần làm gì khi bị mất giấy phép lái xe?
+    - Mất giấy phép lái xe
+    - Làm lại bằng lái
+    - Cấp lại GPLX
+
+- intent: ask_giay_xac_nhan_hon_nhan
+  examples: |
+    - Làm thế nào để xin cấp giấy xác nhận tình trạng hôn nhân?
+    - Giấy xác nhận hôn nhân
+    - Chứng nhận tình trạng hôn nhân
+    - Xác nhận hôn nhân
+
+- intent: ask_khai_tu_nuoc_ngoai
+  examples: |
+    - Thủ tục đăng ký khai tử cho người thân ở nước ngoài?
+    - Khai tử nước ngoài
+    - Thủ tục khai tử quốc tế
+    - Khai tử người nước ngoài
+
+- intent: ask_giay_phep_kinh_doanh_ruou
+  examples: |
+    - Làm sao để xin cấp giấy phép kinh doanh rượu?
+    - Giấy phép kinh doanh rượu
+    - Cấp phép bán rượu
+    - Thủ tục kinh doanh rượu
+
+- intent: ask_giay_chung_nhan_nha
+  examples: |
+    - Tôi muốn xin giấy chứng nhận quyền sở hữu nhà thì làm thế nào?
+    - Giấy chứng nhận nhà
+    - Chứng nhận quyền sở hữu nhà
+    - Thủ tục sở hữu nhà
+
+- intent: ask_cap_lai_khai_sinh
+  examples: |
+    - Thủ tục cấp lại giấy khai sinh bị hư hỏng?
+    - Cấp lại giấy khai sinh
+    - Làm lại khai sinh
+    - Thủ tục cấp lại
+
+- intent: ask_bao_ho_thuong_hieu
+  examples: |
+    - Làm thế nào để đăng ký bảo hộ thương hiệu?
+    - Đăng ký thương hiệu
+    - Bảo hộ nhãn hiệu
+    - Thủ tục đăng ký thương hiệu
+
+- intent: ask_nhan_cha_con
+  examples: |
+    - Tôi cần giấy tờ gì để làm thủ tục nhận cha con?
+    - Thủ tục nhận cha con
+    - Nhận cha con
+    - Thừa nhận cha con
+
+- intent: ask_chuyen_nhuong_dat
+  examples: |
+    - Thủ tục chuyển nhượng quyền sử dụng đất?
+    - Chuyển nhượng đất
+    - Thủ tục chuyển nhượng
+    - Mua bán đất
+
+- intent: ask_giay_phep_van_chuyen
+  examples: |
+    - Làm sao để xin cấp phép vận chuyển hàng hóa?
+    - Giấy phép vận chuyển
+    - Cấp phép vận tải
+    - Thủ tục vận chuyển
+
+- intent: ask_giay_phep_san_xuat
+  examples: |
+    - Tôi muốn xin giấy phép hoạt động cho cơ sở sản xuất?
+    - Giấy phép sản xuất
+    - Cấp phép sản xuất
+    - Thủ tục sản xuất
+
+- intent: ask_ma_so_ma_vach
+  examples: |
+    - Thủ tục đăng ký mã số mã vạch cho sản phẩm?
+    - Mã số mã vạch
+    - Đăng ký mã vạch
+    - Thủ tục mã vạch
+
+- intent: ask_giay_chung_nhan_an_toan_thuc_pham
+  examples: |
+    - Làm thế nào để xin cấp giấy chứng nhận an toàn thực phẩm?
+    - Giấy chứng nhận an toàn thực phẩm
+    - Cấp phép an toàn thực phẩm
+    - Thủ tục an toàn thực phẩm
+
+- intent: ask_giay_phep_xa_thai
+  examples: |
+    - Tôi cần làm gì để xin cấp phép xả thải?
+    - Giấy phép xả thải
+    - Cấp phép xả thải
+    - Thủ tục xả thải
+
+- intent: ask_ket_hon_nuoc_ngoai
+  examples: |
+    - Thủ tục đăng ký kết hôn có yếu tố nước ngoài?
+    - Kết hôn có yếu tố nước ngoài
+    - Thủ tục kết hôn quốc tế
+    - Đăng ký kết hôn quốc tế
+
+- intent: ask_dinh_danh_dien_tu
+  examples: |
+    - Làm thế nào để tạo tài khoản định danh điện tử?
+    - Tài khoản định danh điện tử
+    - Đăng ký định danh điện tử
+    - Thủ tục định danh điện tử
+
+- intent: ask_ky_so_van_ban
+  examples: |
+    - Tôi có thể ký số văn bản online không?
+    - Ký số online
+    - Chữ ký số
+    - Ký điện tử
+
+- intent: ask_tra_cuu_ma_so_thue
+  examples: |
+    - Làm sao để tra cứu mã số thuế cá nhân online?
+    - Tra cứu mã số thuế
+    - Kiểm tra mã số thuế
+    - Xem mã số thuế
+
+- intent: ask_lich_su_nop_thue
+  examples: |
+    - Tôi muốn kiểm tra lịch sử nộp thuế thì làm thế nào?
+    - Lịch sử nộp thuế
+    - Tra cứu nộp thuế
+    - Xem lịch sử thuế
+
+- intent: ask_hoa_don_dien_tu
+  examples: |
+    - Làm thế nào để đăng ký sử dụng hóa đơn điện tử?
+    - Đăng ký hóa đơn điện tử
+    - Hóa đơn điện tử
+    - Thủ tục hóa đơn điện tử
+
+- intent: ask_nop_bao_cao_thue
+  examples: |
+    - Tôi có thể nộp báo cáo thuế qua mạng không?
+    - Nộp báo cáo thuế online
+    - Báo cáo thuế điện tử
+    - Thủ tục báo cáo thuế
+
+- intent: ask_tra_cuu_quy_hoach
+  examples: |
+    - Làm sao để tra cứu thông tin quy hoạch đất đai?
+    - Tra cứu quy hoạch
+    - Quy hoạch đất đai
+    - Thông tin quy hoạch
+
+- intent: ask_dau_gia_tai_san
+  examples: |
+    - Tôi muốn xem thông tin đấu giá tài sản nhà nước?
+    - Đấu giá tài sản
+    - Thông tin đấu giá
+    - Tra cứu đấu giá
+
+- intent: ask_bhxh_tu_nguyen
+  examples: |
+    - Làm thế nào để đăng ký tham gia bảo hiểm xã hội tự nguyện?
+    - BHXH tự nguyện
+    - Đăng ký BHXH tự nguyện
+    - Thủ tục BHXH tự nguyện
+
+- intent: ask_khieu_nai_quyet_dinh
+  examples: |
+    - Tôi có thể khiếu nại quyết định hành chính online không?
+    - Khiếu nại quyết định hành chính
+    - Thủ tục khiếu nại
+    - Đơn khiếu nại
+
+- intent: ask_gplx_quoc_te
+  examples: |
+    - Làm sao để xin cấp giấy phép lái xe quốc tế online?
+    - GPLX quốc tế
+    - Giấy phép lái xe quốc tế
+    - Thủ tục GPLX quốc tế
+
+- intent: ask_thi_cong_chuc
+  examples: |
+    - Tôi muốn đăng ký thi công chức online?
+    - Đăng ký thi công chức
+    - Thi công chức
+    - Thủ tục thi công chức
+
+- intent: ask_tra_cuu_doanh_nghiep
+  examples: |
+    - Làm thế nào để tra cứu thông tin doanh nghiệp?
+    - Tra cứu doanh nghiệp
+    - Thông tin doanh nghiệp
+    - Kiểm tra doanh nghiệp
+
+- intent: ask_xac_nhan_thu_nhap
+  examples: |
+    - Tôi có thể xin xác nhận thu nhập cá nhân online không?
+    - Xác nhận thu nhập
+    - Giấy xác nhận thu nhập
+    - Thủ tục xác nhận thu nhập
+
+- intent: ask_dang_ky_dich_vu_tinh
+  examples: |
+    - Làm sao để đăng ký sử dụng dịch vụ công cấp tỉnh?
+    - Đăng ký dịch vụ công tỉnh
+    - Dịch vụ công cấp tỉnh
+    - Thủ tục dịch vụ công
+
+- intent: ask_nhan_email_ket_qua
+  examples: |
+    - Tôi muốn xem kết quả giải quyết hồ sơ qua email?
+    - Nhận email kết quả
+    - Kết quả qua email
+    - Thông báo email
+
+- intent: ask_cap_nhat_so_dien_thoai
+  examples: |
+    - Làm thế nào để cập nhật số điện thoại trong tài khoản?
+    - Cập nhật số điện thoại
+    - Đổi số điện thoại
+    - Sửa số điện thoại
+
+- intent: ask_thay_doi_email
+  examples: |
+    - Tôi có thể thay đổi địa chỉ email nhận thông báo không?
+    - Đổi email
+    - Thay đổi email
+    - Sửa email
+
+- intent: ask_tai_app
+  examples: |
+    - Làm sao để tải app dịch vụ công trên điện thoại?
+    - Tải app dịch vụ công
+    - Download ứng dụng
+    - Cài đặt app
+
+- intent: ask_huong_dan_su_dung
+  examples: |
+    - Tôi muốn xem hướng dẫn sử dụng dịch vụ công?
+    - Hướng dẫn sử dụng
+    - Hướng dẫn dịch vụ công
+    - Video hướng dẫn
+
+- intent: ask_tro_cap_that_nghiep
+  examples: |
+    - Điều kiện để được hưởng trợ cấp thất nghiệp là gì?
+    - Trợ cấp thất nghiệp
+    - Điều kiện trợ cấp thất nghiệp
+    - Thủ tục trợ cấp thất nghiệp
+
+- intent: ask_vay_von_uu_dai
+  examples: |
+    - Tôi có thể vay vốn ưu đãi cho hộ nghèo không?
+    - Vay vốn ưu đãi
+    - Vay vốn hộ nghèo
+    - Thủ tục vay vốn
+
+- intent: ask_the_bhyt_mien_phi
+  examples: |
+    - Làm thế nào để xin cấp thẻ bảo hiểm y tế miễn phí?
+    - Thẻ BHYT miễn phí
+    - Cấp thẻ BHYT
+    - Thủ tục BHYT miễn phí
+
+- intent: ask_ho_tro_mai_tang
+  examples: |
+    - Thủ tục xin hỗ trợ chi phí mai táng thế nào?
+    - Hỗ trợ mai táng
+    - Chi phí mai táng
+    - Thủ tục mai táng
+
+- intent: ask_che_do_thai_san
+  examples: |
+    - Tôi được hưởng chế độ thai sản bao nhiêu tháng?
+    - Chế độ thai sản
+    - Thời gian thai sản
+    - Nghỉ thai sản
+
+- intent: ask_tro_cap_khuyet_tat
+  examples: |
+    - Làm sao để xin trợ cấp người khuyết tật?
+    - Trợ cấp khuyết tật
+    - Thủ tục trợ cấp khuyết tật
+    - Hỗ trợ người khuyết tật
+
+- intent: ask_nha_o_xa_hoi
+  examples: |
+    - Điều kiện nhận hỗ trợ nhà ở xã hội là gì?
+    - Nhà ở xã hội
+    - Điều kiện nhà ở xã hội
+    - Thủ tục nhà ở xã hội
+
+- intent: ask_giay_chung_nhan_ho_ngheo
+  examples: |
+    - Tôi muốn xin giấy chứng nhận hộ nghèo thì làm sao?
+    - Giấy chứng nhận hộ nghèo
+    - Chứng nhận hộ nghèo
+    - Thủ tục hộ nghèo
+
+- intent: ask_bhyt_ho_gia_dinh
+  examples: |
+    - Làm thế nào để đăng ký tham gia bảo hiểm y tế hộ gia đình?
+    - BHYT hộ gia đình
+    - Đăng ký BHYT gia đình
+    - Thủ tục BHYT hộ
+
+- intent: ask_hoc_bong_ho_ngheo
+  examples: |
+    - Thủ tục xin cấp học bổng cho con em hộ nghèo?
+    - Học bổng hộ nghèo
+    - Thủ tục học bổng
+    - Cấp học bổng
+
+- intent: ask_ho_tro_thien_tai
+  examples: |
+    - Tôi có được hỗ trợ khi gặp thiên tai không?
+    - Hỗ trợ thiên tai
+    - Thủ tục hỗ trợ thiên tai
+    - Trợ cấp thiên tai
+
+- intent: ask_giay_xac_nhan_bhxh
+  examples: |
+    - Làm sao để xin giấy xác nhận tham gia bảo hiểm xã hội?
+    - Giấy xác nhận BHXH
+    - Chứng nhận BHXH
+    - Xác nhận đóng BHXH
+
+- intent: ask_luong_huu_truoc_tuoi
+  examples: |
+    - Điều kiện hưởng lương hưu trước tuổi là gì?
+    - Lương hưu trước tuổi
+    - Điều kiện lương hưu
+    - Thủ tục lương hưu
+
+- intent: ask_tro_cap_mot_lan
+  examples: |
+    - Tôi muốn xin trợ cấp một lần khi nghỉ hưu?
+    - Trợ cấp một lần
+    - Thủ tục trợ cấp một lần
+    - Nhận trợ cấp nghỉ hưu
+
+- intent: ask_tinh_bh_that_nghiep
+  examples: |
+    - Làm thế nào để tính mức hưởng bảo hiểm thất nghiệp?
+    - Tính bảo hiểm thất nghiệp
+    - Mức hưởng thất nghiệp
+    - Cách tính thất nghiệp
+
+- intent: ask_khai_thue_tncn
+  examples: |
+    - Làm thế nào để kê khai thuế thu nhập cá nhân?
+    - Kê khai thuế TNCN
+    - Thủ tục kê khai thuế
+    - Khai thuế cá nhân
+
+- intent: ask_mien_giam_thue
+  examples: |
+    - Tôi cần giấy tờ gì để được miễn giảm thuế?
+    - Miễn giảm thuế
+    - Thủ tục miễn giảm thuế
+    - Điều kiện miễn giảm thuế
+
+- intent: ask_thoi_han_nop_thue_mon_bai
+  examples: |
+    - Thời hạn nộp thuế môn bài là khi nào?
+    - Thuế môn bài
+    - Thời hạn nộp thuế môn bài
+    - Nộp thuế môn bài
+
+- intent: ask_dang_ky_mst_doanh_nghiep
+  examples: |
+    - Làm sao để đăng ký mã số thuế cho doanh nghiệp mới?
+    - Đăng ký MST doanh nghiệp
+    - Mã số thuế doanh nghiệp
+    - Thủ tục MST
+
+- intent: ask_thue_chuyen_nhuong_dat
+  examples: |
+    - Tôi có phải nộp thuế khi chuyển nhượng đất không?
+    - Thuế chuyển nhượng đất
+    - Thuế mua bán đất
+    - Thủ tục thuế đất
+
+- intent: ask_thue_cho_thue_nha
+  examples: |
+    - Làm thế nào để tính thuế thu nhập từ cho thuê nhà?
+    - Thuế cho thuê nhà
+    - Tính thuế cho thuê
+    - Thủ tục thuế cho thuê
+
+- intent: ask_hoan_thue_gtgt
+  examples: |
+    - Thủ tục hoàn thuế giá trị gia tăng thế nào?
+    - Hoàn thuế GTGT
+    - Thủ tục hoàn thuế
+    - Điều kiện hoàn thuế
+
+- intent: ask_gia_han_nop_thue
+  examples: |
+    - Tôi muốn xin gia hạn nộp thuế thì làm sao?
+    - Gia hạn nộp thuế
+    - Thủ tục gia hạn thuế
+    - Xin gia hạn thuế
+
+- intent: ask_tra_cuu_nghia_vu_thue
+  examples: |
+    - Làm sao để tra cứu nghĩa vụ thuế đã nộp?
+    - Tra cứu nghĩa vụ thuế
+    - Kiểm tra thuế đã nộp
+    - Xem lịch sử thuế
+
+- intent: ask_khai_thue_khong_phat_sinh
+  examples: |
+    - Tôi có phải nộp tờ khai thuế khi không phát sinh thu nhập?
+    - Khai thuế không phát sinh
+    - Tờ khai thuế
+    - Thủ tục khai thuế
+
+- intent: ask_khai_thue_dien_tu
+  examples: |
+    - Làm thế nào để kê khai thuế điện tử?
+    - Kê khai thuế điện tử
+    - Khai thuế online
+    - Thủ tục khai thuế điện tử
+
+- intent: ask_giay_chung_nhan_mst
+  examples: |
+    - Thủ tục xin cấp giấy chứng nhận mã số thuế?
+    - Giấy chứng nhận MST
+    - Cấp giấy chứng nhận thuế
+    - Thủ tục cấp MST
+
+- intent: ask_khieu_nai_quyet_dinh_thue
+  examples: |
+    - Tôi muốn khiếu nại quyết định thuế thì làm thế nào?
+    - Khiếu nại quyết định thuế
+    - Thủ tục khiếu nại thuế
+    - Đơn khiếu nại thuế
+
+- intent: ask_bao_cao_tai_chinh
+  examples: |
+    - Thời hạn nộp báo cáo tài chính là khi nào?
+    - Báo cáo tài chính
+    - Thời hạn báo cáo tài chính
+    - Nộp báo cáo tài chính
+
+- intent: ask_chu_ky_so
+  examples: |
+    - Cách đăng ký sử dụng chữ ký số cho doanh nghiệp?
+    - Chữ ký số
+    - Đăng ký chữ ký số
+    - Thủ tục chữ ký số
+
+- intent: ask_giay_phep_quang_cao_mang_xa_hoi
+  examples: |
+    - Làm thế nào để xin cấp phép quảng cáo trên mạng xã hội?
+    - Giấy phép quảng cáo mạng xã hội
+    - Cấp phép quảng cáo online
+    - Thủ tục quảng cáo mạng xã hội
+
+- intent: ask_thanh_lap_chi_nhanh
+  examples: |
+    - Thủ tục thành lập chi nhánh công ty mới?
+    - Thành lập chi nhánh
+    - Thủ tục chi nhánh
+    - Đăng ký chi nhánh
+
+- intent: ask_giay_phep_lao_dong_nguoi_nuoc_ngoai
+  examples: |
+    - Tôi muốn xin giấy phép lao động cho người nước ngoài?
+    - Giấy phép lao động người nước ngoài
+    - Cấp phép lao động
+    - Thủ tục lao động nước ngoài
+
+- intent: ask_dang_ky_ban_quyen
+  examples: |
+    - Làm sao để đăng ký bản quyền tác phẩm?
+    - Đăng ký bản quyền
+    - Thủ tục bản quyền
+    - Bảo hộ tác phẩm
+
+- intent: ask_giay_phep_su_kien_van_hoa
+  examples: |
+    - Thủ tục xin cấp phép tổ chức sự kiện văn hóa?
+    - Giấy phép sự kiện văn hóa
+    - Cấp phép sự kiện
+    - Thủ tục sự kiện văn hóa
+
+- intent: ask_giay_phep_khai_thac_nuoc
+  examples: |
+    - Tôi cần làm gì để xin cấp phép khai thác nước ngầm?
+    - Giấy phép khai thác nước
+    - Cấp phép nước ngầm
+    - Thủ tục khai thác nước
+
+- intent: ask_dau_thau_qua_mang
+  examples: |
+    - Làm thế nào để đăng ký tham gia đấu thầu qua mạng?
+    - Đấu thầu qua mạng
+    - Thủ tục đấu thầu
+    - Đăng ký đấu thầu
+
+- intent: ask_giay_chung_nhan_xuat_xu
+  examples: |
+    - Thủ tục xin cấp giấy chứng nhận xuất xứ hàng hóa?
+    - Giấy chứng nhận xuất xứ
+    - C/O hàng hóa
+    - Thủ tục xuất xứ
+
+- intent: ask_giay_phep_nhap_khau_thiet_bi_y_te
+  examples: |
+    - Tôi muốn xin giấy phép nhập khẩu thiết bị y tế?
+    - Giấy phép nhập khẩu thiết bị y tế
+    - Cấp phép nhập khẩu y tế
+    - Thủ tục nhập khẩu thiết bị
+
+- intent: ask_dang_ky_thuong_hieu
+  examples: |
+    - Làm sao để đăng ký thương hiệu độc quyền?
+    - Đăng ký thương hiệu
+    - Bảo hộ thương hiệu
+    - Thủ tục thương hiệu
+
+- intent: ask_giay_phep_van_tai
+  examples: |
+    - Thủ tục xin cấp phép kinh doanh vận tải?
+    - Giấy phép vận tải
+    - Cấp phép vận tải
+    - Thủ tục vận tải
+
+- intent: ask_giay_phep_pccc
+  examples: |
+    - Tôi cần giấy tờ gì để xin cấp phép phòng cháy chữa cháy?
+    - Giấy phép PCCC
+    - Cấp phép PCCC
+    - Thủ tục PCCC
+
+- intent: ask_bhxh_bat_buoc
+  examples: |
+    - Làm thế nào để đăng ký tham gia bảo hiểm xã hội bắt buộc?
+    - BHXH bắt buộc
+    - Đăng ký BHXH
+    - Thủ tục BHXH bắt buộc
+
+- intent: ask_giay_chung_nhan_dang_ky_doanh_nghiep
+  examples: |
+    - Thủ tục xin cấp giấy chứng nhận đăng ký doanh nghiệp?
+    - Giấy chứng nhận đăng ký doanh nghiệp
+    - Cấp phép doanh nghiệp
+    - Thủ tục đăng ký doanh nghiệp
+
+- intent: ask_giay_phep_xay_dung_cong_trinh
+  examples: |
+    - Tôi muốn xin giấy phép xây dựng công trình công cộng?
+    - Giấy phép xây dựng công trình
+    - Cấp phép xây dựng
+    - Thủ tục xây dựng công trình
+
+- intent: ask_so_huu_tri_tue
+  examples: |
+    - Làm sao để đăng ký sở hữu trí tuệ cho sáng chế?
+    - Đăng ký sáng chế
+    - Sở hữu trí tuệ
+    - Thủ tục sáng chế
+
+- intent: ask_giay_phep_san_xuat_phim
+  examples: |
+    - Thủ tục xin cấp phép sản xuất phim?
+    - Giấy phép sản xuất phim
+    - Cấp phép phim
+    - Thủ tục sản xuất phim
+
+- intent: ask_giay_phep_khao_sat_dia_chat
+  examples: |
+    - Tôi cần làm gì để xin cấp phép khảo sát địa chất?
+    - Giấy phép khảo sát địa chất
+    - Cấp phép khảo sát
+    - Thủ tục khảo sát địa chất
+
+- intent: ask_an_sinh_xa_hoi
+  examples: |
+    - Làm thế nào để đăng ký tham gia chương trình an sinh xã hội?
+    - An sinh xã hội
+    - Đăng ký an sinh xã hội
+    - Thủ tục an sinh xã hội
+
+- intent: ask_giay_phep_tan_so
+  examples: |
+    - Thủ tục xin cấp giấy phép sử dụng tần số vô tuyến điện?
+    - Giấy phép tần số
+    - Cấp phép tần số
+    - Thủ tục tần số vô tuyến
+
+- intent: ask_giay_chung_nhan_kinh_doanh_gas
+  examples: |
+    - Tôi muốn xin giấy chứng nhận đủ điều kiện kinh doanh gas?
+    - Giấy chứng nhận kinh doanh gas
+    - Cấp phép kinh doanh gas
+    - Thủ tục kinh doanh gas
+
+- intent: ask_tich_diem_thue
+  examples: |
+    - Làm sao để đăng ký tham gia hệ thống tích điểm thuế?
+    - Tích điểm thuế
+    - Đăng ký tích điểm thuế
+    - Thủ tục tích điểm thuế
+
+- intent: ask_giay_phep_xu_ly_nuoc_thai
+  examples: |
+    - Thủ tục xin cấp phép vận hành hệ thống xử lý nước thải?
+    - Giấy phép xử lý nước thải
+    - Cấp phép xử lý nước thải
+    - Thủ tục xử lý nước thải
+
+- intent: ask_giay_phep_kinh_doanh_khach_san
+  examples: |
+    - Tôi cần giấy tờ gì để xin cấp phép kinh doanh khách sạn?
+    - Giấy phép kinh doanh khách sạn
+    - Cấp phép khách sạn
+    - Thủ tục kinh doanh khách sạn
+
+- intent: ask_bao_hiem_nong_nghiep
+  examples: |
+    - Làm thế nào để đăng ký tham gia chương trình bảo hiểm nông nghiệp?
+    - Bảo hiểm nông nghiệp
+    - Đăng ký bảo hiểm nông nghiệp
+    - Thủ tục bảo hiểm nông nghiệp
+
+- intent: ask_giay_phep_trang_thong_tin
+  examples: |
+    - Thủ tục xin cấp giấy phép thiết lập trang thông tin điện tử?
+    - Giấy phép trang thông tin
+    - Cấp phép website
+    - Thủ tục trang thông tin
+
+- intent: ask_giay_chung_nhan_vsattp
+  examples: |
+    - Tôi muốn xin giấy chứng nhận đủ điều kiện vệ sinh an toàn thực phẩm?
+    - Giấy chứng nhận VSATTP
+    - Cấp phép VSATTP
+    - Thủ tục VSATTP
+
+- intent: ask_ho_tro_lai_suat
+  examples: |
+    - Làm sao để đăng ký tham gia chương trình hỗ trợ lãi suất?
+    - Hỗ trợ lãi suất
+    - Đăng ký hỗ trợ lãi suất
+    - Thủ tục hỗ trợ lãi suất
+
+- intent: ask_giay_phep_bien_quang_cao
+  examples: |
+    - Thủ tục xin cấp phép lắp đặt biển quảng cáo ngoài trời?
+    - Giấy phép biển quảng cáo
+    - Cấp phép quảng cáo ngoài trời
+    - Thủ tục biển quảng cáo
+

@@ -1,0 +1,802 @@
+version: '3.1'
+rules:
+- rule: Say goodbye anytime the user says goodbye
+  steps:
+  - intent: goodbye
+  - action: utter_goodbye
+- rule: Say 'I am a bot' anytime the user challenges
+  steps:
+  - intent: bot_challenge
+  - action: utter_iamabot
+- rule: Respond to ask_dang_ky_khai_sinh
+  steps:
+  - intent: ask_dang_ky_khai_sinh
+  - action: utter_ask_dang_ky_khai_sinh
+- rule: Respond to ask_cccd_gap_chip
+  steps:
+  - intent: ask_cccd_gap_chip
+  - action: utter_ask_cccd_gap_chip
+- rule: Respond to ask_giay_xac_nhan_cu_tru
+  steps:
+  - intent: ask_giay_xac_nhan_cu_tru
+  - action: utter_ask_giay_xac_nhan_cu_tru
+- rule: Respond to ask_doi_cmnd_sang_cccd
+  steps:
+  - intent: ask_doi_cmnd_sang_cccd
+  - action: utter_ask_doi_cmnd_sang_cccd
+- rule: Respond to ask_mat_giay_khai_sinh
+  steps:
+  - intent: ask_mat_giay_khai_sinh
+  - action: utter_ask_mat_giay_khai_sinh
+- rule: Respond to ask_uy_quyen_ho_so
+  steps:
+  - intent: ask_uy_quyen_ho_so
+  - action: utter_ask_uy_quyen_ho_so
+- rule: Respond to ask_gia_tri_phap_ly_online
+  steps:
+  - intent: ask_gia_tri_phap_ly_online
+  - action: utter_ask_gia_tri_phap_ly_online
+- rule: Respond to ask_thay_doi_ho_khau_online
+  steps:
+  - intent: ask_thay_doi_ho_khau_online
+  - action: utter_ask_thay_doi_ho_khau_online
+- rule: Respond to ask_thoi_han_giai_quyet
+  steps:
+  - intent: ask_thoi_han_giai_quyet
+  - action: utter_ask_thoi_han_giai_quyet
+- rule: Respond to ask_ho_so_bi_tu_choi
+  steps:
+  - intent: ask_ho_so_bi_tu_choi
+  - action: utter_ask_ho_so_bi_tu_choi
+- rule: Respond to ask_khai_bao_tam_tru
+  steps:
+  - intent: ask_khai_bao_tam_tru
+  - action: utter_ask_khai_bao_tam_tru
+- rule: Respond to ask_xem_thong_tin_ca_nhan
+  steps:
+  - intent: ask_xem_thong_tin_ca_nhan
+  - action: utter_ask_xem_thong_tin_ca_nhan
+- rule: Respond to ask_tra_cuu_ho_tich
+  steps:
+  - intent: ask_tra_cuu_ho_tich
+  - action: utter_ask_tra_cuu_ho_tich
+- rule: Respond to ask_nop_ho_so_noi_khac
+  steps:
+  - intent: ask_nop_ho_so_noi_khac
+  - action: utter_ask_nop_ho_so_noi_khac
+- rule: Respond to ask_dang_ky_ket_hon_online
+  steps:
+  - intent: ask_dang_ky_ket_hon_online
+  - action: utter_ask_dang_ky_ket_hon_online
+- rule: Respond to ask_giay_xac_nhan_doc_than
+  steps:
+  - intent: ask_giay_xac_nhan_doc_than
+  - action: utter_ask_giay_xac_nhan_doc_than
+- rule: Respond to ask_sua_ten_khai_sinh
+  steps:
+  - intent: ask_sua_ten_khai_sinh
+  - action: utter_ask_sua_ten_khai_sinh
+- rule: Respond to ask_chuyen_ho_khau
+  steps:
+  - intent: ask_chuyen_ho_khau
+  - action: utter_ask_chuyen_ho_khau
+- rule: Respond to ask_phi_ho_so_online
+  steps:
+  - intent: ask_phi_ho_so_online
+  - action: utter_ask_phi_ho_so_online
+- rule: Respond to ask_huy_ho_so
+  steps:
+  - intent: ask_huy_ho_so
+  - action: utter_ask_huy_ho_so
+- rule: Respond to ask_theo_doi_tien_trinh
+  steps:
+  - intent: ask_theo_doi_tien_trinh
+  - action: utter_ask_theo_doi_tien_trinh
+- rule: Respond to ask_nhan_ket_qua_buu_dien
+  steps:
+  - intent: ask_nhan_ket_qua_buu_dien
+  - action: utter_ask_nhan_ket_qua_buu_dien
+- rule: Respond to ask_xac_thuc_tai_khoan
+  steps:
+  - intent: ask_xac_thuc_tai_khoan
+  - action: utter_ask_xac_thuc_tai_khoan
+- rule: Respond to ask_xem_ho_so_cu
+  steps:
+  - intent: ask_xem_ho_so_cu
+  - action: utter_ask_xem_ho_so_cu
+- rule: Respond to ask_sua_thong_tin_sai
+  steps:
+  - intent: ask_sua_thong_tin_sai
+  - action: utter_ask_sua_thong_tin_sai
+- rule: Respond to ask_cap_lai_gplx
+  steps:
+  - intent: ask_cap_lai_gplx
+  - action: utter_ask_cap_lai_gplx
+- rule: Respond to ask_nop_thue_dat
+  steps:
+  - intent: ask_nop_thue_dat
+  - action: utter_ask_nop_thue_dat
+- rule: Respond to ask_lam_lai_so_ho_khau
+  steps:
+  - intent: ask_lam_lai_so_ho_khau
+  - action: utter_ask_lam_lai_so_ho_khau
+- rule: Respond to ask_giay_phep_xay_dung
+  steps:
+  - intent: ask_giay_phep_xay_dung
+  - action: utter_ask_giay_phep_xay_dung
+- rule: Respond to ask_dang_ky_kinh_doanh
+  steps:
+  - intent: ask_dang_ky_kinh_doanh
+  - action: utter_ask_dang_ky_kinh_doanh
+- rule: Respond to ask_tam_tru_dai_han
+  steps:
+  - intent: ask_tam_tru_dai_han
+  - action: utter_ask_tam_tru_dai_han
+- rule: Respond to ask_giay_xac_nhan_viec_lam
+  steps:
+  - intent: ask_giay_xac_nhan_viec_lam
+  - action: utter_ask_giay_xac_nhan_viec_lam
+- rule: Respond to ask_giay_phep_su_kien
+  steps:
+  - intent: ask_giay_phep_su_kien
+  - action: utter_ask_giay_phep_su_kien
+- rule: Respond to ask_ket_hon_nguoi_nuoc_ngoai
+  steps:
+  - intent: ask_ket_hon_nguoi_nuoc_ngoai
+  - action: utter_ask_ket_hon_nguoi_nuoc_ngoai
+- rule: Respond to ask_giay_xac_nhan_hanh_kiem
+  steps:
+  - intent: ask_giay_xac_nhan_hanh_kiem
+  - action: utter_ask_giay_xac_nhan_hanh_kiem
+- rule: Respond to ask_giay_chung_nhan_dat
+  steps:
+  - intent: ask_giay_chung_nhan_dat
+  - action: utter_ask_giay_chung_nhan_dat
+- rule: Respond to ask_doi_ho_chieu
+  steps:
+  - intent: ask_doi_ho_chieu
+  - action: utter_ask_doi_ho_chieu
+- rule: Respond to ask_giay_phep_kinh_doanh_thuc_pham
+  steps:
+  - intent: ask_giay_phep_kinh_doanh_thuc_pham
+  - action: utter_ask_giay_phep_kinh_doanh_thuc_pham
+- rule: Respond to ask_dang_ky_khai_tu
+  steps:
+  - intent: ask_dang_ky_khai_tu
+  - action: utter_ask_dang_ky_khai_tu
+- rule: Respond to ask_giay_phep_quang_cao
+  steps:
+  - intent: ask_giay_phep_quang_cao
+  - action: utter_ask_giay_phep_quang_cao
+- rule: Respond to ask_xac_nhan_ho_ngheo
+  steps:
+  - intent: ask_xac_nhan_ho_ngheo
+  - action: utter_ask_xac_nhan_ho_ngheo
+- rule: Respond to ask_ma_so_thue_ca_nhan
+  steps:
+  - intent: ask_ma_so_thue_ca_nhan
+  - action: utter_ask_ma_so_thue_ca_nhan
+- rule: Respond to ask_giay_phep_hanh_nghe_y
+  steps:
+  - intent: ask_giay_phep_hanh_nghe_y
+  - action: utter_ask_giay_phep_hanh_nghe_y
+- rule: Respond to ask_doi_ten_cong_ty
+  steps:
+  - intent: ask_doi_ten_cong_ty
+  - action: utter_ask_doi_ten_cong_ty
+- rule: Respond to ask_giay_phep_tam_nhap_tai_xuat
+  steps:
+  - intent: ask_giay_phep_tam_nhap_tai_xuat
+  - action: utter_ask_giay_phep_tam_nhap_tai_xuat
+- rule: Respond to ask_dang_ky_tam_vang
+  steps:
+  - intent: ask_dang_ky_tam_vang
+  - action: utter_ask_dang_ky_tam_vang
+- rule: Respond to ask_giay_phep_nuoi_cho_meo
+  steps:
+  - intent: ask_giay_phep_nuoi_cho_meo
+  - action: utter_ask_giay_phep_nuoi_cho_meo
+- rule: Respond to ask_giay_phep_moi_truong
+  steps:
+  - intent: ask_giay_phep_moi_truong
+  - action: utter_ask_giay_phep_moi_truong
+- rule: Respond to ask_nhan_con_nuoi
+  steps:
+  - intent: ask_nhan_con_nuoi
+  - action: utter_ask_nhan_con_nuoi
+- rule: Respond to ask_huy_ho_so_sai
+  steps:
+  - intent: ask_huy_ho_so_sai
+  - action: utter_ask_huy_ho_so_sai
+- rule: Respond to ask_tao_tai_khoan
+  steps:
+  - intent: ask_tao_tai_khoan
+  - action: utter_ask_tao_tai_khoan
+- rule: Respond to ask_quen_mat_khau
+  steps:
+  - intent: ask_quen_mat_khau
+  - action: utter_ask_quen_mat_khau
+- rule: Respond to ask_chinh_sua_ho_so_sau_nop
+  steps:
+  - intent: ask_chinh_sua_ho_so_sau_nop
+  - action: utter_ask_chinh_sua_ho_so_sau_nop
+- rule: Respond to ask_danh_gia_dich_vu
+  steps:
+  - intent: ask_danh_gia_dich_vu
+  - action: utter_ask_danh_gia_dich_vu
+- rule: Respond to ask_dang_nhap_google
+  steps:
+  - intent: ask_dang_nhap_google
+  - action: utter_ask_dang_nhap_google
+- rule: Respond to ask_khong_nhan_email
+  steps:
+  - intent: ask_khong_nhan_email
+  - action: utter_ask_khong_nhan_email
+- rule: Respond to ask_in_giay_hen
+  steps:
+  - intent: ask_in_giay_hen
+  - action: utter_ask_in_giay_hen
+- rule: Respond to ask_nop_ho_so_thay_nguoi_khac
+  steps:
+  - intent: ask_nop_ho_so_thay_nguoi_khac
+  - action: utter_ask_nop_ho_so_thay_nguoi_khac
+- rule: Respond to ask_xem_lich_hen
+  steps:
+  - intent: ask_xem_lich_hen
+  - action: utter_ask_xem_lich_hen
+- rule: Respond to ask_dang_ky_nhieu_dich_vu
+  steps:
+  - intent: ask_dang_ky_nhieu_dich_vu
+  - action: utter_ask_dang_ky_nhieu_dich_vu
+- rule: Respond to ask_huy_lich_hen
+  steps:
+  - intent: ask_huy_lich_hen
+  - action: utter_ask_huy_lich_hen
+- rule: Respond to ask_cap_nhat_thong_tin
+  steps:
+  - intent: ask_cap_nhat_thong_tin
+  - action: utter_ask_cap_nhat_thong_tin
+- rule: Respond to ask_tai_ho_so_da_gui
+  steps:
+  - intent: ask_tai_ho_so_da_gui
+  - action: utter_ask_tai_ho_so_da_gui
+- rule: Respond to ask_gop_y_khieu_nai
+  steps:
+  - intent: ask_gop_y_khieu_nai
+  - action: utter_ask_gop_y_khieu_nai
+- rule: Respond to ask_su_dung_dien_thoai
+  steps:
+  - intent: ask_su_dung_dien_thoai
+  - action: utter_ask_su_dung_dien_thoai
+- rule: Respond to ask_chuyen_ngon_ngu
+  steps:
+  - intent: ask_chuyen_ngon_ngu
+  - action: utter_ask_chuyen_ngon_ngu
+- rule: Respond to ask_thong_bao_zalo
+  steps:
+  - intent: ask_thong_bao_zalo
+  - action: utter_ask_thong_bao_zalo
+- rule: Respond to ask_tai_hoa_don
+  steps:
+  - intent: ask_tai_hoa_don
+  - action: utter_ask_tai_hoa_don
+- rule: Respond to ask_quen_ma_ho_so
+  steps:
+  - intent: ask_quen_ma_ho_so
+  - action: utter_ask_quen_ma_ho_so
+- rule: Respond to ask_thay_doi_dia_chi_nhan
+  steps:
+  - intent: ask_thay_doi_dia_chi_nhan
+  - action: utter_ask_thay_doi_dia_chi_nhan
+- rule: Respond to ask_luu_ho_so_nhap
+  steps:
+  - intent: ask_luu_ho_so_nhap
+  - action: utter_ask_luu_ho_so_nhap
+- rule: Respond to ask_thu_phi_ho_so
+  steps:
+  - intent: ask_thu_phi_ho_so
+  - action: utter_ask_thu_phi_ho_so
+- rule: Respond to ask_xem_lich_su_danh_gia
+  steps:
+  - intent: ask_xem_lich_su_danh_gia
+  - action: utter_ask_xem_lich_su_danh_gia
+- rule: Respond to ask_xuat_du_lieu_excel
+  steps:
+  - intent: ask_xuat_du_lieu_excel
+  - action: utter_ask_xuat_du_lieu_excel
+- rule: Respond to ask_khong_dang_nhap_duoc
+  steps:
+  - intent: ask_khong_dang_nhap_duoc
+  - action: utter_ask_khong_dang_nhap_duoc
+- rule: Respond to ask_trang_web_loi
+  steps:
+  - intent: ask_trang_web_loi
+  - action: utter_ask_trang_web_loi
+- rule: Respond to ask_loi_tai_file
+  steps:
+  - intent: ask_loi_tai_file
+  - action: utter_ask_loi_tai_file
+- rule: Respond to ask_loi_xac_thuc
+  steps:
+  - intent: ask_loi_xac_thuc
+  - action: utter_ask_loi_xac_thuc
+- rule: Respond to ask_khong_nhan_otp
+  steps:
+  - intent: ask_khong_nhan_otp
+  - action: utter_ask_khong_nhan_otp
+- rule: Respond to ask_loi_404_pdf
+  steps:
+  - intent: ask_loi_404_pdf
+  - action: utter_ask_loi_404_pdf
+- rule: Respond to ask_khong_thanh_toan_duoc
+  steps:
+  - intent: ask_khong_thanh_toan_duoc
+  - action: utter_ask_khong_thanh_toan_duoc
+- rule: Respond to ask_loi_font_chu
+  steps:
+  - intent: ask_loi_font_chu
+  - action: utter_ask_loi_font_chu
+- rule: Respond to ask_server_error
+  steps:
+  - intent: ask_server_error
+  - action: utter_ask_server_error
+- rule: Respond to ask_treo_bieu_mau
+  steps:
+  - intent: ask_treo_bieu_mau
+  - action: utter_ask_treo_bieu_mau
+- rule: Respond to ask_app_mobile_loi
+  steps:
+  - intent: ask_app_mobile_loi
+  - action: utter_ask_app_mobile_loi
+- rule: Respond to ask_khong_in_duoc
+  steps:
+  - intent: ask_khong_in_duoc
+  - action: utter_ask_khong_in_duoc
+- rule: Respond to ask_file_not_supported
+  steps:
+  - intent: ask_file_not_supported
+  - action: utter_ask_file_not_supported
+- rule: Respond to ask_khong_thay_nut_gui
+  steps:
+  - intent: ask_khong_thay_nut_gui
+  - action: utter_ask_khong_thay_nut_gui
+- rule: Respond to ask_man_hinh_trang
+  steps:
+  - intent: ask_man_hinh_trang
+  - action: utter_ask_man_hinh_trang
+- rule: Respond to ask_he_thong_cham
+  steps:
+  - intent: ask_he_thong_cham
+  - action: utter_ask_he_thong_cham
+- rule: Respond to ask_nhieu_tai_khoan
+  steps:
+  - intent: ask_nhieu_tai_khoan
+  - action: utter_ask_nhieu_tai_khoan
+- rule: Respond to ask_access_denied
+  steps:
+  - intent: ask_access_denied
+  - action: utter_ask_access_denied
+- rule: Respond to ask_lien_he_ho_tro
+  steps:
+  - intent: ask_lien_he_ho_tro
+  - action: utter_ask_lien_he_ho_tro
+- rule: Respond to ask_chua_nhan_phan_hoi
+  steps:
+  - intent: ask_chua_nhan_phan_hoi
+  - action: utter_ask_chua_nhan_phan_hoi
+- rule: Respond to ask_cap_nhat_trinh_duyet
+  steps:
+  - intent: ask_cap_nhat_trinh_duyet
+  - action: utter_ask_cap_nhat_trinh_duyet
+- rule: Respond to ask_mat_ket_noi
+  steps:
+  - intent: ask_mat_ket_noi
+  - action: utter_ask_mat_ket_noi
+- rule: Respond to ask_khong_mo_link
+  steps:
+  - intent: ask_khong_mo_link
+  - action: utter_ask_khong_mo_link
+- rule: Respond to ask_treo_khi_thanh_toan
+  steps:
+  - intent: ask_treo_khi_thanh_toan
+  - action: utter_ask_treo_khi_thanh_toan
+- rule: Respond to ask_gop_y_cai_tien
+  steps:
+  - intent: ask_gop_y_cai_tien
+  - action: utter_ask_gop_y_cai_tien
+- rule: Respond to ask_giay_phep_xay_dung_nha
+  steps:
+  - intent: ask_giay_phep_xay_dung_nha
+  - action: utter_ask_giay_phep_xay_dung_nha
+- rule: Respond to ask_dang_ky_thai_san
+  steps:
+  - intent: ask_dang_ky_thai_san
+  - action: utter_ask_dang_ky_thai_san
+- rule: Respond to ask_giay_chung_nhan_ket_hon
+  steps:
+  - intent: ask_giay_chung_nhan_ket_hon
+  - action: utter_ask_giay_chung_nhan_ket_hon
+- rule: Respond to ask_dang_ky_thuong_tru
+  steps:
+  - intent: ask_dang_ky_thuong_tru
+  - action: utter_ask_dang_ky_thuong_tru
+- rule: Respond to ask_chuyen_doi_muc_dich_dat
+  steps:
+  - intent: ask_chuyen_doi_muc_dich_dat
+  - action: utter_ask_chuyen_doi_muc_dich_dat
+- rule: Respond to ask_mat_gplx
+  steps:
+  - intent: ask_mat_gplx
+  - action: utter_ask_mat_gplx
+- rule: Respond to ask_giay_xac_nhan_hon_nhan
+  steps:
+  - intent: ask_giay_xac_nhan_hon_nhan
+  - action: utter_ask_giay_xac_nhan_hon_nhan
+- rule: Respond to ask_khai_tu_nuoc_ngoai
+  steps:
+  - intent: ask_khai_tu_nuoc_ngoai
+  - action: utter_ask_khai_tu_nuoc_ngoai
+- rule: Respond to ask_giay_phep_kinh_doanh_ruou
+  steps:
+  - intent: ask_giay_phep_kinh_doanh_ruou
+  - action: utter_ask_giay_phep_kinh_doanh_ruou
+- rule: Respond to ask_giay_chung_nhan_nha
+  steps:
+  - intent: ask_giay_chung_nhan_nha
+  - action: utter_ask_giay_chung_nhan_nha
+- rule: Respond to ask_cap_lai_khai_sinh
+  steps:
+  - intent: ask_cap_lai_khai_sinh
+  - action: utter_ask_cap_lai_khai_sinh
+- rule: Respond to ask_bao_ho_thuong_hieu
+  steps:
+  - intent: ask_bao_ho_thuong_hieu
+  - action: utter_ask_bao_ho_thuong_hieu
+- rule: Respond to ask_nhan_cha_con
+  steps:
+  - intent: ask_nhan_cha_con
+  - action: utter_ask_nhan_cha_con
+- rule: Respond to ask_chuyen_nhuong_dat
+  steps:
+  - intent: ask_chuyen_nhuong_dat
+  - action: utter_ask_chuyen_nhuong_dat
+- rule: Respond to ask_giay_phep_van_chuyen
+  steps:
+  - intent: ask_giay_phep_van_chuyen
+  - action: utter_ask_giay_phep_van_chuyen
+- rule: Respond to ask_giay_phep_san_xuat
+  steps:
+  - intent: ask_giay_phep_san_xuat
+  - action: utter_ask_giay_phep_san_xuat
+- rule: Respond to ask_ma_so_ma_vach
+  steps:
+  - intent: ask_ma_so_ma_vach
+  - action: utter_ask_ma_so_ma_vach
+- rule: Respond to ask_giay_chung_nhan_an_toan_thuc_pham
+  steps:
+  - intent: ask_giay_chung_nhan_an_toan_thuc_pham
+  - action: utter_ask_giay_chung_nhan_an_toan_thuc_pham
+- rule: Respond to ask_giay_phep_xa_thai
+  steps:
+  - intent: ask_giay_phep_xa_thai
+  - action: utter_ask_giay_phep_xa_thai
+- rule: Respond to ask_ket_hon_nuoc_ngoai
+  steps:
+  - intent: ask_ket_hon_nuoc_ngoai
+  - action: utter_ask_ket_hon_nuoc_ngoai
+- rule: Respond to ask_dinh_danh_dien_tu
+  steps:
+  - intent: ask_dinh_danh_dien_tu
+  - action: utter_ask_dinh_danh_dien_tu
+- rule: Respond to ask_ky_so_van_ban
+  steps:
+  - intent: ask_ky_so_van_ban
+  - action: utter_ask_ky_so_van_ban
+- rule: Respond to ask_tra_cuu_ma_so_thue
+  steps:
+  - intent: ask_tra_cuu_ma_so_thue
+  - action: utter_ask_tra_cuu_ma_so_thue
+- rule: Respond to ask_lich_su_nop_thue
+  steps:
+  - intent: ask_lich_su_nop_thue
+  - action: utter_ask_lich_su_nop_thue
+- rule: Respond to ask_hoa_don_dien_tu
+  steps:
+  - intent: ask_hoa_don_dien_tu
+  - action: utter_ask_hoa_don_dien_tu
+- rule: Respond to ask_nop_bao_cao_thue
+  steps:
+  - intent: ask_nop_bao_cao_thue
+  - action: utter_ask_nop_bao_cao_thue
+- rule: Respond to ask_tra_cuu_quy_hoach
+  steps:
+  - intent: ask_tra_cuu_quy_hoach
+  - action: utter_ask_tra_cuu_quy_hoach
+- rule: Respond to ask_dau_gia_tai_san
+  steps:
+  - intent: ask_dau_gia_tai_san
+  - action: utter_ask_dau_gia_tai_san
+- rule: Respond to ask_bhxh_tu_nguyen
+  steps:
+  - intent: ask_bhxh_tu_nguyen
+  - action: utter_ask_bhxh_tu_nguyen
+- rule: Respond to ask_khieu_nai_quyet_dinh
+  steps:
+  - intent: ask_khieu_nai_quyet_dinh
+  - action: utter_ask_khieu_nai_quyet_dinh
+- rule: Respond to ask_gplx_quoc_te
+  steps:
+  - intent: ask_gplx_quoc_te
+  - action: utter_ask_gplx_quoc_te
+- rule: Respond to ask_thi_cong_chuc
+  steps:
+  - intent: ask_thi_cong_chuc
+  - action: utter_ask_thi_cong_chuc
+- rule: Respond to ask_tra_cuu_doanh_nghiep
+  steps:
+  - intent: ask_tra_cuu_doanh_nghiep
+  - action: utter_ask_tra_cuu_doanh_nghiep
+- rule: Respond to ask_xac_nhan_thu_nhap
+  steps:
+  - intent: ask_xac_nhan_thu_nhap
+  - action: utter_ask_xac_nhan_thu_nhap
+- rule: Respond to ask_dang_ky_dich_vu_tinh
+  steps:
+  - intent: ask_dang_ky_dich_vu_tinh
+  - action: utter_ask_dang_ky_dich_vu_tinh
+- rule: Respond to ask_nhan_email_ket_qua
+  steps:
+  - intent: ask_nhan_email_ket_qua
+  - action: utter_ask_nhan_email_ket_qua
+- rule: Respond to ask_cap_nhat_so_dien_thoai
+  steps:
+  - intent: ask_cap_nhat_so_dien_thoai
+  - action: utter_ask_cap_nhat_so_dien_thoai
+- rule: Respond to ask_thay_doi_email
+  steps:
+  - intent: ask_thay_doi_email
+  - action: utter_ask_thay_doi_email
+- rule: Respond to ask_tai_app
+  steps:
+  - intent: ask_tai_app
+  - action: utter_ask_tai_app
+- rule: Respond to ask_huong_dan_su_dung
+  steps:
+  - intent: ask_huong_dan_su_dung
+  - action: utter_ask_huong_dan_su_dung
+- rule: Respond to ask_tro_cap_that_nghiep
+  steps:
+  - intent: ask_tro_cap_that_nghiep
+  - action: utter_ask_tro_cap_that_nghiep
+- rule: Respond to ask_vay_von_uu_dai
+  steps:
+  - intent: ask_vay_von_uu_dai
+  - action: utter_ask_vay_von_uu_dai
+- rule: Respond to ask_the_bhyt_mien_phi
+  steps:
+  - intent: ask_the_bhyt_mien_phi
+  - action: utter_ask_the_bhyt_mien_phi
+- rule: Respond to ask_ho_tro_mai_tang
+  steps:
+  - intent: ask_ho_tro_mai_tang
+  - action: utter_ask_ho_tro_mai_tang
+- rule: Respond to ask_che_do_thai_san
+  steps:
+  - intent: ask_che_do_thai_san
+  - action: utter_ask_che_do_thai_san
+- rule: Respond to ask_tro_cap_khuyet_tat
+  steps:
+  - intent: ask_tro_cap_khuyet_tat
+  - action: utter_ask_tro_cap_khuyet_tat
+- rule: Respond to ask_nha_o_xa_hoi
+  steps:
+  - intent: ask_nha_o_xa_hoi
+  - action: utter_ask_nha_o_xa_hoi
+- rule: Respond to ask_giay_chung_nhan_ho_ngheo
+  steps:
+  - intent: ask_giay_chung_nhan_ho_ngheo
+  - action: utter_ask_giay_chung_nhan_ho_ngheo
+- rule: Respond to ask_bhyt_ho_gia_dinh
+  steps:
+  - intent: ask_bhyt_ho_gia_dinh
+  - action: utter_ask_bhyt_ho_gia_dinh
+- rule: Respond to ask_hoc_bong_ho_ngheo
+  steps:
+  - intent: ask_hoc_bong_ho_ngheo
+  - action: utter_ask_hoc_bong_ho_ngheo
+- rule: Respond to ask_ho_tro_thien_tai
+  steps:
+  - intent: ask_ho_tro_thien_tai
+  - action: utter_ask_ho_tro_thien_tai
+- rule: Respond to ask_giay_xac_nhan_bhxh
+  steps:
+  - intent: ask_giay_xac_nhan_bhxh
+  - action: utter_ask_giay_xac_nhan_bhxh
+- rule: Respond to ask_luong_huu_truoc_tuoi
+  steps:
+  - intent: ask_luong_huu_truoc_tuoi
+  - action: utter_ask_luong_huu_truoc_tuoi
+- rule: Respond to ask_tro_cap_mot_lan
+  steps:
+  - intent: ask_tro_cap_mot_lan
+  - action: utter_ask_tro_cap_mot_lan
+- rule: Respond to ask_tinh_bh_that_nghiep
+  steps:
+  - intent: ask_tinh_bh_that_nghiep
+  - action: utter_ask_tinh_bh_that_nghiep
+- rule: Respond to ask_khai_thue_tncn
+  steps:
+  - intent: ask_khai_thue_tncn
+  - action: utter_ask_khai_thue_tncn
+- rule: Respond to ask_mien_giam_thue
+  steps:
+  - intent: ask_mien_giam_thue
+  - action: utter_ask_mien_giam_thue
+- rule: Respond to ask_thoi_han_nop_thue_mon_bai
+  steps:
+  - intent: ask_thoi_han_nop_thue_mon_bai
+  - action: utter_ask_thoi_han_nop_thue_mon_bai
+- rule: Respond to ask_dang_ky_mst_doanh_nghiep
+  steps:
+  - intent: ask_dang_ky_mst_doanh_nghiep
+  - action: utter_ask_dang_ky_mst_doanh_nghiep
+- rule: Respond to ask_thue_chuyen_nhuong_dat
+  steps:
+  - intent: ask_thue_chuyen_nhuong_dat
+  - action: utter_ask_thue_chuyen_nhuong_dat
+- rule: Respond to ask_thue_cho_thue_nha
+  steps:
+  - intent: ask_thue_cho_thue_nha
+  - action: utter_ask_thue_cho_thue_nha
+- rule: Respond to ask_hoan_thue_gtgt
+  steps:
+  - intent: ask_hoan_thue_gtgt
+  - action: utter_ask_hoan_thue_gtgt
+- rule: Respond to ask_gia_han_nop_thue
+  steps:
+  - intent: ask_gia_han_nop_thue
+  - action: utter_ask_gia_han_nop_thue
+- rule: Respond to ask_tra_cuu_nghia_vu_thue
+  steps:
+  - intent: ask_tra_cuu_nghia_vu_thue
+  - action: utter_ask_tra_cuu_nghia_vu_thue
+- rule: Respond to ask_khai_thue_khong_phat_sinh
+  steps:
+  - intent: ask_khai_thue_khong_phat_sinh
+  - action: utter_ask_khai_thue_khong_phat_sinh
+- rule: Respond to ask_khai_thue_dien_tu
+  steps:
+  - intent: ask_khai_thue_dien_tu
+  - action: utter_ask_khai_thue_dien_tu
+- rule: Respond to ask_giay_chung_nhan_mst
+  steps:
+  - intent: ask_giay_chung_nhan_mst
+  - action: utter_ask_giay_chung_nhan_mst
+- rule: Respond to ask_khieu_nai_quyet_dinh_thue
+  steps:
+  - intent: ask_khieu_nai_quyet_dinh_thue
+  - action: utter_ask_khieu_nai_quyet_dinh_thue
+- rule: Respond to ask_bao_cao_tai_chinh
+  steps:
+  - intent: ask_bao_cao_tai_chinh
+  - action: utter_ask_bao_cao_tai_chinh
+- rule: Respond to ask_chu_ky_so
+  steps:
+  - intent: ask_chu_ky_so
+  - action: utter_ask_chu_ky_so
+- rule: Respond to ask_giay_phep_quang_cao_mang_xa_hoi
+  steps:
+  - intent: ask_giay_phep_quang_cao_mang_xa_hoi
+  - action: utter_ask_giay_phep_quang_cao_mang_xa_hoi
+- rule: Respond to ask_thanh_lap_chi_nhanh
+  steps:
+  - intent: ask_thanh_lap_chi_nhanh
+  - action: utter_ask_thanh_lap_chi_nhanh
+- rule: Respond to ask_giay_phep_lao_dong_nguoi_nuoc_ngoai
+  steps:
+  - intent: ask_giay_phep_lao_dong_nguoi_nuoc_ngoai
+  - action: utter_ask_giay_phep_lao_dong_nguoi_nuoc_ngoai
+- rule: Respond to ask_dang_ky_ban_quyen
+  steps:
+  - intent: ask_dang_ky_ban_quyen
+  - action: utter_ask_dang_ky_ban_quyen
+- rule: Respond to ask_giay_phep_su_kien_van_hoa
+  steps:
+  - intent: ask_giay_phep_su_kien_van_hoa
+  - action: utter_ask_giay_phep_su_kien_van_hoa
+- rule: Respond to ask_giay_phep_khai_thac_nuoc
+  steps:
+  - intent: ask_giay_phep_khai_thac_nuoc
+  - action: utter_ask_giay_phep_khai_thac_nuoc
+- rule: Respond to ask_dau_thau_qua_mang
+  steps:
+  - intent: ask_dau_thau_qua_mang
+  - action: utter_ask_dau_thau_qua_mang
+- rule: Respond to ask_giay_chung_nhan_xuat_xu
+  steps:
+  - intent: ask_giay_chung_nhan_xuat_xu
+  - action: utter_ask_giay_chung_nhan_xuat_xu
+- rule: Respond to ask_giay_phep_nhap_khau_thiet_bi_y_te
+  steps:
+  - intent: ask_giay_phep_nhap_khau_thiet_bi_y_te
+  - action: utter_ask_giay_phep_nhap_khau_thiet_bi_y_te
+- rule: Respond to ask_dang_ky_thuong_hieu
+  steps:
+  - intent: ask_dang_ky_thuong_hieu
+  - action: utter_ask_dang_ky_thuong_hieu
+- rule: Respond to ask_giay_phep_van_tai
+  steps:
+  - intent: ask_giay_phep_van_tai
+  - action: utter_ask_giay_phep_van_tai
+- rule: Respond to ask_giay_phep_pccc
+  steps:
+  - intent: ask_giay_phep_pccc
+  - action: utter_ask_giay_phep_pccc
+- rule: Respond to ask_bhxh_bat_buoc
+  steps:
+  - intent: ask_bhxh_bat_buoc
+  - action: utter_ask_bhxh_bat_buoc
+- rule: Respond to ask_giay_chung_nhan_dang_ky_doanh_nghiep
+  steps:
+  - intent: ask_giay_chung_nhan_dang_ky_doanh_nghiep
+  - action: utter_ask_giay_chung_nhan_dang_ky_doanh_nghiep
+- rule: Respond to ask_giay_phep_xay_dung_cong_trinh
+  steps:
+  - intent: ask_giay_phep_xay_dung_cong_trinh
+  - action: utter_ask_giay_phep_xay_dung_cong_trinh
+- rule: Respond to ask_so_huu_tri_tue
+  steps:
+  - intent: ask_so_huu_tri_tue
+  - action: utter_ask_so_huu_tri_tue
+- rule: Respond to ask_giay_phep_san_xuat_phim
+  steps:
+  - intent: ask_giay_phep_san_xuat_phim
+  - action: utter_ask_giay_phep_san_xuat_phim
+- rule: Respond to ask_giay_phep_khao_sat_dia_chat
+  steps:
+  - intent: ask_giay_phep_khao_sat_dia_chat
+  - action: utter_ask_giay_phep_khao_sat_dia_chat
+- rule: Respond to ask_an_sinh_xa_hoi
+  steps:
+  - intent: ask_an_sinh_xa_hoi
+  - action: utter_ask_an_sinh_xa_hoi
+- rule: Respond to ask_giay_phep_tan_so
+  steps:
+  - intent: ask_giay_phep_tan_so
+  - action: utter_ask_giay_phep_tan_so
+- rule: Respond to ask_giay_chung_nhan_kinh_doanh_gas
+  steps:
+  - intent: ask_giay_chung_nhan_kinh_doanh_gas
+  - action: utter_ask_giay_chung_nhan_kinh_doanh_gas
+- rule: Respond to ask_tich_diem_thue
+  steps:
+  - intent: ask_tich_diem_thue
+  - action: utter_ask_tich_diem_thue
+- rule: Respond to ask_giay_phep_xu_ly_nuoc_thai
+  steps:
+  - intent: ask_giay_phep_xu_ly_nuoc_thai
+  - action: utter_ask_giay_phep_xu_ly_nuoc_thai
+- rule: Respond to ask_giay_phep_kinh_doanh_khach_san
+  steps:
+  - intent: ask_giay_phep_kinh_doanh_khach_san
+  - action: utter_ask_giay_phep_kinh_doanh_khach_san
+- rule: Respond to ask_bao_hiem_nong_nghiep
+  steps:
+  - intent: ask_bao_hiem_nong_nghiep
+  - action: utter_ask_bao_hiem_nong_nghiep
+- rule: Respond to ask_giay_phep_trang_thong_tin
+  steps:
+  - intent: ask_giay_phep_trang_thong_tin
+  - action: utter_ask_giay_phep_trang_thong_tin
+- rule: Respond to ask_giay_chung_nhan_vsattp
+  steps:
+  - intent: ask_giay_chung_nhan_vsattp
+  - action: utter_ask_giay_chung_nhan_vsattp
+- rule: Respond to ask_ho_tro_lai_suat
+  steps:
+  - intent: ask_ho_tro_lai_suat
+  - action: utter_ask_ho_tro_lai_suat
+- rule: Respond to ask_giay_phep_bien_quang_cao
+  steps:
+  - intent: ask_giay_phep_bien_quang_cao
+  - action: utter_ask_giay_phep_bien_quang_cao

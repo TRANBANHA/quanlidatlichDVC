@@ -1,0 +1,19 @@
+# This file contains the different endpoints your bot can use.
+# https://rasa.com/docs/rasa/user-guide/connectors/your-own-website/
+
+# Server for the custom connector.
+action_endpoint:
+  url: "http://localhost:5055/webhook"
+
+# Tracker store which is used to store the conversations.
+# By default the conversations are stored in memory.
+# https://rasa.com/docs/rasa/tracker-stores
+tracker_store:
+  type: InMemoryTrackerStore
+
+# Event broker which is used for streaming events.
+# https://rasa.com/docs/rasa/event-brokers
+#event_broker:
+#  type: file
+#  path: /path/to/events/errors.log
+
