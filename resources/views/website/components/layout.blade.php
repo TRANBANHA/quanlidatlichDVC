@@ -120,17 +120,29 @@
             // Event handler cho modal - tự động chọn phường khi modal hiện ra
             $('#selectPhuongModal').on('shown.bs.modal', function () {
                 const phuongSelect = $("#phuong-select");
-                const savedDonViId = localStorage.getItem('selected_don_vi_id');
                 
-                // Nếu có phường đã lưu, chọn phường đó
-                if (savedDonViId && phuongSelect.find(`option[value="${savedDonViId}"]`).length > 0) {
-                    phuongSelect.val(savedDonViId).trigger('change');
-                } else {
-                    // Nếu không có phường đã lưu, chọn phường đầu tiên (bỏ qua option rỗng)
+                // Ưu tiên 1: Lấy từ tài khoản (nếu đã đăng nhập)
+                let defaultDonViId = $('meta[name="user-don-vi-id"]').attr('content');
+                
+                // Ưu tiên 2: Lấy từ localStorage
+                if (!defaultDonViId) {
+                    defaultDonViId = localStorage.getItem('selected_don_vi_id');
+                }
+                
+                // Ưu tiên 3: Chọn phường đầu tiên (bỏ qua option rỗng)
+                if (!defaultDonViId) {
                     const firstOption = phuongSelect.find('option[value!=""]').first();
                     if (firstOption.length > 0) {
-                        phuongSelect.val(firstOption.val()).trigger('change');
+                        defaultDonViId = firstOption.val();
                     }
+                }
+                
+                // Chọn phường và trigger change để load nhân viên
+                if (defaultDonViId && phuongSelect.find(`option[value="${defaultDonViId}"]`).length > 0) {
+                    // Với Select2, cần set value và trigger change
+                    phuongSelect.val(defaultDonViId);
+                    phuongSelect.trigger('change.select2'); // Trigger cho Select2
+                    phuongSelect.trigger('change'); // Trigger cho event handler thông thường
                 }
             });
 
@@ -156,7 +168,7 @@
 
                 if (!donViId) {
                     nhanVienContainer.hide();
-                    nhanVienSelect.html('<option value="">-- Chọn nhân viên (hoặc để trống để AI chat) --</option>');
+                    nhanVienSelect.html('');
                     return;
                 }
 
@@ -191,7 +203,7 @@
                     }
 
                     const data = await response.json();
-                    let options = '<option value="">-- Chọn nhân viên (hoặc để trống để AI chat) --</option>';
+                    let options = '';
 
                     if (data.success && data.officers && data.officers.length > 0) {
                         data.officers.forEach(function(officer) {
@@ -372,7 +384,7 @@
             // Reset nhân viên khi modal được mở lại
             $('#selectPhuongModal').on('show.bs.modal', function() {
                 $("#nhan-vien-container").hide();
-                $("#nhan-vien-select").html('<option value="">-- Chọn nhân viên (hoặc để trống để AI chat) --</option>');
+                $("#nhan-vien-select").html('');
             });
 
             async function loadRoomMessages(roomId) {

@@ -37,7 +37,6 @@
                                 <span class="ms-2 text-muted">Đang tải danh sách nhân viên...</span>
                             </div>
                             <select id="nhan-vien-select" class="form-select form-select-lg">
-                                <option value="">-- Chọn nhân viên (hoặc để trống để AI chat) --</option>
                             </select>
                             <small class="form-text text-muted">Nếu không chọn nhân viên, AI chatbot sẽ trả lời bạn.</small>
                         </div>
@@ -78,6 +77,7 @@
                 <meta name="user-name" content="{{ auth()->check() ? (auth()->user()->ho_ten ?? auth()->user()->email) : 'Khách' }}">
                 <meta name="user-email" content="{{ auth()->check() ? auth()->user()->email : '' }}">
                 <meta name="user-phone" content="{{ auth()->check() ? (auth()->user()->so_dien_thoai ?? '') : '' }}">
+                <meta name="user-don-vi-id" content="{{ auth()->check() && auth()->user()->don_vi_id ? auth()->user()->don_vi_id : '' }}">
                 <input type="text" id="chat-input" placeholder="Nhập tin nhắn..." />
                 <button type="button" class="chat-submit" id="chat-submit">
                     <i class="fas fa-paper-plane"></i>
