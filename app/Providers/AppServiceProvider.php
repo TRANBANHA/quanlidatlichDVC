@@ -81,17 +81,6 @@ class AppServiceProvider extends ServiceProvider
                 
                 $view->with('settings', $settings);
                 
-                // Share active notifications (admin notifications)
-                $notifications = \App\Models\Notification::where(function($query) {
-                    $query->where('ngay_het_han', '>', Carbon::now())
-                          ->orWhereNull('ngay_het_han');
-                })
-                ->where('ngay_dang', '<=', Carbon::now())
-                ->where('type', 0)
-                ->orderBy('ngay_dang', 'desc')
-                ->get();
-                
-                $view->with('notifications', $notifications);
             } catch (\Exception $e) {
                 $view->with('settings', []);
                 $view->with('notifications', collect([]));

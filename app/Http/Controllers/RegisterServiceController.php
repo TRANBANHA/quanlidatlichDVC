@@ -6,13 +6,9 @@ use Carbon\Carbon;
 use App\Models\HoSo;
 use App\Models\DonVi;
 use App\Models\Service;
-use App\Models\Admin;
 use Illuminate\Http\Request;
 use App\Models\ServiceSchedule;
-use App\Models\ServiceScheduleStaff;
-use App\Models\ServiceAssignment;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Log;
 
 class RegisterServiceController extends Controller
 {
@@ -138,93 +134,38 @@ class RegisterServiceController extends Controller
                 return back()->withErrors(['file_path' => 'Lỗi khi upload file: ' . $e->getMessage()])->withInput();
             }
         }
-        // Tự động phân công cán bộ dựa trên nhiều nguồn
+        // Tự động phân công cán bộ: Random đều cho tất cả cán bộ của phường (không theo dịch vụ)
         $selectedCanBoId = null;
         
-        // Ưu tiên 1: Tìm từ ServiceAssignment (phân công theo ngày cụ thể)
-        $assigned = ServiceAssignment::where('ngay_phan_cong', $request->date)
-            ->where('ma_dich_vu', $request->service)
-            ->first();
-        // ma_can_bo đã được cast thành array trong model ServiceAssignment
-        $canBoIds = $assigned && $assigned->ma_can_bo ? (array) $assigned->ma_can_bo : [];
-
-        if (!empty($canBoIds)) {
-            // Tính workload của từng cán bộ trong ngày
+        // Lấy tất cả cán bộ của phường
+        $canBoPhuong = \App\Models\Admin::where('don_vi_id', $request->don_vi_id)
+            ->where('quyen', \App\Models\Admin::CAN_BO) // Chỉ cán bộ
+            ->pluck('id')
+            ->toArray();
+        
+        if (!empty($canBoPhuong)) {
+            // Đếm số hồ sơ của từng cán bộ trong ngày (tất cả dịch vụ)
             $canBoWorkloads = [];
-            foreach ($canBoIds as $canBoId) {
-                $count = HoSo::where('ngay_hen', $request->date)
-                    ->where('quan_tri_vien_id', $canBoId)
+            foreach ($canBoPhuong as $canBoId) {
+                $workload = HoSo::where('quan_tri_vien_id', $canBoId)
+                    ->where('ngay_hen', $request->date)
+                    ->where('trang_thai', '!=', HoSo::STATUS_CANCELLED)
                     ->count();
-                $canBoWorkloads[$canBoId] = $count;
+                $canBoWorkloads[$canBoId] = $workload;
             }
-
-            // Chọn cán bộ có ít hồ sơ nhất (load balancing)
-            $selectedCanBoId = array_key_first($canBoWorkloads);
-            $minWorkload = $canBoWorkloads[$selectedCanBoId];
-
-            foreach ($canBoWorkloads as $canBoId => $workload) {
-                if ($workload < $minWorkload) {
-                    $selectedCanBoId = $canBoId;
-                    $minWorkload = $workload;
-                }
-            }
-        }
-        
-        // Fallback 2: Nếu không có phân công theo ngày, tìm từ ServiceSchedule
-        if (!$selectedCanBoId) {
-            // Lấy thứ trong tuần của ngày hẹn (1 = Thứ 2, 7 = Chủ nhật)
-            $ngayHen = Carbon::parse($request->date);
-            $thuTrongTuan = $ngayHen->dayOfWeek; // 0 = Chủ nhật, 1 = Thứ 2, ..., 6 = Thứ 7
-            // Chuyển đổi: 0 (Chủ nhật) -> 7, 1-6 giữ nguyên
-            $thuTrongTuan = $thuTrongTuan == 0 ? 7 : $thuTrongTuan;
             
-            // Tìm schedule của dịch vụ vào thứ đó
-            $schedule = ServiceSchedule::where('dich_vu_id', $request->service)
-                ->where('thu_trong_tuan', $thuTrongTuan)
-                ->where('trang_thai', true)
-                ->first();
-            
-            if ($schedule) {
-                // Lấy các cán bộ đã được phân công vào schedule này
-                $canBoIds = ServiceScheduleStaff::where('schedule_id', $schedule->id)
-                    ->pluck('can_bo_id')
-                    ->toArray();
+            // Tìm cán bộ có ít hồ sơ nhất trong ngày
+            if (!empty($canBoWorkloads)) {
+                $minWorkload = min($canBoWorkloads);
+                // Lấy tất cả cán bộ có workload thấp nhất
+                $canBoWithMinWorkload = array_keys($canBoWorkloads, $minWorkload);
                 
-                if (!empty($canBoIds)) {
-                    // Random chọn 1 cán bộ trong danh sách
-                    $selectedCanBoId = $canBoIds[array_rand($canBoIds)];
-                    Log::info('Sử dụng cán bộ từ schedule', [
-                        'schedule_id' => $schedule->id,
-                        'dich_vu_id' => $request->service,
-                        'thu_trong_tuan' => $thuTrongTuan,
-                        'quan_tri_vien_id' => $selectedCanBoId
-                    ]);
-                }
-            }
-        }
-        
-        // Fallback 3: Nếu vẫn không có, random từ cán bộ của phường
-        if (!$selectedCanBoId) {
-            $canBoPhuong = Admin::where('don_vi_id', $request->don_vi_id)
-                ->where('quyen', 0) // Cán bộ (quyen = 0)
-                ->where('trang_thai', true)
-                ->pluck('id')
-                ->toArray();
-            
-            if (!empty($canBoPhuong)) {
-                // Random chọn 1 cán bộ của phường
-                $selectedCanBoId = $canBoPhuong[array_rand($canBoPhuong)];
-                Log::info('Sử dụng cán bộ phường làm fallback', [
-                    'dich_vu_id' => $request->service,
-                    'don_vi_id' => $request->don_vi_id,
-                    'quan_tri_vien_id' => $selectedCanBoId
-                ]);
+                // Random chọn trong số các cán bộ có workload thấp nhất để chia đều
+                $randomIndex = array_rand($canBoWithMinWorkload);
+                $selectedCanBoId = $canBoWithMinWorkload[$randomIndex];
             } else {
-                Log::warning('Không tìm thấy cán bộ để phân công', [
-                    'dich_vu_id' => $request->service,
-                    'don_vi_id' => $request->don_vi_id,
-                    'ngay_hen' => $request->date
-                ]);
+                // Nếu không có hồ sơ nào, random chọn trong tất cả cán bộ phường
+                $selectedCanBoId = $canBoPhuong[array_rand($canBoPhuong)];
             }
         }
         // ✅ Bước 3: Lưu dữ liệu   

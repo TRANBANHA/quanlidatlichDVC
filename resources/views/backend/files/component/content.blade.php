@@ -18,16 +18,57 @@
             </ul>
         </div>
 
+        <!-- Tab dịch vụ -->
+        @if(($currentUser->isAdminPhuong() ?? false || $currentUser->isCanBo() ?? false) && isset($services) && $services->count() > 0)
+        <div class="card mb-4">
+            <div class="card-header">
+                <h5 class="mb-0"><i class="fas fa-briefcase me-2"></i>Chọn dịch vụ</h5>
+            </div>
+            <div class="card-body">
+                @php
+                    $currentDichVuId = request('dich_vu_id');
+                @endphp
+                <div class="d-flex flex-wrap gap-2">
+                    <a href="{{ route('file.index', array_merge(request()->except('dich_vu_id'), ['dich_vu_id' => ''])) }}" 
+                       class="btn btn-{{ !$currentDichVuId ? 'primary' : 'outline-primary' }}">
+                        <i class="fas fa-list me-1"></i>Tất cả dịch vụ
+                        <span class="badge bg-{{ !$currentDichVuId ? 'light text-dark' : 'primary' }} ms-2">{{ $serviceCounts['all'] ?? $ho_so->total() }}</span>
+                    </a>
+                    @foreach($services as $service)
+                        @php
+                            $count = $serviceCounts[$service->id] ?? 0;
+                            $isActive = $currentDichVuId == $service->id;
+                        @endphp
+                        <a href="{{ route('file.index', array_merge(request()->except('dich_vu_id'), ['dich_vu_id' => $service->id])) }}" 
+                           class="btn btn-{{ $isActive ? 'primary' : 'outline-primary' }}">
+                            <i class="fas fa-briefcase me-1"></i>{{ $service->ten_dich_vu }}
+                            <span class="badge bg-{{ $isActive ? 'light text-dark' : 'primary' }} ms-2">{{ $count }}</span>
+                        </a>
+                    @endforeach
+                </div>
+            </div>
+        </div>
+        @endif
+
         <!-- Search Form -->
         <div class="row mb-4">
             <div class="col">
-                <form action="{{ route('file.index') }}" method="GET">
-                    <div class="input-group">
-                        <input type="text" name="search" class="form-control" placeholder="Tìm kiếm theo ghi chú..."
-                            value="{{ request('search') }}">
-                        <button type="submit" class="btn btn-primary">Tìm kiếm</button>
-                        <a href="{{ route('file.create') }}" class="btn btn-success">Thêm mới</a>
+                <form action="{{ route('file.index') }}" method="GET" class="row g-3">
+                    <div class="col-md-8">
+                        <label class="form-label">Tìm kiếm</label>
+                        <div class="input-group">
+                            <input type="text" name="search" class="form-control" placeholder="Tìm kiếm theo ghi chú..."
+                                value="{{ request('search') }}">
+                            <button type="submit" class="btn btn-primary">Tìm kiếm</button>
+                        </div>
                     </div>
+                    <div class="col-md-2 d-flex align-items-end">
+                        <a href="{{ route('file.index') }}" class="btn btn-secondary w-100">Reset</a>
+                    </div>
+                    <!-- Giữ lại dich_vu_id trong form nếu đã chọn -->
+                    @if(request('dich_vu_id'))
+                        <input type="hidden" name="dich_vu_id" value="{{ request('dich_vu_id') }}">
+                    @endif
                 </form>
             </div>
         </div>

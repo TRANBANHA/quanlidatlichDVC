@@ -16,101 +16,60 @@ class CheckAuth
      */
     public function handle(Request $request, Closure $next): Response
     {
-        $routes = [
-            // 'admin.index',
-            'quantri.index',
-            'quantri.create',
-            'quantri.store',
-            'quantri.show',
-            'quantri.edit',
-            'quantri.update',
-            'quantri.destroy',
-            'users.index',
-            'users.create',
-            'users.store',
-            'users.show',
-            'users.edit',
-            'users.update',
-            'users.destroy',
-            // 'citizens.index',
-            // 'citizens.create',
-            // 'citizens.store',
-            // 'citizens.show',
-            // 'citizens.edit',
-            // 'citizens.update',
-            // 'citizens.destroy',
-            // 'birth-registrations.index',
-            // 'birth-registrations.create',
-            // 'birth-registrations.store',
-            // 'birth-registrations.show',
-            // 'birth-registrations.edit',
-            // 'birth-registrations.update',
-            // 'birth-registrations.destroy',
-            // 'absence.index',
-            // 'absence.create',
-            // 'absence.store',
-            // 'absence.show',
-            // 'absence.edit',
-            // 'absence.update',
-            // 'absence.destroy',
-            // 'temp-residence.index',
-            // 'temp-residence.create',
-            // 'temp-residence.store',
-            // 'temp-residence.show',
-            // 'temp-residence.edit',
-            // 'temp-residence.update',
-            // 'temp-residence.destroy',
-            // 'death.index',
-            // 'death.create',
-            // 'death.store',
-            // 'death.show',
-            // 'death.edit',
-            // 'death.update',
-            // 'death.destroy',
-            // 'posts.index',
-            // 'posts.create',
-            // 'posts.store',
-            // 'posts.show',
-            // 'posts.edit',
-            // 'posts.update',
-            // 'posts.destroy',
-            // 'categories.index',
-            // 'categories.create',
-            // 'categories.store',
-            // 'categories.show',
-            // 'categories.edit',
-            // 'categories.update',
-            // 'categories.destroy',
-            // 'noti.index',
-            // 'noti.create',
-            // 'noti.store',
-            // 'noti.show',
-            // 'noti.edit',
-            // 'noti.update',
-            // 'noti.destroy',
-            // 'users.import',
-            'setting.index',
-            'setting.create',
-            'setting.store',
-            'setting.show',
-            'setting.edit',
-            'setting.update',
-            'setting.destroy',
-            // 'comments.index',
-            // 'comments.create',
-            // 'comments.store',
-            // 'comments.show',
-            // 'comments.edit',
-            // 'comments.update',
-            // 'comments.destroy',
-        ];
+        // Debug: Log thông tin request
+        \Log::info('CheckAuth Middleware', [
+            'route' => $request->route()->getName(),
+            'url' => $request->url(),
+            'user_quyen' => Auth::guard('admin')->check() ? Auth::guard('admin')->user()->quyen : 'not_logged_in'
+        ]);
 
-        // Kiểm tra quyền truy cập
-        if (Auth::check() && Auth::user()->role == 2) {
-            foreach ($routes as $route) {
-                if ($request->routeIs($route)) {
-                    // Chuyển hướng đến trang 404
-                    abort(404, 'Bạn không có quyền truy cập vào trang này.');
+        // Kiểm tra nếu user đang đăng nhập bằng guard admin
+        if (Auth::guard('admin')->check()) {
+            $admin = Auth::guard('admin')->user();
+            
+            // Route chỉ dành cho Admin phường (quyen = 2) - chặn Admin tổng và Cán bộ
+            $adminPhuongOnlyRoutes = [
+                'payments.index',
+                'payments.show',
+                'service-phuong.*',
+                'admin-phuong.*',
+                'statistics.*',
+            ];
+            
+            // Route chỉ dành cho Cán bộ (quyen = 0) - chặn Admin tổng và Admin phường
+            $canBoOnlyRoutes = [
+                // Không có routes riêng cho cán bộ
+            ];
+            
+            // Route chỉ dành cho Admin tổng (quyen = 1) - chặn Admin phường và Cán bộ
+            $adminTongOnlyRoutes = [
+                'admin.settings.*',
+            ];
+            
+            // Chặn Admin tổng và Cán bộ truy cập route của Admin phường
+            if ($admin->quyen != 2) { // Không phải Admin phường
+                foreach ($adminPhuongOnlyRoutes as $route) {
+                    if ($request->routeIs($route)) {
+                        abort(404, 'Bạn không có quyền truy cập vào trang này.');
+                    }
+                }
+            }
+            
+            // Chặn Admin tổng và Admin phường truy cập route của Cán bộ
+            if ($admin->quyen != 0) { // Không phải Cán bộ
+                foreach ($canBoOnlyRoutes as $route) {
+                    if ($request->routeIs($route)) {
+                        abort(404, 'Bạn không có quyền truy cập vào trang này.');
+                    }
+                }
+            }
+            
+            // Chặn Admin phường và Cán bộ truy cập route của Admin tổng
+            if ($admin->quyen != 1) { // Không phải Admin tổng
+                foreach ($adminTongOnlyRoutes as $route) {
+                    if ($request->routeIs($route)) {
+                        abort(404, 'Bạn không có quyền truy cập vào trang này.');
+                    }
                 }
             }
         }

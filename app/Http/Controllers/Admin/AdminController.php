@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Models\Admin;
 use App\Models\DonVi;
+use App\Mail\AdminAccountMail;
 use Illuminate\Http\Request;
 use App\Services\AdminService;
 use App\Http\Controllers\Controller;
@@ -12,6 +13,7 @@ use App\Exports\StaffTemplateExport;
 use Maatwebsite\Excel\Facades\Excel;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Mail;
 
 class AdminController extends Controller
 {
@@ -119,10 +121,10 @@ class AdminController extends Controller
             }
         }
         
+        // Validation rules - mật khẩu sẽ được tự động tạo, không cần nhập
         $request->validate([
             'ho_ten' => 'required|string|max:255',
             'ten_dang_nhap' => 'required|string|max:255|unique:quan_tri_vien,ten_dang_nhap',
-            'mat_khau' => 'required|string|min:6',
             'email' => 'nullable|email|unique:quan_tri_vien,email',
             'so_dien_thoai' => 'nullable|string|max:20',
             'quyen' => 'required|in:0,1,2',
@@ -131,8 +133,6 @@ class AdminController extends Controller
             'ho_ten.required' => 'Vui lòng nhập họ tên.',
             'ten_dang_nhap.required' => 'Vui lòng nhập tên đăng nhập.',
             'ten_dang_nhap.unique' => 'Tên đăng nhập đã tồn tại.',
-            'mat_khau.required' => 'Vui lòng nhập mật khẩu.',
-            'mat_khau.min' => 'Mật khẩu phải có ít nhất 6 ký tự.',
             'email.email' => 'Email không đúng định dạng.',
             'email.unique' => 'Email đã tồn tại.',
             'quyen.required' => 'Vui lòng chọn quyền.',
@@ -146,17 +146,55 @@ class AdminController extends Controller
                 ->withInput();
         }
 
-        Admin::create([
+        // Tự động tạo mật khẩu random cho tất cả tài khoản
+        // Tạo mật khẩu random 8 ký tự (chữ hoa, chữ thường và số)
+        $characters = 'ABCDEFGHJKLMNPQRSTUVWXYZabcdefghjkmnpqrstuvwxyz23456789';
+        $randomPassword = '';
+        for ($i = 0; $i < 8; $i++) {
+            $randomPassword .= $characters[rand(0, strlen($characters) - 1)];
+        }
+
+        $admin = Admin::create([
             'ho_ten' => $request->ho_ten,
             'ten_dang_nhap' => $request->ten_dang_nhap,
-            'mat_khau' => bcrypt($request->mat_khau),
+            'mat_khau' => bcrypt($randomPassword),
             'email' => $request->email,
             'so_dien_thoai' => $request->so_dien_thoai,
             'quyen' => $request->quyen,
             'don_vi_id' => $request->don_vi_id,
         ]);
 
-        return redirect()->route('quantri.index')->with('success', 'Tạo tài khoản thành công!');
+        // Lấy tên đơn vị/phường nếu có
+        $donViName = null;
+        if ($request->don_vi_id) {
+            $donVi = DonVi::find($request->don_vi_id);
+            $donViName = $donVi ? $donVi->ten_don_vi : null;
+        }
+
+        // Gửi email thông tin tài khoản nếu có email
+        if (!empty($request->email)) {
+            try {
+                Mail::to($request->email)->send(new AdminAccountMail(
+                    $request->ho_ten,
+                    $request->ten_dang_nhap,
+                    $randomPassword,
+                    $request->email,
+                    $donViName
+                ));
+            } catch (\Exception $e) {
+                Log::error('Lỗi gửi email thông tin tài khoản: ' . $e->getMessage());
+                // Vẫn tiếp tục tạo tài khoản dù gửi email lỗi
+            }
+        }
+
+        // Thông báo kết quả
+        $message = 'Tạo tài khoản thành công!';
+        if (!empty($request->email)) {
+            $message .= ' Thông tin đăng nhập đã được gửi đến email: <strong>' . $request->email . '</strong>';
+        } else {
+            $message .= ' Mật khẩu: <strong>' . $randomPassword . '</strong> - Vui lòng lưu lại và cung cấp cho người dùng.';
+        }
+        return redirect()->route('quantri.index')->with('success', $message);
     }
 
     /**

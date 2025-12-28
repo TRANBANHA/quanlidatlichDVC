@@ -2,7 +2,11 @@
 <html lang="en">
 
 @include('website.components.head')
-
+<style>
+    .navbar {
+        box-shadow:  none !important;
+    }
+ </style>
 <body>
 
     <!-- Spinner Start -->
@@ -34,9 +38,14 @@
     @include('website.components.footer')
     <!-- Footer End -->
 
+    <!-- Select2 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+    <link href="https://cdn.jsdelivr.net/npm/select2-bootstrap-5-theme@1.3.0/dist/select2-bootstrap-5-theme.min.css" rel="stylesheet" />
+    
     <!-- JavaScript Libraries -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
     <script src="{{ asset('website') }}/lib/easing/easing.min.js"></script>
     <script src="{{ asset('website') }}/lib/waypoints/waypoints.min.js"></script>
     <script src="{{ asset('website') }}/lib/owlcarousel/owl.carousel.min.js"></script>
@@ -90,6 +99,24 @@
             var currentRoomId = null; // numeric id for ChatRoom
             var currentRoomUseRasa = false; // Lưu trạng thái Rasa của room hiện tại
 
+            // Khởi tạo Select2 cho dropdown phường trong modal chat
+            if ($('#phuong-select').length) {
+                $('#phuong-select').select2({
+                    theme: 'bootstrap-5',
+                    placeholder: '-- Chọn phường --',
+                    allowClear: true,
+                    dropdownParent: $('#selectPhuongModal'),
+                    language: {
+                        noResults: function() {
+                            return "Không tìm thấy phường nào";
+                        },
+                        searching: function() {
+                            return "Đang tìm kiếm...";
+                        }
+                    }
+                });
+            }
+
             // Event handler cho modal - tự động chọn phường khi modal hiện ra
             $('#selectPhuongModal').on('shown.bs.modal', function () {
                 const phuongSelect = $("#phuong-select");
@@ -97,18 +124,13 @@
                 
                 // Nếu có phường đã lưu, chọn phường đó
                 if (savedDonViId && phuongSelect.find(`option[value="${savedDonViId}"]`).length > 0) {
-                    phuongSelect.val(savedDonViId);
+                    phuongSelect.val(savedDonViId).trigger('change');
                 } else {
                     // Nếu không có phường đã lưu, chọn phường đầu tiên (bỏ qua option rỗng)
                     const firstOption = phuongSelect.find('option[value!=""]').first();
                     if (firstOption.length > 0) {
-                        phuongSelect.val(firstOption.val());
+                        phuongSelect.val(firstOption.val()).trigger('change');
                     }
-                }
-                
-                // Trigger change event để load nhân viên
-                if (phuongSelect.val()) {
-                    phuongSelect.trigger('change');
                 }
             });
 

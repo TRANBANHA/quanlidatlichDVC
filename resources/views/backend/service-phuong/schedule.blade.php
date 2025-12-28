@@ -1,12 +1,12 @@
 @extends('backend.components.layout')
 @section('title')
-    Quản lý lịch dịch vụ và phân công cán bộ
+    Quản lý lịch dịch vụ
 @endsection
 @section('content')
 <div class="container">
     <div class="page-inner">
         <div class="page-header d-flex justify-content-between align-items-center mb-4">
-            <h3 class="fw-bold mb-0">Quản lý lịch dịch vụ và phân công cán bộ</h3>
+            <h3 class="fw-bold mb-0">Quản lý lịch dịch vụ</h3>
             <a href="{{ route('service-phuong.index') }}" class="btn btn-secondary">
                 <i class="fas fa-arrow-left"></i> Quay lại
             </a>
@@ -43,7 +43,7 @@
             @if(Auth::guard('admin')->user()->isAdminPhuong() || Auth::guard('admin')->user()->isCanBo())
             <div class="card mb-4 shadow-sm">
                 <div class="card-header bg-primary text-white">
-                    <h5 class="mb-0"><i class="fas fa-plus-circle me-2"></i>Thêm lịch dịch vụ và phân công cán bộ</h5>
+                    <h5 class="mb-0"><i class="fas fa-plus-circle me-2"></i>Thêm lịch dịch vụ</h5>
                 </div>
                 <div class="card-body">
                     <div class="alert alert-info mb-3">
@@ -102,27 +102,12 @@
                             </div>
                         </div>
                         <div class="mb-3">
-                            <label for="ma_can_bo" class="form-label">Phân công cán bộ</label>
-                            @if($canBoList->isEmpty())
-                                <div class="alert alert-info">
-                                    <i class="fas fa-info-circle me-2"></i>Chưa có cán bộ nào trong phường.
-                                </div>
-                            @else
-                                <select name="ma_can_bo[]" id="ma_can_bo" class="form-select" multiple size="5">
-                                    @foreach($canBoList as $canBo)
-                                        <option value="{{ $canBo->id }}">{{ $canBo->ho_ten }} ({{ $canBo->ten_dang_nhap }})</option>
-                                    @endforeach
-                                </select>
-                                <small class="text-muted">Giữ Ctrl (hoặc Cmd trên Mac) để chọn nhiều cán bộ</small>
-                            @endif
-                        </div>
-                        <div class="mb-3">
                             <label for="ghi_chu" class="form-label">Ghi chú</label>
                             <textarea name="ghi_chu" id="ghi_chu" class="form-control" rows="2"></textarea>
                         </div>
                         <div class="text-end">
                             <button type="submit" class="btn btn-primary">
-                                <i class="fas fa-save me-2"></i>Lưu lịch và phân công
+                                <i class="fas fa-save me-2"></i>Lưu lịch
                             </button>
                         </div>
                     </form>
@@ -152,17 +137,12 @@
                                                 <th>Thứ</th>
                                                 <th>Giờ làm việc</th>
                                                 <th>Số lượng tối đa</th>
-                                                <th>Cán bộ được phân công</th>
                                                 <th>Ghi chú</th>
                                                 <th>Thao tác</th>
                                             </tr>
                                         </thead>
                                         <tbody>
                                             @foreach($schedules as $schedule)
-                                                @php
-                                                    $assignedStaffIds = $assignmentsBySchedule[$schedule->id] ?? [];
-                                                    $assignedStaff = $canBoList->whereIn('id', $assignedStaffIds);
-                                                @endphp
                                                 <tr>
                                                     <td>
                                                         @php
@@ -172,15 +152,6 @@
                                                     </td>
                                                     <td>{{ $schedule->gio_bat_dau }} - {{ $schedule->gio_ket_thuc }}</td>
                                                     <td><span class="badge bg-success">{{ $schedule->so_luong_toi_da }} hồ sơ</span></td>
-                                                    <td>
-                                                        @if($assignedStaff->isNotEmpty())
-                                                            @foreach($assignedStaff as $staff)
-                                                                <span class="badge bg-info me-1">{{ $staff->ho_ten }}</span>
-                                                            @endforeach
-                                                        @else
-                                                            <span class="text-muted">Chưa phân công</span>
-                                                        @endif
-                                                    </td>
                                                     <td>{{ $schedule->ghi_chu ?? '-' }}</td>
                                                     <td>
                                                         @if(Auth::guard('admin')->user()->isAdminPhuong() || Auth::guard('admin')->user()->isCanBo())
@@ -210,9 +181,6 @@
         $schedules = $schedulesByService[$servicePhuong->dich_vu_id] ?? collect();
     @endphp
     @foreach($schedules as $schedule)
-        @php
-            $assignedStaffIds = $assignmentsBySchedule[$schedule->id] ?? [];
-        @endphp
         <div class="modal fade" id="editModal{{ $schedule->id }}" tabindex="-1">
             <div class="modal-dialog modal-lg">
                 <div class="modal-content">
@@ -239,17 +207,6 @@
                             <div class="mb-3">
                                 <label class="form-label">Số lượng tối đa <span class="text-danger">*</span></label>
                                 <input type="number" name="so_luong_toi_da" class="form-control" value="{{ $schedule->so_luong_toi_da }}" min="1" required>
-                            </div>
-                            <div class="mb-3">
-                                <label class="form-label">Phân công cán bộ</label>
-                                <select name="ma_can_bo[]" class="form-select" multiple size="5">
-                                    @foreach($canBoList as $canBo)
-                                        <option value="{{ $canBo->id }}" {{ in_array($canBo->id, $assignedStaffIds) ? 'selected' : '' }}>
-                                            {{ $canBo->ho_ten }} ({{ $canBo->ten_dang_nhap }})
-                                        </option>
-                                    @endforeach
-                                </select>
-                                <small class="text-muted">Giữ Ctrl (hoặc Cmd trên Mac) để chọn nhiều cán bộ</small>
                             </div>
                             <div class="mb-3">
                                 <label class="form-label">Ghi chú</label>

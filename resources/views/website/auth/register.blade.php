@@ -9,6 +9,9 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="{{ asset('website_coppy/css/font-awesome.min.css') }}">
     <link rel="stylesheet" href="{{ asset('website_coppy/css/style.css') }}">
+    <!-- Select2 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+    <link href="https://cdn.jsdelivr.net/npm/select2-bootstrap-5-theme@1.3.0/dist/select2-bootstrap-5-theme.min.css" rel="stylesheet" />
 </head>
 
 <body class="bg-light">
@@ -88,7 +91,7 @@
                             {{-- Phường --}}
                             <div class="mb-3">
                                 <label class="form-label">Phường <span class="text-danger">*</span></label>
-                                <select name="don_vi_id" class="form-select" required>
+                                <select name="don_vi_id" id="don_vi_id_register" class="form-select" required>
                                     <option value="">-- Chọn phường --</option>
                                     @foreach ($donVis as $donVi)
                                         <option value="{{ $donVi->id }}" {{ old('don_vi_id') == $donVi->id ? 'selected' : '' }}>
@@ -111,6 +114,20 @@
                                 @enderror
                             </div>
 
+                            {{-- Loại phường (Tạm trú/Tạm vắng) --}}
+                            <div class="mb-3">
+                                <label class="form-label">Loại phường <span class="text-danger">*</span></label>
+                                <select name="loai_phuong" class="form-select" required>
+                                    <option value="">-- Chọn loại phường --</option>
+                                    <option value="tạm trú" {{ old('loai_phuong') == 'tạm trú' ? 'selected' : '' }}>Tạm trú</option>
+                                    <option value="tạm vắng" {{ old('loai_phuong') == 'tạm vắng' ? 'selected' : '' }}>Tạm vắng</option>
+                                </select>
+                                <small class="form-text text-muted">Chọn loại phường của bạn (mặc định khi đặt lịch sẽ là tạm trú)</small>
+                                @error('loai_phuong')
+                                    <div class="text-danger mt-1">{{ $message }}</div>
+                                @enderror
+                            </div>
+
                             <button type="submit" class="btn btn-primary w-100">Đăng ký</button>
 
                             <p class="text-center mt-3">
@@ -124,6 +141,26 @@
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            // Khởi tạo Select2 với tính năng search cho dropdown phường
+            $('#don_vi_id_register').select2({
+                theme: 'bootstrap-5',
+                placeholder: '-- Chọn phường --',
+                allowClear: true,
+                language: {
+                    noResults: function() {
+                        return "Không tìm thấy phường nào";
+                    },
+                    searching: function() {
+                        return "Đang tìm kiếm...";
+                    }
+                }
+            });
+        });
+    </script>
 </body>
 
 </html>

@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Payment;
 use App\Models\HoSo;
+use App\Models\DonVi;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -12,221 +13,184 @@ use Illuminate\Support\Facades\DB;
 class PaymentController extends Controller
 {
     /**
-     * Danh sách thanh toán
+     * Danh sách thanh toán (Chỉ dành cho Admin phường)
      */
     public function index(Request $request)
     {
         $currentUser = Auth::guard('admin')->user();
         
-        $query = Payment::with(['user', 'hoSo.dichVu', 'hoSo.donVi'])
-            ->orderBy('created_at', 'desc');
+        // Chỉ Admin phường mới được truy cập
+        if (!$currentUser || !$currentUser->isAdminPhuong()) {
+            abort(404, 'Bạn không có quyền truy cập trang này.');
+        }
 
-        // Phân quyền
-        if ($currentUser->isAdminPhuong()) {
-            // Admin phường: Chỉ xem thanh toán của phường mình
-            $query->whereHas('hoSo', function($q) use ($currentUser) {
+        $query = Payment::with(['user', 'hoSo.dichVu', 'hoSo.donVi'])
+            ->whereHas('hoSo', function($q) use ($currentUser) {
                 $q->where('don_vi_id', $currentUser->don_vi_id);
             });
-        } elseif ($currentUser->isCanBo()) {
-            // Cán bộ: Không có quyền xem
-            abort(403, 'Bạn không có quyền truy cập trang này.');
-        }
-        // Admin tổng: Xem tất cả
 
         // Lọc theo trạng thái
         if ($request->filled('trang_thai')) {
             $query->where('trang_thai_thanh_toan', $request->trang_thai);
         }
 
-        // Lọc theo phương thức thanh toán
-        if ($request->filled('phuong_thuc')) {
-            $query->where('phuong_thuc_thanh_toan', $request->phuong_thuc);
-        }
-
-        // Tìm kiếm
+        // Tìm kiếm theo mã hồ sơ, mã giao dịch, tên người dùng
         if ($request->filled('search')) {
             $search = $request->search;
             $query->where(function($q) use ($search) {
-                $q->where('ma_giao_dich', 'like', '%' . $search . '%')
-                  ->orWhereHas('user', function($q) use ($search) {
-                      $q->where('ten', 'like', '%' . $search . '%')
-                        ->orWhere('so_dien_thoai', 'like', '%' . $search . '%');
-                  })
+                $q->where('ma_giao_dich', 'like', "%{$search}%")
                   ->orWhereHas('hoSo', function($q) use ($search) {
-                      $q->where('ma_ho_so', 'like', '%' . $search . '%');
+                      $q->where('ma_ho_so', 'like', "%{$search}%");
+                  })
+                  ->orWhereHas('user', function($q) use ($search) {
+                      $q->where('ten', 'like', "%{$search}%")
+                        ->orWhere('cccd', 'like', "%{$search}%");
                   });
             });
         }
 
-        $payments = $query->paginate(20);
+        // Lọc theo khoảng thời gian
+        if ($request->filled('tu_ngay')) {
+            $query->whereDate('created_at', '>=', $request->tu_ngay);
+        }
+        if ($request->filled('den_ngay')) {
+            $query->whereDate('created_at', '<=', $request->den_ngay);
+        }
 
-        $stats = [
-            'total' => Payment::when($currentUser->isAdminPhuong(), function($q) use ($currentUser) {
-                $q->whereHas('hoSo', function($q) use ($currentUser) {
-                    $q->where('don_vi_id', $currentUser->don_vi_id);
-                });
-            })->count(),
-            'cho_thanh_toan' => Payment::where('trang_thai_thanh_toan', 'cho_thanh_toan')
-                ->when($currentUser->isAdminPhuong(), function($q) use ($currentUser) {
-                    $q->whereHas('hoSo', function($q) use ($currentUser) {
-                        $q->where('don_vi_id', $currentUser->don_vi_id);
-                    });
-                })->count(),
-            'da_thanh_toan' => Payment::where('trang_thai_thanh_toan', 'da_thanh_toan')
-                ->when($currentUser->isAdminPhuong(), function($q) use ($currentUser) {
-                    $q->whereHas('hoSo', function($q) use ($currentUser) {
-                        $q->where('don_vi_id', $currentUser->don_vi_id);
-                    });
-                })->count(),
-            'co_anh' => Payment::whereNotNull('hinh_anh')
-                ->where('trang_thai_thanh_toan', 'cho_thanh_toan')
-                ->when($currentUser->isAdminPhuong(), function($q) use ($currentUser) {
-                    $q->whereHas('hoSo', function($q) use ($currentUser) {
-                        $q->where('don_vi_id', $currentUser->don_vi_id);
-                    });
-                })->count(),
-        ];
+        $payments = $query->orderBy('created_at', 'desc')
+            ->paginate(20)
+            ->withQueryString();
 
-        return view('backend.payments.index', compact('payments', 'stats'));
+        // Thống kê
+        $tongTien = Payment::whereHas('hoSo', function($q) use ($currentUser) {
+                $q->where('don_vi_id', $currentUser->don_vi_id);
+            })
+            ->where('trang_thai_thanh_toan', 'da_thanh_toan')
+            ->sum('so_tien');
+
+        $tongSoGiaoDich = Payment::whereHas('hoSo', function($q) use ($currentUser) {
+                $q->where('don_vi_id', $currentUser->don_vi_id);
+            })
+            ->count();
+
+        $thongKeTrangThai = Payment::whereHas('hoSo', function($q) use ($currentUser) {
+                $q->where('don_vi_id', $currentUser->don_vi_id);
+            })
+            ->select('trang_thai_thanh_toan', DB::raw('count(*) as so_luong'), DB::raw('sum(so_tien) as tong_tien'))
+            ->groupBy('trang_thai_thanh_toan')
+            ->get();
+
+        return view('backend.payments.index', compact(
+            'payments',
+            'tongTien',
+            'tongSoGiaoDich',
+            'thongKeTrangThai'
+        ));
     }
 
     /**
-     * Xem chi tiết thanh toán
+     * Chi tiết thanh toán
      */
     public function show($id)
     {
-        $payment = Payment::with(['user', 'hoSo.dichVu', 'hoSo.donVi'])->findOrFail($id);
-        
         $currentUser = Auth::guard('admin')->user();
-
-        // Kiểm tra quyền
-        if ($currentUser->isAdminPhuong()) {
-            if ($payment->hoSo->don_vi_id != $currentUser->don_vi_id) {
-                abort(403, 'Bạn không có quyền xem thanh toán này.');
-            }
-        } elseif ($currentUser->isCanBo()) {
-            abort(403, 'Bạn không có quyền xem thanh toán này.');
+        
+        if (!$currentUser || !$currentUser->isAdminPhuong()) {
+            abort(404, 'Bạn không có quyền truy cập trang này.');
         }
+
+        $payment = Payment::with(['user', 'hoSo.dichVu', 'hoSo.donVi', 'hoSo.quanTriVien'])
+            ->whereHas('hoSo', function($q) use ($currentUser) {
+                $q->where('don_vi_id', $currentUser->don_vi_id);
+            })
+            ->findOrFail($id);
 
         return view('backend.payments.show', compact('payment'));
     }
 
     /**
-     * Xác nhận thanh toán
+     * Xác nhận thanh toán (Admin phường)
      */
     public function approve($id)
     {
-        $payment = Payment::with('hoSo')->findOrFail($id);
-        
         $currentUser = Auth::guard('admin')->user();
-
-        // Kiểm tra quyền - CHỈ Admin phường mới được xác nhận
-        if ($currentUser->isAdmin()) {
-            // Admin tổng KHÔNG được xác nhận
+        
+        if (!$currentUser || !$currentUser->isAdminPhuong()) {
             return response()->json([
                 'success' => false,
-                'message' => 'Admin tổng chỉ có quyền xem, không được xác nhận thanh toán.'
-            ], 403);
-        } elseif ($currentUser->isAdminPhuong()) {
-            if ($payment->hoSo->don_vi_id != $currentUser->don_vi_id) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Bạn không có quyền xác nhận thanh toán này.'
-                ], 403);
-            }
-        } else {
-            // Cán bộ không có quyền
-            return response()->json([
-                'success' => false,
-                'message' => 'Bạn không có quyền xác nhận thanh toán.'
+                'message' => 'Bạn không có quyền thực hiện thao tác này.'
             ], 403);
         }
 
-        if ($payment->trang_thai_thanh_toan == 'da_thanh_toan') {
+        $payment = Payment::with('hoSo')
+            ->whereHas('hoSo', function($q) use ($currentUser) {
+                $q->where('don_vi_id', $currentUser->don_vi_id);
+            })
+            ->findOrFail($id);
+
+        // Kiểm tra trạng thái
+        if ($payment->trang_thai_thanh_toan != 'cho_thanh_toan') {
             return response()->json([
                 'success' => false,
-                'message' => 'Thanh toán này đã được xác nhận rồi.'
+                'message' => 'Chỉ có thể xác nhận thanh toán đang chờ xử lý.'
             ], 400);
         }
 
-        DB::beginTransaction();
-        try {
-            $payment->update([
-                'trang_thai_thanh_toan' => 'da_thanh_toan',
-                'ngay_thanh_toan' => now(),
-            ]);
+        // Cập nhật trạng thái thanh toán
+        $payment->trang_thai_thanh_toan = 'da_thanh_toan';
+        $payment->ngay_thanh_toan = now();
+        $payment->save();
 
-            DB::commit();
-
-            return response()->json([
-                'success' => true,
-                'message' => 'Xác nhận thanh toán thành công!'
-            ]);
-        } catch (\Exception $e) {
-            DB::rollBack();
-            return response()->json([
-                'success' => false,
-                'message' => 'Có lỗi xảy ra: ' . $e->getMessage()
-            ], 500);
-        }
+        return response()->json([
+            'success' => true,
+            'message' => 'Xác nhận thanh toán thành công!'
+        ]);
     }
 
     /**
-     * Từ chối thanh toán
+     * Từ chối thanh toán (Admin phường)
      */
-    public function reject($id, Request $request)
+    public function reject(Request $request, $id)
     {
-        $payment = Payment::with('hoSo')->findOrFail($id);
-        
         $currentUser = Auth::guard('admin')->user();
-
-        // Kiểm tra quyền - CHỈ Admin phường mới được từ chối
-        if ($currentUser->isAdmin()) {
-            // Admin tổng KHÔNG được từ chối
+        
+        if (!$currentUser || !$currentUser->isAdminPhuong()) {
             return response()->json([
                 'success' => false,
-                'message' => 'Admin tổng chỉ có quyền xem, không được từ chối thanh toán.'
-            ], 403);
-        } elseif ($currentUser->isAdminPhuong()) {
-            if ($payment->hoSo->don_vi_id != $currentUser->don_vi_id) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Bạn không có quyền từ chối thanh toán này.'
-                ], 403);
-            }
-        } else {
-            // Cán bộ không có quyền
-            return response()->json([
-                'success' => false,
-                'message' => 'Bạn không có quyền từ chối thanh toán.'
+                'message' => 'Bạn không có quyền thực hiện thao tác này.'
             ], 403);
         }
 
         $request->validate([
             'ly_do' => 'required|string|max:500',
+        ], [
+            'ly_do.required' => 'Vui lòng nhập lý do từ chối.',
+            'ly_do.max' => 'Lý do không được vượt quá 500 ký tự.',
         ]);
 
-        DB::beginTransaction();
-        try {
-            $payment->update([
-                'trang_thai_thanh_toan' => 'that_bai',
-                'giai_trinh' => ($payment->giai_trinh ? $payment->giai_trinh . "\n\n" : '') . 
-                               'Lý do từ chối: ' . $request->ly_do . ' (Bởi: ' . $currentUser->ho_ten . ' - ' . now()->format('d/m/Y H:i') . ')',
-            ]);
+        $payment = Payment::with('hoSo')
+            ->whereHas('hoSo', function($q) use ($currentUser) {
+                $q->where('don_vi_id', $currentUser->don_vi_id);
+            })
+            ->findOrFail($id);
 
-            DB::commit();
-
-            return response()->json([
-                'success' => true,
-                'message' => 'Đã từ chối thanh toán!'
-            ]);
-        } catch (\Exception $e) {
-            DB::rollBack();
+        // Kiểm tra trạng thái
+        if ($payment->trang_thai_thanh_toan != 'cho_thanh_toan') {
             return response()->json([
                 'success' => false,
-                'message' => 'Có lỗi xảy ra: ' . $e->getMessage()
-            ], 500);
+                'message' => 'Chỉ có thể từ chối thanh toán đang chờ xử lý.'
+            ], 400);
         }
+
+        // Cập nhật trạng thái thanh toán
+        $payment->trang_thai_thanh_toan = 'that_bai';
+        $payment->giai_trinh = $request->ly_do;
+        $payment->save();
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Từ chối thanh toán thành công!'
+        ]);
     }
 }
 

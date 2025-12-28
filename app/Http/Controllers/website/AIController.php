@@ -21,7 +21,6 @@ class AIController extends Controller
         Log::info('Request Data', $request->all());
 
         $response = $this->anthropicService->callClaudeApi($request->message);
-        dd($response);
         if (isset($response['error'])) {
             return response()->json([
                 'error' => $response['error'],

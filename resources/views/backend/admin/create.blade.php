@@ -67,10 +67,9 @@
                                             <input type="text" id="ten_dang_nhap" name="ten_dang_nhap" class="form-control"
                                                 placeholder="Nhập tên đăng nhập" value="{{ old('ten_dang_nhap') }}" required>
                                         </div>
-                                        <div class="mb-3">
-                                            <label for="mat_khau" class="form-label">Mật khẩu <span class="text-danger">*</span></label>
-                                            <input type="password" id="mat_khau" name="mat_khau" class="form-control"
-                                                placeholder="Nhập mật khẩu" required>
+                                        <div class="alert alert-info mb-3">
+                                            <i class="fas fa-info-circle"></i> 
+                                            <strong>Mật khẩu sẽ được tự động tạo ngẫu nhiên và gửi về email (nếu có email).</strong>
                                         </div>
                                     </div>
                                     <div class="col-md-6">
@@ -136,4 +135,5 @@
             </div>
         </div>
     </div>
+
 @endsection

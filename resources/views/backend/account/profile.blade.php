@@ -2,7 +2,7 @@
 @section('title', 'Thông tin tài khoản')
 
 @section('content')
-<div class="container-fluid">
+<div class="container">
     <div class="row">
         <div class="col-md-8 mx-auto">
             <div class="card">

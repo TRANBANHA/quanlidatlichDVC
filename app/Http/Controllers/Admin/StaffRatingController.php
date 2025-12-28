@@ -22,7 +22,9 @@ class StaffRatingController extends Controller
             abort(403, 'Chỉ cán bộ mới có quyền xem đánh giá.');
         }
 
+        // Chỉ lấy đánh giá có quan_tri_vien_id khớp với cán bộ hiện tại và không NULL
         $query = Rating::where('quan_tri_vien_id', $currentUser->id)
+            ->whereNotNull('quan_tri_vien_id') // Đảm bảo không NULL
             ->with(['hoSo.dichVu', 'hoSo.nguoiDung', 'nguoiDung'])
             ->orderBy('created_at', 'desc');
 
@@ -45,15 +47,34 @@ class StaffRatingController extends Controller
 
         $ratings = $query->paginate(15)->withQueryString();
 
-        // Thống kê
+        // Thống kê - chỉ đếm rating có quan_tri_vien_id khớp và không NULL
         $stats = [
-            'tong' => Rating::where('quan_tri_vien_id', $currentUser->id)->count(),
-            'diem_tb' => Rating::where('quan_tri_vien_id', $currentUser->id)->avg('diem'),
-            '5_sao' => Rating::where('quan_tri_vien_id', $currentUser->id)->where('diem', 5)->count(),
-            '4_sao' => Rating::where('quan_tri_vien_id', $currentUser->id)->where('diem', 4)->count(),
-            '3_sao' => Rating::where('quan_tri_vien_id', $currentUser->id)->where('diem', 3)->count(),
-            '2_sao' => Rating::where('quan_tri_vien_id', $currentUser->id)->where('diem', 2)->count(),
-            '1_sao' => Rating::where('quan_tri_vien_id', $currentUser->id)->where('diem', 1)->count(),
+            'tong' => Rating::where('quan_tri_vien_id', $currentUser->id)
+                ->whereNotNull('quan_tri_vien_id')
+                ->count(),
+            'diem_tb' => Rating::where('quan_tri_vien_id', $currentUser->id)
+                ->whereNotNull('quan_tri_vien_id')
+                ->avg('diem') ?? 0,
+            '5_sao' => Rating::where('quan_tri_vien_id', $currentUser->id)
+                ->whereNotNull('quan_tri_vien_id')
+                ->where('diem', 5)
+                ->count(),
+            '4_sao' => Rating::where('quan_tri_vien_id', $currentUser->id)
+                ->whereNotNull('quan_tri_vien_id')
+                ->where('diem', 4)
+                ->count(),
+            '3_sao' => Rating::where('quan_tri_vien_id', $currentUser->id)
+                ->whereNotNull('quan_tri_vien_id')
+                ->where('diem', 3)
+                ->count(),
+            '2_sao' => Rating::where('quan_tri_vien_id', $currentUser->id)
+                ->whereNotNull('quan_tri_vien_id')
+                ->where('diem', 2)
+                ->count(),
+            '1_sao' => Rating::where('quan_tri_vien_id', $currentUser->id)
+                ->whereNotNull('quan_tri_vien_id')
+                ->where('diem', 1)
+                ->count(),
         ];
 
         return view('backend.staff.ratings.index', compact('ratings', 'stats'));

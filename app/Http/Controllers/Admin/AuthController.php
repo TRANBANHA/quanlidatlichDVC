@@ -1,140 +1,103 @@
 <?php
 
-namespace App\Http\Controllers\admin;
+namespace App\Http\Controllers\Admin;
 
 use App\Models\Admin;
-use Illuminate\Support\Str;
 use Illuminate\Http\Request;
-use App\Mail\NewPasswordMail;
-use App\Mail\ResetPasswordMail;
-use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Hash;
 use App\Providers\RouteServiceProvider;
-use Illuminate\Support\Facades\Password;
 
 class AuthController extends Controller
 {
-
-
+    /**
+     * Show the admin login form.
+     */
     public function login()
     {
-        // dd(Auth::guard('admin')->name());
-        if (Auth::guard('admin')->check() && Auth::guard('admin')->user()->publish == 1) {
-            return redirect()->route('admin.index');
+        // If already authenticated as admin, redirect to appropriate page based on role
+        if (Auth::guard('admin')->check()) {
+            $admin = Auth::guard('admin')->user();
+            if ($admin->isAdminPhuong() || $admin->isCanBo()) {
+                return redirect()->route('reports.index');
+            }
+            return redirect(RouteServiceProvider::ADMIN);
         }
-        return view("backend.Auth.login");
+        
+        return view('backend.Auth.login');
     }
+
+    /**
+     * Handle admin login request.
+     */
     public function postLogin(Request $request)
     {
         $request->validate([
-            'login' => 'required', // email, sdt hoặc tên đăng nhập
+            'login' => 'required',  // Nhận email, số điện thoại hoặc tên đăng nhập
             'password' => 'required',
         ]);
 
-        $loginInput = $request->login;
-        $password = $request->password;
-
-        // Xác định kiểu đăng nhập
-        if (filter_var($loginInput, FILTER_VALIDATE_EMAIL)) {
-            $field = 'email';
-        } elseif (preg_match('/^[0-9]+$/', $loginInput)) {
-            $field = 'so_dien_thoai';
-        } else {
-            $field = 'ten_dang_nhap';
+        // Tìm kiếm admin theo email, số điện thoại hoặc tên đăng nhập
+        $admin = Admin::where('email', $request->login)
+            ->orWhere('so_dien_thoai', $request->login)
+            ->orWhere('ten_dang_nhap', $request->login)
+            ->first();
+        if(Auth::guard('admin')->check()){
+            return redirect(RouteServiceProvider::ADMIN)->with('error', "Bạn đã đăng nhập, vui lòng đăng xuất để đăng nhập với tài khoản khác");
         }
-
-        $credentials = [
-            $field => $loginInput,
-            'password' => $password,
-        ];
-        // dd($credentials);
-        // Đăng nhập qua guard admin
-        // dd(Auth::guard('admin')->attempt($credentials));
-        if (Auth::guard('admin')->attempt($credentials)) {
-            $admin = Auth::guard('admin')->user();
-            // Cho phép đăng nhập với 3 loại quyền: Admin (1), Admin phường (2), Cán bộ (0)
-            if (!in_array($admin->quyen, [Admin::ADMIN, Admin::ADMIN_PHUONG, Admin::CAN_BO])) {   
-                return redirect()->route('admin.login')
-                    ->with('error', "Tài khoản của bạn không đủ quyền truy cập, liên hệ admin để xác thực!!");
+        // Kiểm tra mật khẩu
+        if ($admin && Hash::check($request->password, $admin->mat_khau)) {
+            // Đăng nhập với guard 'admin'
+            Auth::guard('admin')->login($admin);
+            
+            // Regenerate session để tránh session fixation
+            $request->session()->regenerate();
+            
+            // Redirect theo role: Admin phường và Cán bộ vào báo cáo, Admin tổng vào reports
+            if ($admin->isAdminPhuong() || $admin->isCanBo()) {
+                return redirect()->route('reports.index')->with('success', "Đăng nhập thành công");
             }
-
-            return redirect(RouteServiceProvider::ADMIN);
+            
+            return redirect()->intended(RouteServiceProvider::ADMIN)->with('success', "Đăng nhập thành công");
         }
 
-        return redirect()->route('admin.login')
-            ->with('error', "Đăng nhập thất bại, vui lòng kiểm tra thông tin đăng nhập");
+        return redirect()->back()->withInput($request->only('login'))->with('error', "Đăng nhập thất bại, vui lòng kiểm tra thông tin đăng nhập và mật khẩu");
     }
 
-
-
+    /**
+     * Handle admin logout request.
+     */
     public function logout(Request $request)
     {
-        Auth::logout();
+        Auth::guard('admin')->logout();
         $request->session()->invalidate();
-
         $request->session()->regenerateToken();
 
-        return redirect()->route('admin.login');
+        return redirect()->route('admin.login')->with('success', 'Đăng xuất thành công');
     }
 
-    // Phương thức gửi email xác nhận
-    protected function sendVerificationEmail($user)
-    {
-        $verificationLink = route('verification.verify', ['id' => $user->id, 'hash' => sha1($user->email)]);
-
-        Mail::send('emails.verify', ['user' => $user, 'verificationLink' => $verificationLink], function ($message) use ($user) {
-            $message->to($user->email);
-            $message->subject('Xác nhận tài khoản');
-        });
-    }
-    public function verify(Request $request, $id)
-    {
-        $user = Admin::findOrFail($id);
-
-        // Kiểm tra hash của email
-        if (sha1($user->email) !== $request->hash) {
-            return redirect()->route('login')->with('error', 'Xác thực không hợp lệ.');
-        }
-
-        // Cập nhật trường publish thành 1
-        $user->publish = 1;
-        $user->save();
-
-        return redirect()->route('login')->with('success', 'Tài khoản đã được xác nhận thành công.');
-    }
+    /**
+     * Send password reset link email.
+     */
     public function sendResetLinkEmail(Request $request)
     {
+        // Validate email
         $request->validate([
-            'email' => 'required|email|exists:admins,email',
+            'email' => 'required|email|exists:quan_tri_vien,email',
         ]);
 
-        // Tìm admin dựa trên email
-        $admin = Admin::where('email', $request->email)->first();
-
-        if ($admin) {
-            // Tạo mật khẩu ngẫu nhiên 7 ký tự
-            $randomPassword = Str::random(7);
-
-            // Cập nhật mật khẩu trong database
-            $admin->password = bcrypt($randomPassword);
-            $admin->save();
-
-            try {
-                // Gửi email với mật khẩu mới
-                \Mail::to($admin->email)->send(new ResetPasswordMail($randomPassword));
-
-                return redirect()->back()->with('success', 'Mật khẩu mới đã được gửi đến email của bạn!');
-            } catch (\Exception $e) {
-                // Log lỗi nếu không gửi được email
-                \Log::error('Reset password email error: ' . $e->getMessage());
-
-                return redirect()->back()->with('error', 'Mật khẩu đã được cập nhật, nhưng không thể gửi email. Vui lòng thử lại.');
-            }
-        }
-
-        return redirect()->back()->with('error', 'Có lỗi xảy ra, vui lòng thử lại sau.');
+        // TODO: Implement password reset functionality for admin
+        // For now, just return success message
+        return redirect()->back()->with('success', 'Chức năng đặt lại mật khẩu đang được phát triển. Vui lòng liên hệ quản trị viên.');
     }
 
+    /**
+     * Reset password.
+     */
+    public function resetPassword(Request $request)
+    {
+        // TODO: Implement password reset functionality
+        return redirect()->back()->with('success', 'Chức năng đặt lại mật khẩu đang được phát triển.');
+    }
 }

@@ -2,7 +2,7 @@
 @section('title', 'Đổi mật khẩu')
 
 @section('content')
-<div class="container-fluid">
+<div class="container">
     <div class="row">
         <div class="col-md-6 mx-auto">
             <div class="card">

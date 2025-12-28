@@ -3,9 +3,9 @@
 use App\Exports\UsersExport;
 use Maatwebsite\Excel\Facades\Excel;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\admin\AuthController;
+use App\Http\Controllers\Admin\AuthController;
 use App\Http\Controllers\Admin\FileController;
-use App\Http\Controllers\admin\HomeController;
+use App\Http\Controllers\Admin\HomeController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Admin\AdminController;
 use App\Http\Controllers\Admin\DeathController;
@@ -193,9 +193,13 @@ Route::middleware(['auth:admin', 'role.access'])->group(function () {
     });
 
 });
-// // Route login
-Route::get('/login', [AuthController::class, "login"])->name("admin.login");
-Route::post('/login', [AuthController::class, "postLogin"])->name("admin.post.login");
+
+// Login routes (should be accessible without authentication)
+Route::middleware('guest:admin')->group(function () {
+    Route::get('/login', [AuthController::class, "login"])->name("admin.login");
+    Route::post('/login', [AuthController::class, "postLogin"])->name("admin.post.login");
+});
+
 Route::get('/logout', [AuthController::class, "logout"])->name("admin.logout");
 Route::post('/comments/update-status', [CommentController::class, 'updateStatus']);
 

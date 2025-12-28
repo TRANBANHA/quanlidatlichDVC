@@ -115,6 +115,124 @@
             </div>
         </div>
 
+        <!-- Thống kê nhân viên (chỉ Admin phường) -->
+        @if($currentUser->isAdminPhuong() && isset($canBoList) && $canBoList->count() > 0)
+        <div class="card mb-4 shadow-sm border-0">
+            <div class="card-header bg-white border-bottom">
+                <h5 class="mb-0"><i class="fas fa-users me-2 text-primary"></i>Thống kê nhân viên</h5>
+            </div>
+            <div class="card-body">
+                <div class="row g-3">
+                    @foreach($canBoList as $canBo)
+                        @php
+                            $soHoSoDaXuLy = $canBoStats[$canBo->id] ?? 0;
+                            $tongHoSoCuaCanBo = $hoSos->where('quan_tri_vien_id', $canBo->id)->count();
+                            $tyLe = $tongHoSoCuaCanBo > 0 ? round(($soHoSoDaXuLy / $tongHoSoCuaCanBo) * 100, 1) : 0;
+                        @endphp
+                        <div class="col-xl-3 col-md-4 col-sm-6">
+                            <div class="card border h-100 staff-stats-card">
+                                <div class="card-body">
+                                    <div class="d-flex align-items-start">
+                                        <div class="staff-avatar me-3">
+                                            <div class="avatar-circle bg-primary">
+                                                <i class="fas fa-user-tie"></i>
+                                            </div>
+                                        </div>
+                                        <div class="flex-grow-1">
+                                            <h6 class="mb-1 fw-bold">{{ $canBo->ho_ten }}</h6>
+                                            <div class="mb-2">
+                                                <small class="text-muted d-block">
+                                                    <i class="fas fa-folder-open me-1"></i>
+                                                    Tổng hồ sơ: <strong>{{ $tongHoSoCuaCanBo }}</strong>
+                                                </small>
+                                                <small class="text-success d-block mt-1">
+                                                    <i class="fas fa-check-circle me-1"></i>
+                                                    Đã xử lý: <strong>{{ $soHoSoDaXuLy }}</strong>
+                                                </small>
+                                            </div>
+                                            <div class="progress" style="height: 8px;">
+                                                <div class="progress-bar bg-success" role="progressbar" 
+                                                     style="width: {{ $tyLe }}%" 
+                                                     aria-valuenow="{{ $tyLe }}" 
+                                                     aria-valuemin="0" 
+                                                     aria-valuemax="100">
+                                                </div>
+                                            </div>
+                                            <small class="text-muted d-block mt-1">Tỷ lệ: {{ $tyLe }}%</small>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    @endforeach
+                    
+                    <!-- Thống kê hồ sơ chưa chỉ định -->
+                    @php
+                        $hoSoChuaPhanCong = $hoSos->whereNull('quan_tri_vien_id')->count();
+                    @endphp
+                    @if($hoSoChuaPhanCong > 0)
+                        <div class="col-xl-3 col-md-4 col-sm-6">
+                            <div class="card border h-100 staff-stats-card border-warning">
+                                <div class="card-body">
+                                    <div class="d-flex align-items-start">
+                                        <div class="staff-avatar me-3">
+                                            <div class="avatar-circle bg-warning">
+                                                <i class="fas fa-exclamation-triangle"></i>
+                                            </div>
+                                        </div>
+                                        <div class="flex-grow-1">
+                                            <h6 class="mb-1 fw-bold text-warning">Chưa chỉ định</h6>
+                                            <div class="mb-2">
+                                                <small class="text-muted d-block">
+                                                    <i class="fas fa-folder-open me-1"></i>
+                                                    Hồ sơ: <strong>{{ $hoSoChuaPhanCong }}</strong>
+                                                </small>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    @endif
+                </div>
+            </div>
+        </div>
+        @endif
+
+        <!-- Tab dịch vụ -->
+        @if(($currentUser->isAdminPhuong() || $currentUser->isCanBo()) && $services->count() > 0)
+        <div class="card mb-4 shadow-sm border-0">
+            <div class="card-header bg-white border-bottom">
+                <h5 class="mb-0"><i class="fas fa-briefcase me-2 text-primary"></i>Chọn dịch vụ</h5>
+            </div>
+            <div class="card-body">
+                <div class="row g-3">
+                    @php
+                        $currentDichVuId = request('dich_vu_id');
+                    @endphp
+                    <div class="col-md-12">
+                        <a href="{{ route('admin.ho-so.index', array_merge(request()->except('dich_vu_id'), ['dich_vu_id' => ''])) }}" 
+                           class="btn btn-{{ !$currentDichVuId ? 'primary' : 'outline-primary' }} mb-2 me-2">
+                            <i class="fas fa-list me-1"></i>Tất cả dịch vụ
+                            <span class="badge bg-{{ !$currentDichVuId ? 'light text-dark' : 'primary' }} ms-2">{{ $serviceCounts['all'] ?? $hoSos->count() }}</span>
+                        </a>
+                        @foreach($services as $service)
+                            @php
+                                $count = $serviceCounts[$service->id] ?? 0;
+                                $isActive = $currentDichVuId == $service->id;
+                            @endphp
+                            <a href="{{ route('admin.ho-so.index', array_merge(request()->except('dich_vu_id'), ['dich_vu_id' => $service->id])) }}" 
+                               class="btn btn-{{ $isActive ? 'primary' : 'outline-primary' }} mb-2 me-2">
+                                <i class="fas fa-briefcase me-1"></i>{{ $service->ten_dich_vu }}
+                                <span class="badge bg-{{ $isActive ? 'light text-dark' : 'primary' }} ms-2">{{ $count }}</span>
+                            </a>
+                        @endforeach
+                    </div>
+                </div>
+            </div>
+        </div>
+        @endif
+
         <!-- Bộ lọc -->
         <div class="card mb-4 shadow-sm border-0">
             <div class="card-header bg-white border-bottom">
@@ -168,15 +286,70 @@
                             </a>
                         </div>
                     </div>
+                    <!-- Giữ lại dich_vu_id trong form nếu đã chọn -->
+                    @if(request('dich_vu_id'))
+                        <input type="hidden" name="dich_vu_id" value="{{ request('dich_vu_id') }}">
+                    @endif
                 </form>
             </div>
         </div>
 
-        <!-- Danh sách hồ sơ -->
+        <!-- Khung Hôm nay xử lý -->
+        @if(($currentUser->isAdmin() || $currentUser->isAdminPhuong() || $currentUser->isCanBo()) && isset($groupedHoSosHomNay) && count($groupedHoSosHomNay) > 0)
+        <div class="card shadow-sm border-0 mb-4 border-warning border-2">
+            <div class="card-header bg-warning text-white border-bottom">
+                <div class="d-flex align-items-center justify-content-between">
+                    <h5 class="mb-0 fw-bold">
+                        <i class="fas fa-calendar-day me-2"></i>HÔM NAY XỬ LÝ
+                        <span class="badge bg-light text-dark ms-2">{{ $hoSoHomNay->count() }} hồ sơ</span>
+                    </h5>
+                    <span class="badge bg-danger animate-pulse">
+                        <i class="fas fa-exclamation-circle me-1"></i>Ưu tiên
+                    </span>
+                </div>
+            </div>
+            <div class="card-body p-0">
+                @include('backend.ho-so.partials.hoso-list', [
+                    'groupedHoSos' => $groupedHoSosHomNay,
+                    'currentUser' => $currentUser,
+                    'canBoMap' => $canBoMap ?? [],
+                    'canBoList' => $canBoList ?? collect(),
+                    'isHomNay' => true
+                ])
+            </div>
+        </div>
+        @endif
+
+        <!-- Khung Thông báo quan trọng (nếu có) -->
+        @php
+            $hoSoQuanTrong = $hoSos->filter(function($hoSo) {
+                return in_array($hoSo->trang_thai, ['Đang xử lý', 'Cần bổ sung hồ sơ']) && 
+                       $hoSo->ngay_hen && 
+                       \Carbon\Carbon::parse($hoSo->ngay_hen)->lte(\Carbon\Carbon::now()->addDays(2));
+            })->count();
+        @endphp
+        @if($hoSoQuanTrong > 0)
+        <div class="card shadow-sm border-0 mb-4 border-danger">
+            <div class="card-header bg-danger text-white">
+                <h5 class="mb-0 fw-bold">
+                    <i class="fas fa-exclamation-triangle me-2"></i>CẦN CHÚ Ý
+                    <span class="badge bg-light text-danger ms-2">{{ $hoSoQuanTrong }} hồ sơ cần xử lý gấp</span>
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="alert alert-warning mb-0">
+                    <i class="fas fa-info-circle me-2"></i>
+                    Có <strong>{{ $hoSoQuanTrong }}</strong> hồ sơ đang xử lý hoặc cần bổ sung trong 2 ngày tới. Vui lòng kiểm tra và xử lý kịp thời.
+                </div>
+            </div>
+        </div>
+        @endif
+
+        <!-- Danh sách hồ sơ các ngày khác -->
         <div class="card shadow-sm border-0">
             <div class="card-header bg-white border-bottom">
                 <div class="d-flex align-items-center justify-content-between">
-                    <h5 class="mb-0"><i class="fas fa-list me-2 text-primary"></i>Danh sách hồ sơ</h5>
+                    <h5 class="mb-0"><i class="fas fa-list me-2 text-primary"></i>Danh sách hồ sơ theo ngày</h5>
                     <span class="badge bg-primary">{{ $hoSos->count() }} hồ sơ</span>
                 </div>
             </div>
@@ -189,154 +362,68 @@
                             <p class="text-muted mb-0">Vui lòng chọn phường để xem hồ sơ</p>
                         </div>
                     </div>
-                @elseif($currentUser->isAdmin() || $currentUser->isAdminPhuong())
-                    <!-- Hiển thị theo group (Admin tổng: đã chọn phường, Admin phường: theo nhân viên) -->
-                    @forelse($groupedHoSos as $groupKey => $groupHoSos)
-                        <div class="mb-4">
-                            <!-- Header của group -->
-                            <div class="bg-light p-3 border-bottom">
-                                <h6 class="mb-0 fw-bold text-primary">
-                                    @if($currentUser->isAdmin())
-                                        <i class="fas fa-building me-2"></i>
-                                        Phường: {{ $groupHoSos->first()->donVi->ten_don_vi ?? 'N/A' }}
-                                        <span class="badge bg-primary ms-2">{{ $groupHoSos->count() }} hồ sơ</span>
-                                    @elseif($currentUser->isAdminPhuong())
-                                        <i class="fas fa-user-tie me-2"></i>
-                                        @if($groupKey && $groupHoSos->first()->quanTriVien)
-                                            Cán bộ: {{ $groupHoSos->first()->quanTriVien->ho_ten }}
-                                        @else
-                                            Chưa phân công
-                                        @endif
-                                        <span class="badge bg-primary ms-2">{{ $groupHoSos->count() }} hồ sơ</span>
-                                    @endif
-                                </h6>
-                            </div>
-                            
-                            <!-- Bảng hồ sơ trong group -->
-                            <div class="table-responsive">
-                                <table class="table table-hover table-modern mb-0">
-                                    <thead class="table-light">
-                                        <tr>
-                                            <th class="ps-4"><i class="fas fa-hashtag me-2"></i>Mã hồ sơ</th>
-                                            <th><i class="fas fa-sort-numeric-up me-2"></i>Số thứ tự</th>
-                                            <th><i class="fas fa-user me-2"></i>Người dân</th>
-                                            <th><i class="fas fa-concierge-bell me-2"></i>Dịch vụ</th>
-                                            @if($currentUser->isAdmin() || $currentUser->isAdminPhuong())
-                                                <th><i class="fas fa-user-tie me-2"></i>Cán bộ xử lý</th>
-                                            @endif
-                                            <th><i class="fas fa-calendar-alt me-2"></i>Ngày hẹn</th>
-                                            <th><i class="fas fa-tag me-2"></i>Trạng thái</th>
-                                            <th class="text-center"><i class="fas fa-cog me-2"></i>Hành động</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        @foreach($groupHoSos as $hoSo)
-                                            <tr class="table-row-hover">
-                                                <td class="ps-4">
-                                                    <strong class="text-primary">{{ $hoSo->ma_ho_so }}</strong>
-                                                </td>
-                                                <td>
-                                                    <span class="badge bg-info">{{ $hoSo->so_thu_tu ?? '-' }}</span>
-                                                </td>
-                                                <td>
-                                                    <div class="d-flex flex-column">
-                                                        <span class="fw-semibold">{{ $hoSo->nguoiDung->ten ?? 'N/A' }}</span>
-                                                        <small class="text-muted">{{ $hoSo->nguoiDung->cccd ?? '' }}</small>
-                                                    </div>
-                                                </td>
-                                                <td>
-                                                    <span class="badge bg-light text-dark">{{ $hoSo->dichVu->ten_dich_vu ?? 'N/A' }}</span>
-                                                </td>
-                                                @if($currentUser->isAdmin() || $currentUser->isAdminPhuong())
-                                                    <td>
-                                                        @if($currentUser->isAdminPhuong() || ($currentUser->isAdmin() && request('don_vi_id')))
-                                                            @php
-                                                                // Lấy thứ trong tuần của ngày hẹn
-                                                                $ngayHen = \Carbon\Carbon::parse($hoSo->ngay_hen);
-                                                                $thuTrongTuan = $ngayHen->dayOfWeek; // 0 = Chủ nhật, 1 = Thứ 2, ..., 6 = Thứ 7
-                                                                $thuTrongTuan = $thuTrongTuan == 0 ? 7 : $thuTrongTuan;
-                                                                
-                                                                // Tìm schedule của dịch vụ vào thứ đó
-                                                                $schedule = \App\Models\ServiceSchedule::where('dich_vu_id', $hoSo->dich_vu_id)
-                                                                    ->where('thu_trong_tuan', $thuTrongTuan)
-                                                                    ->where('trang_thai', true)
-                                                                    ->first();
-                                                                
-                                                                $canBosForHoSo = collect();
-                                                                $donViId = $currentUser->isAdmin() ? $hoSo->don_vi_id : $currentUser->don_vi_id;
-                                                                
-                                                                if ($schedule) {
-                                                                    // Lấy các cán bộ đã được phân công vào schedule này
-                                                                    $canBoIds = \App\Models\ServiceScheduleStaff::where('schedule_id', $schedule->id)
-                                                                        ->pluck('can_bo_id')
-                                                                        ->toArray();
-                                                                    
-                                                                    if (!empty($canBoIds)) {
-                                                                        $canBosForHoSo = \App\Models\Admin::where('don_vi_id', $donViId)
-                                                                            ->where('quyen', 0)
-                                                                            ->whereIn('id', $canBoIds)
-                                                                            ->orderBy('ho_ten')
-                                                                            ->get();
-                                                                    }
-                                                                }
-                                                                
-                                                                // CHỈ thêm cán bộ đã được phân công vào danh sách NẾU cán bộ đó có trong schedule
-                                                                // Không thêm cán bộ đã được phân công trước đó nếu không có trong schedule
-                                                            @endphp
-                                                            <form action="{{ route('admin.ho-so.assign', $hoSo->id) }}" method="POST" class="assign-form" data-ho-so-id="{{ $hoSo->id }}">
-                                                                @csrf
-                                                                <select name="quan_tri_vien_id" class="form-select form-select-sm assign-select" style="min-width: 150px;" {{ $canBosForHoSo->isEmpty() ? 'disabled' : '' }}>
-                                                                    @if($canBosForHoSo->isEmpty())
-                                                                        <option value="" disabled selected>Chưa phân công cán bộ</option>
-                                                                    @else
-                                                                        <option value="">-- Chọn cán bộ --</option>
-                                                                        @foreach($canBosForHoSo as $canBo)
-                                                                            <option value="{{ $canBo->id }}" {{ $hoSo->quan_tri_vien_id == $canBo->id ? 'selected' : '' }}>
-                                                                                {{ $canBo->ho_ten }}
-                                                                            </option>
-                                                                        @endforeach
-                                                                    @endif
-                                                                </select>
-                                                            </form>
-                                                        @else
-                                                            @if($hoSo->quanTriVien)
-                                                                <span class="badge bg-info">{{ $hoSo->quanTriVien->ho_ten }}</span>
-                                                            @else
-                                                                <span class="badge bg-secondary">Chưa phân công</span>
-                                                            @endif
-                                                        @endif
-                                                    </td>
-                                                @endif
-                                                <td>
-                                                    <div class="d-flex flex-column">
-                                                        <span>{{ \Carbon\Carbon::parse($hoSo->ngay_hen)->format('d/m/Y') }}</span>
-                                                        <small class="text-muted"><i class="fas fa-clock me-1"></i>{{ $hoSo->gio_hen }}</small>
-                                                    </div>
-                                                </td>
-                                                <td>
-                                                    @php
-                                                        $statusColors = [
-                                                            'Đã tiếp nhận' => 'info',
-                                                            'Đang xử lý' => 'warning',
-                                                            'Cần bổ sung hồ sơ' => 'danger',
-                                                            'Hoàn tất' => 'success',
-                                                            'Đã hủy' => 'secondary',
-                                                        ];
-                                                        $color = $statusColors[$hoSo->trang_thai] ?? 'secondary';
-                                                    @endphp
-                                                    <span class="badge bg-{{ $color }} badge-modern">{{ $hoSo->trang_thai }}</span>
-                                                </td>
-                                                <td class="text-center">
-                                                    <a href="{{ route('admin.ho-so.show', $hoSo->id) }}" class="btn btn-sm btn-primary btn-action" title="Xem chi tiết">
-                                                        <i class="fas fa-eye"></i>
-                                                    </a>
-                                                </td>
-                                            </tr>
-                                        @endforeach
-                                    </tbody>
-                                </table>
-                            </div>
+                @elseif($currentUser->isAdmin() || $currentUser->isAdminPhuong() || $currentUser->isCanBo())
+                    <!-- Hiển thị theo ngày, trong mỗi ngày group theo cán bộ hoặc dịch vụ -->
+                    @forelse($groupedHoSos as $ngayKey => $ngayGroup)
+                        @php
+                            // Xác định ngày hiển thị
+                            if ($ngayKey === 'khong_co_ngay') {
+                                $ngayHienThi = 'Chưa có ngày hẹn';
+                                $isToday = false;
+                            } else {
+                                try {
+                                    $ngayCarbon = \Carbon\Carbon::parse($ngayKey);
+                                    $ngayHienThi = $ngayCarbon->format('d/m/Y');
+                                    $isToday = $ngayCarbon->isToday();
+                                    $isTomorrow = $ngayCarbon->isTomorrow();
+                                } catch (\Exception $e) {
+                                    $ngayHienThi = $ngayKey;
+                                    $isToday = false;
+                                    $isTomorrow = false;
+                                }
+                            }
+                        @endphp
+                        
+                        <!-- Header ngày -->
+                        <div class="bg-info text-white p-3 border-bottom">
+                            <h6 class="mb-0 fw-bold">
+                                <i class="fas fa-calendar me-2"></i>
+                                {{ $ngayHienThi }}
+                                @if($isToday)
+                                    <span class="badge bg-warning text-dark ms-2">Hôm nay</span>
+                                @elseif($isTomorrow)
+                                    <span class="badge bg-secondary ms-2">Ngày mai</span>
+                                @endif
+                                @php
+                                    $tongHoSoTrongNgay = is_a($ngayGroup, 'Illuminate\Support\Collection') 
+                                        ? $ngayGroup->flatten()->count() 
+                                        : (is_array($ngayGroup) ? collect($ngayGroup)->flatten()->count() : $ngayGroup->count());
+                                @endphp
+                                <span class="badge bg-light text-dark ms-2">{{ $tongHoSoTrongNgay }} hồ sơ</span>
+                            </h6>
                         </div>
+                        
+                        <!-- Nếu là Admin phường hoặc Cán bộ, group tiếp theo cán bộ/dịch vụ -->
+                        @if($currentUser->isAdminPhuong() || $currentUser->isCanBo())
+                            @foreach($ngayGroup as $subGroupKey => $subGroupHoSos)
+                                @include('backend.ho-so.partials.hoso-group', [
+                                    'groupHoSos' => $subGroupHoSos,
+                                    'groupKey' => $subGroupKey,
+                                    'currentUser' => $currentUser,
+                                    'canBoMap' => $canBoMap ?? [],
+                                    'canBoList' => $canBoList ?? collect()
+                                ])
+                            @endforeach
+                        @else
+                            <!-- Admin tổng: hiển thị trực tiếp -->
+                            @include('backend.ho-so.partials.hoso-group', [
+                                'groupHoSos' => $ngayGroup,
+                                'groupKey' => null,
+                                'currentUser' => $currentUser,
+                                'canBoMap' => [],
+                                'canBoList' => collect()
+                            ])
+                        @endif
                     @empty
                         <div class="text-center py-5">
                             <div class="empty-state-table">
@@ -345,77 +432,6 @@
                             </div>
                         </div>
                     @endforelse
-                @else
-                    <!-- Cán bộ: Hiển thị trực tiếp, sắp xếp theo số thứ tự -->
-                    <div class="table-responsive">
-                        <table class="table table-hover table-modern mb-0">
-                            <thead class="table-light">
-                                <tr>
-                                    <th class="ps-4"><i class="fas fa-sort-numeric-up me-2"></i>Số thứ tự</th>
-                                    <th><i class="fas fa-hashtag me-2"></i>Mã hồ sơ</th>
-                                    <th><i class="fas fa-user me-2"></i>Người dân</th>
-                                    <th><i class="fas fa-concierge-bell me-2"></i>Dịch vụ</th>
-                                    <th><i class="fas fa-calendar-alt me-2"></i>Ngày hẹn</th>
-                                    <th><i class="fas fa-tag me-2"></i>Trạng thái</th>
-                                    <th class="text-center"><i class="fas fa-cog me-2"></i>Hành động</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @forelse($hoSos as $hoSo)
-                                    <tr class="table-row-hover">
-                                        <td class="ps-4">
-                                            <span class="badge bg-info fs-6">{{ $hoSo->so_thu_tu ?? '-' }}</span>
-                                        </td>
-                                        <td>
-                                            <strong class="text-primary">{{ $hoSo->ma_ho_so }}</strong>
-                                        </td>
-                                        <td>
-                                            <div class="d-flex flex-column">
-                                                <span class="fw-semibold">{{ $hoSo->nguoiDung->ten ?? 'N/A' }}</span>
-                                                <small class="text-muted">{{ $hoSo->nguoiDung->cccd ?? '' }}</small>
-                                            </div>
-                                        </td>
-                                        <td>
-                                            <span class="badge bg-light text-dark">{{ $hoSo->dichVu->ten_dich_vu ?? 'N/A' }}</span>
-                                        </td>
-                                        <td>
-                                            <div class="d-flex flex-column">
-                                                <span>{{ \Carbon\Carbon::parse($hoSo->ngay_hen)->format('d/m/Y') }}</span>
-                                                <small class="text-muted"><i class="fas fa-clock me-1"></i>{{ $hoSo->gio_hen }}</small>
-                                            </div>
-                                        </td>
-                                        <td>
-                                            @php
-                                                $statusColors = [
-                                                    'Đã tiếp nhận' => 'info',
-                                                    'Đang xử lý' => 'warning',
-                                                    'Cần bổ sung hồ sơ' => 'danger',
-                                                    'Hoàn tất' => 'success',
-                                                    'Đã hủy' => 'secondary',
-                                                ];
-                                                $color = $statusColors[$hoSo->trang_thai] ?? 'secondary';
-                                            @endphp
-                                            <span class="badge bg-{{ $color }} badge-modern">{{ $hoSo->trang_thai }}</span>
-                                        </td>
-                                        <td class="text-center">
-                                            <a href="{{ route('admin.ho-so.show', $hoSo->id) }}" class="btn btn-sm btn-primary btn-action" title="Xem chi tiết">
-                                                <i class="fas fa-eye"></i>
-                                            </a>
-                                        </td>
-                                    </tr>
-                                @empty
-                                    <tr>
-                                        <td colspan="7" class="text-center py-5">
-                                            <div class="empty-state-table">
-                                                <i class="fas fa-inbox fa-3x mb-3 text-muted"></i>
-                                                <p class="text-muted mb-0">Chưa có hồ sơ nào</p>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                @endforelse
-                            </tbody>
-                        </table>
-                    </div>
                 @endif
             </div>
         </div>
@@ -481,6 +497,39 @@
         font-size: 1.75rem;
         font-weight: 700;
         margin: 0;
+    }
+
+    .staff-stats-card {
+        transition: all 0.3s ease;
+        border-radius: 12px;
+    }
+
+    .staff-stats-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1) !important;
+    }
+
+    .staff-avatar {
+        flex-shrink: 0;
+    }
+
+    .avatar-circle {
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-size: 1.25rem;
+    }
+
+    .avatar-circle.bg-primary {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    }
+
+    .avatar-circle.bg-warning {
+        background: linear-gradient(135deg, #ffc107 0%, #ff9800 100%);
     }
 
     .form-control-modern,
@@ -560,6 +609,29 @@
             padding: 10px 8px;
         }
     }
+
+    .animate-pulse {
+        animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+    }
+
+    @keyframes pulse {
+        0%, 100% {
+            opacity: 1;
+        }
+        50% {
+            opacity: .5;
+        }
+    }
+
+    .border-warning.border-2 {
+        border-width: 3px !important;
+    }
+
+    .table-sm th,
+    .table-sm td {
+        padding: 0.5rem;
+        font-size: 0.875rem;
+    }
 </style>
 
 <script>
@@ -578,7 +650,7 @@
         }
         @endif
 
-        // Xử lý phân công cán bộ qua AJAX
+        // Xử lý cập nhật cán bộ qua AJAX
         const assignSelects = document.querySelectorAll('.assign-select');
         assignSelects.forEach(function(select) {
             select.addEventListener('change', function() {
@@ -613,13 +685,13 @@
                         this.dataset.originalValue = canBoId;
                     } else {
                         // Hiển thị lỗi và khôi phục giá trị cũ
-                        showNotification('error', data.message || 'Có lỗi xảy ra khi phân công.');
+                        showNotification('error', data.message || 'Có lỗi xảy ra khi cập nhật.');
                         this.value = originalValue;
                     }
                 })
                 .catch(error => {
                     console.error('Error:', error);
-                    showNotification('error', 'Có lỗi xảy ra khi phân công hồ sơ.');
+                    showNotification('error', 'Có lỗi xảy ra khi cập nhật hồ sơ.');
                     this.value = originalValue;
                 })
                 .finally(() => {

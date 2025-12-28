@@ -80,6 +80,13 @@ class HoSo extends Model
     {
         return $this->hasOne(Rating::class, 'ho_so_id');
     }
+    
+    // Một hồ sơ có một đánh giá của người dùng cụ thể
+    public function ratingByUser($userId)
+    {
+        return $this->hasOne(Rating::class, 'ho_so_id')
+            ->where('nguoi_dung_id', $userId);
+    }
 
     // Một hồ sơ có nhiều fields động
     public function hoSoFields()

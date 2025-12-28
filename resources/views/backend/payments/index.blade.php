@@ -3,7 +3,7 @@
 @section('title', 'Quản Lý Thanh Toán')
 
 @section('content')
-<div class="container-fluid">
+<div class="container">
     <div class="row">
         <div class="col-12">
             <div class="card shadow mb-4">
@@ -13,6 +13,15 @@
                     </h6>
                 </div>
                 <div class="card-body">
+                    @php
+                        // Tính toán thống kê từ $thongKeTrangThai
+                        $stats = [
+                            'total' => $tongSoGiaoDich ?? 0,
+                            'cho_thanh_toan' => $thongKeTrangThai->firstWhere('trang_thai_thanh_toan', 'cho_thanh_toan')->so_luong ?? 0,
+                            'da_thanh_toan' => $thongKeTrangThai->firstWhere('trang_thai_thanh_toan', 'da_thanh_toan')->so_luong ?? 0,
+                            'co_anh' => $payments->whereNotNull('hinh_anh')->where('trang_thai_thanh_toan', 'cho_thanh_toan')->count()
+                        ];
+                    @endphp
                     <!-- Thống kê -->
                     <div class="row mb-4">
                         <div class="col-md-3">
@@ -145,9 +154,25 @@
                                         </div>
                                     </td>
                                     <td>
-                                        <a href="{{ route('admin.ho-so.show', $payment->ho_so_id) }}" target="_blank">
-                                            {{ $payment->hoSo->ma_ho_so ?? 'N/A' }}
-                                        </a>
+                                        @php
+                                            $hoSo = $payment->hoSo;
+                                            $daDenNgay = true;
+                                            if ($hoSo && $hoSo->ngay_hen) {
+                                                $ngayHen = \Carbon\Carbon::parse($hoSo->ngay_hen)->startOfDay();
+                                                $ngayHienTai = \Carbon\Carbon::now()->startOfDay();
+                                                $daDenNgay = $ngayHienTai->gte($ngayHen);
+                                            }
+                                        @endphp
+                                        @if($daDenNgay && $hoSo)
+                                            <a href="{{ route('admin.ho-so.show', $payment->ho_so_id) }}" target="_blank">
+                                                {{ $hoSo->ma_ho_so ?? 'N/A' }}
+                                            </a>
+                                        @else
+                                            <span class="text-muted">{{ $hoSo->ma_ho_so ?? 'N/A' }}</span>
+                                            @if($hoSo && $hoSo->ngay_hen)
+                                                <br><small class="text-warning">(Chưa đến ngày: {{ \Carbon\Carbon::parse($hoSo->ngay_hen)->format('d/m/Y') }})</small>
+                                            @endif
+                                        @endif
                                     </td>
                                     <td>
                                         <strong class="text-primary">{{ number_format($payment->so_tien) }} VNĐ</strong>

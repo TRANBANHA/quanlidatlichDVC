@@ -27,7 +27,15 @@ class BookingController extends Controller
     public function selectPhuong()
     {
         $donVis = DonVi::orderBy('ten_don_vi')->get();
-        return view('website.booking.select-phuong', compact('donVis'));
+        
+        // Lấy phường mặc định từ tài khoản nếu user đã đăng nhập
+        $defaultDonViId = null;
+        if (Auth::guard('web')->check()) {
+            $user = Auth::guard('web')->user();
+            $defaultDonViId = $user->don_vi_id ?? null;
+        }
+        
+        return view('website.booking.select-phuong', compact('donVis', 'defaultDonViId'));
     }
 
     /**
@@ -207,18 +215,24 @@ class BookingController extends Controller
         try {
             $user = Auth::guard('web')->user();
             
-            // Kiểm tra số lượng còn trống
+            // Kiểm tra số lượng còn trống với LOCK để tránh race condition
+            // Sử dụng lockForUpdate để đảm bảo chỉ 1 request được xử lý tại 1 thời điểm
             $servicePhuong = ServicePhuong::where('dich_vu_id', $request->dich_vu_id)
                 ->where('don_vi_id', $request->don_vi_id)
+                ->lockForUpdate() // Lock row để tránh race condition
                 ->firstOrFail();
 
+            // Đếm số lượng đã đặt với lock để đảm bảo tính nhất quán
             $bookedCount = HoSo::where('dich_vu_id', $request->dich_vu_id)
                 ->where('don_vi_id', $request->don_vi_id)
                 ->where('ngay_hen', $request->ngay_hen)
                 ->where('trang_thai', '!=', HoSo::STATUS_CANCELLED)
+                ->lockForUpdate() // Lock để đảm bảo đếm chính xác
                 ->count();
 
+            // Kiểm tra lại số chỗ trước khi tạo hồ sơ (double check)
             if ($bookedCount >= $servicePhuong->so_luong_toi_da) {
+                DB::rollBack();
                 return redirect()->route('booking.upload-form', [
                     'don_vi_id' => $request->don_vi_id,
                     'dich_vu_id' => $request->dich_vu_id,
@@ -230,65 +244,77 @@ class BookingController extends Controller
             // Tính số thứ tự (số lượng đã đăng ký + 1)
             $soThuTu = $bookedCount + 1;
 
-            // Tự động phân công cán bộ dựa trên lịch dịch vụ
+            // Tự động phân công cán bộ: Random đều cho tất cả cán bộ của phường (không theo dịch vụ)
             $quanTriVienId = null;
             
-            // Lấy thứ trong tuần của ngày hẹn (1 = Thứ 2, 7 = Chủ nhật)
-            $ngayHen = Carbon::parse($request->ngay_hen);
-            $thuTrongTuan = $ngayHen->dayOfWeek; // 0 = Chủ nhật, 1 = Thứ 2, ..., 6 = Thứ 7
-            // Chuyển đổi: 0 (Chủ nhật) -> 7, 1-6 giữ nguyên
-            $thuTrongTuan = $thuTrongTuan == 0 ? 7 : $thuTrongTuan;
+            // Lấy tất cả cán bộ của phường
+            $canBoPhuong = Admin::where('don_vi_id', $request->don_vi_id)
+                ->where('quyen', Admin::CAN_BO) // Chỉ cán bộ
+                ->pluck('id')
+                ->toArray();
             
-            // Tìm schedule của dịch vụ vào thứ đó
-            $schedule = ServiceSchedule::where('dich_vu_id', $request->dich_vu_id)
-                ->where('thu_trong_tuan', $thuTrongTuan)
-                ->where('trang_thai', true)
-                ->first();
-            
-            if ($schedule) {
-                // Lấy các cán bộ đã được phân công vào schedule này
-                $canBoIds = ServiceScheduleStaff::where('schedule_id', $schedule->id)
-                    ->pluck('can_bo_id')
-                    ->toArray();
-                
-                if (!empty($canBoIds)) {
-                    // Random chọn 1 cán bộ trong danh sách
-                    $quanTriVienId = $canBoIds[array_rand($canBoIds)];
-                } else {
-                    // Nếu schedule không có cán bộ, log để debug
-                    \Log::warning('Schedule không có cán bộ được gán', [
-                        'schedule_id' => $schedule->id,
-                        'dich_vu_id' => $request->dich_vu_id,
-                        'thu_trong_tuan' => $thuTrongTuan,
-                        'ngay_hen' => $request->ngay_hen
-                    ]);
+            if (!empty($canBoPhuong)) {
+                // Đếm số hồ sơ của từng cán bộ trong ngày (tất cả dịch vụ)
+                $canBoWorkloads = [];
+                foreach ($canBoPhuong as $canBoId) {
+                    $workload = HoSo::where('quan_tri_vien_id', $canBoId)
+                        ->where('ngay_hen', $request->ngay_hen)
+                        ->where('trang_thai', '!=', HoSo::STATUS_CANCELLED)
+                        ->count();
+                    $canBoWorkloads[$canBoId] = $workload;
                 }
-            } else {
-                // Nếu không tìm thấy schedule, thử tìm cán bộ của phường làm fallback
-                $canBoPhuong = Admin::where('don_vi_id', $request->don_vi_id)
-                    ->where('quyen', 0) // Cán bộ
-                    ->where('trang_thai', true)
-                    ->pluck('id')
-                    ->toArray();
                 
-                if (!empty($canBoPhuong)) {
-                    // Random chọn 1 cán bộ của phường
+                // Tìm cán bộ có ít hồ sơ nhất trong ngày
+                if (!empty($canBoWorkloads)) {
+                    $minWorkload = min($canBoWorkloads);
+                    // Lấy tất cả cán bộ có workload thấp nhất
+                    $canBoWithMinWorkload = array_keys($canBoWorkloads, $minWorkload);
+                    
+                    // Random chọn trong số các cán bộ có workload thấp nhất để chia đều
+                    $randomIndex = array_rand($canBoWithMinWorkload);
+                    $quanTriVienId = $canBoWithMinWorkload[$randomIndex];
+                } else {
+                    // Nếu không có hồ sơ nào, random chọn trong tất cả cán bộ phường
                     $quanTriVienId = $canBoPhuong[array_rand($canBoPhuong)];
-                    \Log::info('Không tìm thấy schedule, sử dụng cán bộ phường làm fallback', [
-                        'dich_vu_id' => $request->dich_vu_id,
-                        'don_vi_id' => $request->don_vi_id,
-                        'thu_trong_tuan' => $thuTrongTuan,
-                        'quan_tri_vien_id' => $quanTriVienId
-                    ]);
-                } else {
-                    \Log::warning('Không tìm thấy schedule và không có cán bộ phường', [
-                        'dich_vu_id' => $request->dich_vu_id,
-                        'don_vi_id' => $request->don_vi_id,
-                        'thu_trong_tuan' => $thuTrongTuan,
-                        'ngay_hen' => $request->ngay_hen
-                    ]);
                 }
+                
+                \Log::info('Phân công cán bộ random đều cho phường', [
+                    'don_vi_id' => $request->don_vi_id,
+                    'ngay_hen' => $request->ngay_hen,
+                    'quan_tri_vien_id' => $quanTriVienId,
+                    'workload' => $canBoWorkloads[$quanTriVienId] ?? 0,
+                    'all_workloads' => $canBoWorkloads,
+                    'min_workload' => $minWorkload ?? null,
+                    'candidates' => $canBoWithMinWorkload ?? []
+                ]);
+            } else {
+                \Log::warning('Không tìm thấy cán bộ phường để phân công', [
+                    'don_vi_id' => $request->don_vi_id,
+                    'ngay_hen' => $request->ngay_hen
+                ]);
             }
+
+            // Kiểm tra lại lần cuối trước khi tạo hồ sơ (double check pattern)
+            // Đảm bảo không có request nào khác đã tạo hồ sơ trong lúc xử lý
+            $finalBookedCount = HoSo::where('dich_vu_id', $request->dich_vu_id)
+                ->where('don_vi_id', $request->don_vi_id)
+                ->where('ngay_hen', $request->ngay_hen)
+                ->where('trang_thai', '!=', HoSo::STATUS_CANCELLED)
+                ->lockForUpdate()
+                ->count();
+            
+            if ($finalBookedCount >= $servicePhuong->so_luong_toi_da) {
+                DB::rollBack();
+                return redirect()->route('booking.upload-form', [
+                    'don_vi_id' => $request->don_vi_id,
+                    'dich_vu_id' => $request->dich_vu_id,
+                    'ngay_hen' => $request->ngay_hen,
+                    'gio_hen' => $request->gio_hen
+                ])->withErrors(['ngay_hen' => 'Ngày này đã hết chỗ. Vui lòng chọn ngày khác.'])->withInput();
+            }
+            
+            // Cập nhật lại số thứ tự dựa trên số lượng thực tế
+            $soThuTu = $finalBookedCount + 1;
 
             // Tạo mã hồ sơ trước
             $maHoSo = HoSo::generateCode();
@@ -576,6 +602,26 @@ class BookingController extends Controller
                 }
             }
 
+            // Tự động thêm trường "loai_phuong" với giá trị mặc định từ user nếu chưa có
+            $existingLoaiPhuong = \App\Models\HoSoField::where('ho_so_id', $hoSo->id)
+                ->where('ten_truong', 'loai_phuong')
+                ->first();
+            
+            // Nếu chưa có trường loai_phuong hoặc giá trị rỗng, tự động thêm với giá trị từ user (mặc định là "tạm trú")
+            if (!$existingLoaiPhuong || empty(trim($existingLoaiPhuong->gia_tri))) {
+                $loaiPhuongValue = $user->loai_phuong ?? 'tạm trú';
+                
+                if ($existingLoaiPhuong) {
+                    $existingLoaiPhuong->update(['gia_tri' => $loaiPhuongValue]);
+                } else {
+                    \App\Models\HoSoField::create([
+                        'ho_so_id' => $hoSo->id,
+                        'ten_truong' => 'loai_phuong',
+                        'gia_tri' => $loaiPhuongValue,
+                    ]);
+                }
+            }
+
             // Tạo thông báo
             ThongBao::create([
                 'ho_so_id' => $hoSo->id,
@@ -664,10 +710,11 @@ class BookingController extends Controller
             // Kiểm tra xem ngày này có trong lịch không
             foreach ($schedules as $schedule) {
                 if ($schedule->thu_trong_tuan == $thuTrongTuan) {
-                    // Kiểm tra số lượng đã đặt
+                    // Kiểm tra số lượng đã đặt - đảm bảo format ngày đúng
+                    $dateString = $date->format('Y-m-d');
                     $bookedCount = HoSo::where('dich_vu_id', $servicePhuong->dich_vu_id)
                         ->where('don_vi_id', $servicePhuong->don_vi_id)
-                        ->where('ngay_hen', $date->format('Y-m-d'))
+                        ->whereDate('ngay_hen', $dateString) // Sử dụng whereDate để đảm bảo so sánh đúng
                         ->where('trang_thai', '!=', HoSo::STATUS_CANCELLED)
                         ->count();
 
@@ -676,11 +723,13 @@ class BookingController extends Controller
                     // Chỉ thêm ngày nếu còn chỗ trống
                     if ($availableSlots > 0) {
                         $availableDates[] = [
-                            'date' => $date->format('Y-m-d'),
+                            'date' => $dateString,
                             'display' => $date->format('d/m/Y'),
                             'day_name' => $this->getDayName($carbonDayOfWeek),
                             'schedule' => $schedule,
                             'available_slots' => $availableSlots,
+                            'booked_count' => $bookedCount,
+                            'so_luong_toi_da' => $servicePhuong->so_luong_toi_da,
                         ];
                     }
                     break; // Đã tìm thấy schedule cho thứ này, không cần kiểm tra schedule khác

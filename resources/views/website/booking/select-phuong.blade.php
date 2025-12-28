@@ -61,7 +61,9 @@
                                 <select name="don_vi_id" id="don_vi_select" class="form-select form-select-lg" required>
                                     <option value="">-- Chọn phường --</option>
                                     @foreach($donVis as $donVi)
-                                        <option value="{{ $donVi->id }}">{{ $donVi->ten_don_vi }}</option>
+                                        <option value="{{ $donVi->id }}" {{ isset($defaultDonViId) && $defaultDonViId == $donVi->id ? 'selected' : '' }}>
+                                            {{ $donVi->ten_don_vi }}
+                                        </option>
                                     @endforeach
                                 </select>
                                 @error('don_vi_id')
@@ -71,12 +73,40 @@
                                 @enderror
                             </div>
 
+                            <!-- Select2 CSS -->
+                            <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+                            <link href="https://cdn.jsdelivr.net/npm/select2-bootstrap-5-theme@1.3.0/dist/select2-bootstrap-5-theme.min.css" rel="stylesheet" />
+
+                            <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+                            <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
                             <script>
-                                // Lưu don_vi_id vào localStorage khi người dùng chọn
-                                document.getElementById('don_vi_select').addEventListener('change', function() {
-                                    if (this.value) {
-                                        localStorage.setItem('selected_don_vi_id', this.value);
-                                    }
+                                $(document).ready(function() {
+                                    // Khởi tạo Select2 với tính năng search
+                                    $('#don_vi_select').select2({
+                                        theme: 'bootstrap-5',
+                                        placeholder: '-- Chọn phường --',
+                                        allowClear: true,
+                                        language: {
+                                            noResults: function() {
+                                                return "Không tìm thấy phường nào";
+                                            },
+                                            searching: function() {
+                                                return "Đang tìm kiếm...";
+                                            }
+                                        }
+                                    });
+
+                                    // Nếu có phường mặc định, trigger change để Select2 hiển thị đúng
+                                    @if(isset($defaultDonViId) && $defaultDonViId)
+                                        $('#don_vi_select').val('{{ $defaultDonViId }}').trigger('change');
+                                    @endif
+
+                                    // Lưu don_vi_id vào localStorage khi người dùng chọn
+                                    $('#don_vi_select').on('change', function() {
+                                        if (this.value) {
+                                            localStorage.setItem('selected_don_vi_id', this.value);
+                                        }
+                                    });
                                 });
                             </script>
 

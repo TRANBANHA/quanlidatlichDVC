@@ -3,7 +3,7 @@
 @section('title', 'Chi Tiết Thanh Toán')
 
 @section('content')
-<div class="container-fluid">
+<div class="container">
     <div class="row">
         <div class="col-12">
             <div class="card shadow mb-4">
@@ -87,9 +87,25 @@
                                 <tr>
                                     <th>Mã hồ sơ:</th>
                                     <td>
-                                        <a href="{{ route('admin.ho-so.show', $payment->ho_so_id) }}" target="_blank">
-                                            {{ $payment->hoSo->ma_ho_so ?? 'N/A' }}
-                                        </a>
+                                        @php
+                                            $hoSo = $payment->hoSo;
+                                            $daDenNgay = true;
+                                            if ($hoSo && $hoSo->ngay_hen) {
+                                                $ngayHen = \Carbon\Carbon::parse($hoSo->ngay_hen)->startOfDay();
+                                                $ngayHienTai = \Carbon\Carbon::now()->startOfDay();
+                                                $daDenNgay = $ngayHienTai->gte($ngayHen);
+                                            }
+                                        @endphp
+                                        @if($daDenNgay && $hoSo)
+                                            <a href="{{ route('admin.ho-so.show', $payment->ho_so_id) }}" target="_blank">
+                                                {{ $hoSo->ma_ho_so ?? 'N/A' }}
+                                            </a>
+                                        @else
+                                            <span class="text-muted">{{ $hoSo->ma_ho_so ?? 'N/A' }}</span>
+                                            @if($hoSo && $hoSo->ngay_hen)
+                                                <br><small class="text-warning">(Chưa đến ngày: {{ \Carbon\Carbon::parse($hoSo->ngay_hen)->format('d/m/Y') }})</small>
+                                            @endif
+                                        @endif
                                     </td>
                                 </tr>
                                 <tr>
@@ -201,7 +217,7 @@ function approvePayment(id) {
         return;
     }
 
-    fetch(`{{ route('admin.payments.index') }}/${id}/approve`, {
+    fetch(`{{ url('admin/payments') }}/${id}/approve`, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
@@ -236,7 +252,7 @@ document.getElementById('rejectForm').addEventListener('submit', function(e) {
         return;
     }
 
-    fetch(`{{ route('admin.payments.index') }}/{{ $payment->id }}/reject`, {
+    fetch(`{{ url('admin/payments') }}/{{ $payment->id }}/reject`, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',

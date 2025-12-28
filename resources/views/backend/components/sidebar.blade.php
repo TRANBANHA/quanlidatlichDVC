@@ -57,24 +57,27 @@
                         if (Auth::guard('admin')->check()) {
                             $admin = Auth::guard('admin')->user();
                             
-                            // Admin tổng (quyen = 1): Xem tất cả menu TRỪ menu "Dịch vụ" và "Dịch vụ phường"
+                            // Admin tổng (quyen = 1): Xem tất cả menu TRỪ menu "Dịch vụ", "Dịch vụ phường", "Thanh toán", "Hồ sơ"
                             // CHỈ Admin tổng mới thấy "Cấu hình website" và "Thông báo"
                             if ($admin->quyen === 1) {
                                 // Chỉ Admin tổng mới thấy "Cấu hình website" và "Thông báo"
                                 if ($menu['name'] === 'Cấu hình website' || $menu['name'] === 'Thông báo') {
                                     $showMenu = true;
                                 } else {
-                                    // Các menu khác: Xem tất cả TRỪ "Dịch vụ" và "Dịch vụ phường"
-                                    $showMenu = $menu['name'] !== 'Dịch vụ' && $menu['name'] !== 'Dịch vụ phường';
+                                    // Các menu khác: Xem tất cả TRỪ "Dịch vụ", "Dịch vụ phường", "Thanh toán", "Hồ sơ"
+                                    $showMenu = $menu['name'] !== 'Dịch vụ' 
+                                             && $menu['name'] !== 'Dịch vụ phường' 
+                                             && $menu['name'] !== 'Thanh toán' 
+                                             && $menu['name'] !== 'Hồ sơ';
                                 }
                             }
-                            // Admin phường (quyen = 2): Xem menu có show_all hoặc menu quản lý, KHÔNG thấy "Cấu hình website" và "Thông báo"
+                            // Admin phường (quyen = 2): Xem menu có show_all hoặc menu quản lý, KHÔNG thấy "Cấu hình website", "Thông báo", "Chat"
                             elseif ($admin->quyen === 2) {
-                                // Admin phường KHÔNG thấy "Cấu hình website" và "Thông báo"
-                                if ($menu['name'] === 'Cấu hình website' || $menu['name'] === 'Thông báo') {
+                                // Admin phường KHÔNG thấy "Cấu hình website", "Thông báo", "Chat"
+                                if ($menu['name'] === 'Cấu hình website' || $menu['name'] === 'Thông báo' || $menu['name'] === 'Chat') {
                                     $showMenu = false;
                                 } else {
-                                    $showMenu = isset($menu['show_all']) || in_array($menu['name'], ['Quản lý đơn vị/phường', 'Quản trị hệ thống', 'Hồ sơ', 'Chat', 'Dịch vụ phường', 'Báo cáo', 'Thanh toán']);
+                                    $showMenu = isset($menu['show_all']) || in_array($menu['name'], ['Quản lý đơn vị/phường', 'Quản trị hệ thống', 'Hồ sơ', 'Dịch vụ phường', 'Báo cáo', 'Thanh toán']);
                                 }
                             }
                             // Cán bộ (quyen = 0): Xem Hồ sơ, Chat, Tài khoản, Báo cáo, KHÔNG thấy "Cấu hình website", "Thông báo", "Thanh toán"
@@ -121,9 +124,9 @@
                                                 if (Auth::guard('admin')->check()) {
                                                     $admin = Auth::guard('admin')->user();
                                                     
-                                                    // Admin tổng: Xem tất cả submenu
+                                                    // Admin tổng: Xem tất cả submenu TRỪ "Đánh giá nhân viên"
                                                     if ($admin->quyen === 1) {
-                                                        $showSubMenu = true;
+                                                        $showSubMenu = $sub['title'] !== 'Đánh giá nhân viên';
                                                     }
                                                     // Admin phường: Xem tất cả submenu
                                                     elseif ($admin->quyen === 2) {

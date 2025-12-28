@@ -124,13 +124,7 @@ return [
             'show_all' => false,
             'single' => true,
         ],
-        [
-            'name' => 'Thông báo',
-            'icon' => 'fas fa-bell',
-            'route' => 'admin/notifications',
-            'show_all' => false,
-            'single' => true,
-        ],
+       
         
         // ========== PHẦN 6: TÀI KHOẢN CÁ NHÂN ==========
         [

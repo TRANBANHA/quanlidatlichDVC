@@ -6,7 +6,6 @@ use App\Http\Controllers\Controller;
 use App\Models\Service;
 use App\Models\ServicePhuong;
 use App\Models\ServiceSchedule;
-use App\Models\ServiceScheduleStaff;
 use App\Models\ServiceAssignment;
 use App\Models\ServiceField;
 use App\Models\Admin;
@@ -156,7 +155,7 @@ class ServicePhuongController extends Controller
     }
 
     /**
-     * Quản lý lịch dịch vụ và phân công cán bộ (Admin phường)
+     * Quản lý lịch dịch vụ (Admin phường)
      */
     public function schedule()
     {
@@ -182,28 +181,11 @@ class ServicePhuongController extends Controller
                 ->get();
         }
 
-        // Lấy danh sách cán bộ của phường
-        $canBoList = Admin::where('don_vi_id', $currentUser->don_vi_id)
-            ->where('quyen', Admin::CAN_BO)
-            ->get();
-
-        // Lấy phân công cán bộ cho từng schedule
-        $assignmentsBySchedule = [];
-        foreach ($schedulesByService as $serviceId => $schedules) {
-            foreach ($schedules as $schedule) {
-                $assignmentsBySchedule[$schedule->id] = ServiceScheduleStaff::where('schedule_id', $schedule->id)
-                    ->with('canBo')
-                    ->get()
-                    ->pluck('can_bo_id')
-                    ->toArray();
-            }
-        }
-
-        return view('backend.service-phuong.schedule', compact('servicePhuongs', 'schedulesByService', 'canBoList', 'assignmentsBySchedule'));
+        return view('backend.service-phuong.schedule', compact('servicePhuongs', 'schedulesByService'));
     }
 
     /**
-     * Lưu lịch dịch vụ và phân công cán bộ
+     * Lưu lịch dịch vụ
      */
     public function storeSchedule(Request $request)
     {
@@ -220,8 +202,6 @@ class ServicePhuongController extends Controller
             'gio_bat_dau' => 'required',
             'gio_ket_thuc' => 'required',
             'so_luong_toi_da' => 'required|integer|min:1',
-            'ma_can_bo' => 'nullable|array',
-            'ma_can_bo.*' => 'exists:quan_tri_vien,id',
         ]);
 
         // Kiểm tra dịch vụ thuộc phường
@@ -258,28 +238,7 @@ class ServicePhuongController extends Controller
             ]
         );
 
-        // Lưu phân công cán bộ
-        // Xóa phân công cũ của schedule này
-        ServiceScheduleStaff::where('schedule_id', $schedule->id)->delete();
-
-        if ($request->has('ma_can_bo') && !empty($request->ma_can_bo)) {
-            // Kiểm tra cán bộ thuộc phường
-            $canBoIds = Admin::where('don_vi_id', $currentUser->don_vi_id)
-                ->where('quyen', Admin::CAN_BO)
-                ->whereIn('id', $request->ma_can_bo)
-                ->pluck('id')
-                ->toArray();
-
-            // Lưu phân công mới
-            foreach ($canBoIds as $canBoId) {
-                ServiceScheduleStaff::create([
-                    'schedule_id' => $schedule->id,
-                    'can_bo_id' => $canBoId,
-                ]);
-            }
-        }
-
-        return redirect()->back()->with('success', 'Đã lưu lịch dịch vụ và phân công cán bộ thành công!');
+        return redirect()->back()->with('success', 'Đã lưu lịch dịch vụ thành công!');
     }
 
     /**

@@ -25,8 +25,20 @@ class InfoController extends Controller
         }
         $user = auth()->user();
         $donVis = DonVi::all();
-        $ho_so = HoSo::with('nguoiDung', 'donVi', 'dichVu', 'thongBao', 'rating', 'hoSoFields')->where('nguoi_dung_id', Auth::user()->id)
-                ->paginate(10);
+        
+        // Load hồ sơ với rating được filter theo người dùng hiện tại
+        $ho_so = HoSo::with([
+            'nguoiDung', 
+            'donVi', 
+            'dichVu', 
+            'thongBao', 
+            'hoSoFields',
+            'rating' => function($query) use ($user) {
+                $query->where('nguoi_dung_id', $user->id);
+            }
+        ])
+        ->where('nguoi_dung_id', Auth::user()->id)
+        ->paginate(10);
         
         // Lấy thông báo cho tab4
         $thongBaos = ThongBao::where('nguoi_dung_id', $user->id)

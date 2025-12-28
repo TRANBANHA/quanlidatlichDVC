@@ -93,7 +93,7 @@
                                     @if($hoSo->quanTriVien)
                                         <span class="badge bg-info">{{ $hoSo->quanTriVien->ho_ten }}</span>
                                     @else
-                                        <span class="badge bg-secondary">Chưa phân công</span>
+                                        <span class="badge bg-secondary">Chưa chỉ định</span>
                                     @endif
                                 </p>
                             </div>
@@ -200,16 +200,28 @@
             <!-- Sidebar: Cập nhật trạng thái (CHỈ CÁN BỘ) -->
             <div class="col-md-4">
                 @if(Auth::guard('admin')->user()->isCanBo())
+                    @php
+                        // Kiểm tra xem đã đến ngày xử lý chưa
+                        $ngayHen = \Carbon\Carbon::parse($hoSo->ngay_hen);
+                        $ngayHienTai = \Carbon\Carbon::now()->startOfDay();
+                        $daDenNgay = $ngayHienTai->greaterThanOrEqualTo($ngayHen->startOfDay());
+                    @endphp
                     <div class="card mb-4">
                         <div class="card-header">
                             <h4 class="card-title mb-0">Cập nhật trạng thái</h4>
                         </div>
                         <div class="card-body">
-                            <form action="{{ route('admin.ho-so.update-status', $hoSo->id) }}" method="POST">
+                            @if(!$daDenNgay)
+                                <div class="alert alert-warning">
+                                    <i class="fas fa-exclamation-triangle me-2"></i>
+                                    Chưa đến ngày xử lý ({{ $ngayHen->format('d/m/Y') }}). Vui lòng đợi đến ngày hẹn để cập nhật trạng thái.
+                                </div>
+                            @endif
+                            <form action="{{ route('admin.ho-so.update-status', $hoSo->id) }}" method="POST" @if(!$daDenNgay) onsubmit="return false;" @endif>
                                 @csrf
                                 <div class="mb-3">
                                     <label class="form-label">Trạng thái</label>
-                                    <select name="trang_thai" class="form-select" required>
+                                    <select name="trang_thai" class="form-select" required {{ !$daDenNgay ? 'disabled' : '' }}>
                                         <option value="Đã tiếp nhận" {{ $hoSo->trang_thai == 'Đã tiếp nhận' ? 'selected' : '' }}>Đã tiếp nhận</option>
                                         <option value="Đang xử lý" {{ $hoSo->trang_thai == 'Đang xử lý' ? 'selected' : '' }}>Đang xử lý</option>
                                         <option value="Cần bổ sung hồ sơ" {{ $hoSo->trang_thai == 'Cần bổ sung hồ sơ' ? 'selected' : '' }}>Cần bổ sung hồ sơ</option>
@@ -219,9 +231,9 @@
                                 </div>
                                 <div class="mb-3">
                                     <label class="form-label">Ghi chú xử lý</label>
-                                    <textarea name="ghi_chu_xu_ly" class="form-control" rows="3" placeholder="Nhập ghi chú..."></textarea>
+                                    <textarea name="ghi_chu_xu_ly" class="form-control" rows="3" placeholder="Nhập ghi chú..." {{ !$daDenNgay ? 'disabled' : '' }}></textarea>
                                 </div>
-                                <button type="submit" class="btn btn-primary w-100">
+                                <button type="submit" class="btn btn-primary w-100" {{ !$daDenNgay ? 'disabled' : '' }}>
                                     <i class="fas fa-save me-2"></i>Cập nhật
                                 </button>
                             </form>
@@ -260,17 +272,17 @@
                             @endif
                             <div class="alert alert-info mb-0">
                                 <i class="fas fa-info-circle me-2"></i>
-                                <small>Chỉ cán bộ được phân công mới có quyền cập nhật trạng thái hồ sơ.</small>
+                                <small>Chỉ cán bộ được chỉ định mới có quyền cập nhật trạng thái hồ sơ.</small>
                             </div>
                         </div>
                     </div>
                 @endif
 
-                <!-- Phân công cán bộ (Admin tổng và Admin phường) -->
+                <!-- Cán bộ xử lý (Admin tổng và Admin phường) -->
                 @if(Auth::guard('admin')->user()->isAdmin() || Auth::guard('admin')->user()->isAdminPhuong())
                     <div class="card mb-4">
                         <div class="card-header">
-                            <h4 class="card-title mb-0">Phân công cán bộ</h4>
+                            <h4 class="card-title mb-0">Cán bộ xử lý</h4>
                         </div>
                         <div class="card-body">
                             <form action="{{ route('admin.ho-so.assign', $hoSo->id) }}" method="POST">
@@ -278,6 +290,7 @@
                                 <div class="mb-3">
                                     <label class="form-label">Cán bộ xử lý</label>
                                     <select name="quan_tri_vien_id" class="form-select">
+                                        <option value="">-- Chọn cán bộ --</option>
                                         @php
                                             // Lấy thứ trong tuần của ngày hẹn (1 = Thứ 2, 7 = Chủ nhật)
                                             $ngayHen = \Carbon\Carbon::parse($hoSo->ngay_hen);
@@ -303,29 +316,23 @@
                                                 ->first();
                                             
                                             $canBos = collect();
-                                            $donViId = Auth::guard('admin')->user()->isAdmin() ? $hoSo->don_vi_id : Auth::guard('admin')->user()->don_vi_id;
-                                            
                                             if ($schedule) {
-                                                // Lấy các cán bộ đã được phân công vào schedule này
+                                                // Lấy các cán bộ trong schedule này
                                                 $canBoIds = \App\Models\ServiceScheduleStaff::where('schedule_id', $schedule->id)
                                                     ->pluck('can_bo_id')
                                                     ->toArray();
                                                 
-                                                if (!empty($canBoIds)) {
-                                                    $canBos = \App\Models\Admin::where('don_vi_id', $donViId)
-                                                        ->where('quyen', 0)
-                                                        ->whereIn('id', $canBoIds)
-                                                        ->orderBy('ho_ten')
-                                                        ->get();
-                                                }
+                                                $donViId = Auth::guard('admin')->user()->isAdmin() ? $hoSo->don_vi_id : Auth::guard('admin')->user()->don_vi_id;
+                                                
+                                                $canBos = \App\Models\Admin::where('don_vi_id', $donViId)
+                                                    ->where('quyen', 0)
+                                                    ->whereIn('id', $canBoIds)
+                                                    ->get();
                                             }
-                                            
-                                            // CHỈ lấy cán bộ từ schedule, không thêm cán bộ đã được phân công trước đó nếu không có trong schedule
                                         @endphp
                                         @if($canBos->isEmpty())
-                                            <option value="" disabled selected>Chưa phân công cán bộ</option>
+                                            <option value="" disabled>Không có cán bộ trong {{ $tenThu[$thuTrongTuan] ?? 'thứ này' }} của dịch vụ này</option>
                                         @else
-                                            <option value="">-- Chọn cán bộ --</option>
                                             @foreach($canBos as $canBo)
                                                 <option value="{{ $canBo->id }}" {{ $hoSo->quan_tri_vien_id == $canBo->id ? 'selected' : '' }}>
                                                     {{ $canBo->ho_ten }}
@@ -333,15 +340,27 @@
                                             @endforeach
                                         @endif
                                     </select>
-                                    @if($canBos->isEmpty())
+                                    @if($canBos->isEmpty() && $schedule)
                                         <small class="text-danger">
                                             <i class="fas fa-exclamation-triangle me-1"></i>
-                                            Vui lòng phân công cán bộ vào lịch dịch vụ trước.
+                                            Vui lòng thêm cán bộ vào lịch dịch vụ trước.
                                         </small>
                                     @endif
                                 </div>
-                                <button type="submit" class="btn btn-info w-100" {{ $canBos->isEmpty() ? 'disabled' : '' }}>
-                                    <i class="fas fa-user-tie me-2"></i>Phân công
+                                @php
+                                    // Kiểm tra xem đã đến ngày xử lý chưa
+                                    $ngayHenAssign = \Carbon\Carbon::parse($hoSo->ngay_hen);
+                                    $ngayHienTaiAssign = \Carbon\Carbon::now()->startOfDay();
+                                    $daDenNgayAssign = $ngayHienTaiAssign->greaterThanOrEqualTo($ngayHenAssign->startOfDay());
+                                @endphp
+                                @if(!$daDenNgayAssign)
+                                    <div class="alert alert-warning mb-3">
+                                        <i class="fas fa-exclamation-triangle me-2"></i>
+                                        Chưa đến ngày xử lý ({{ $ngayHenAssign->format('d/m/Y') }}). Vui lòng đợi đến ngày hẹn.
+                                    </div>
+                                @endif
+                                <button type="submit" class="btn btn-info w-100" {{ $canBos->isEmpty() || !$daDenNgayAssign ? 'disabled' : '' }}>
+                                    <i class="fas fa-user-tie me-2"></i>Cập nhật
                                 </button>
                             </form>
                         </div>

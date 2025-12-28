@@ -89,10 +89,12 @@ class AccountController extends Controller
 
         $admin = Auth::guard('admin')->user();
 
-        if (!Hash::check($request->current_password, $admin->password)) {
+        // Kiểm tra mật khẩu hiện tại với field mat_khau (không phải password)
+        if (!Hash::check($request->current_password, $admin->mat_khau)) {
             return back()->withErrors(['current_password' => 'Mật khẩu hiện tại không đúng']);
         }
 
+        // Cập nhật mật khẩu mới
         $admin->update([
             'mat_khau' => Hash::make($request->password)
         ]);

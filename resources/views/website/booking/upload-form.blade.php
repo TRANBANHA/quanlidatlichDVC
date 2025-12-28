@@ -7,15 +7,15 @@
     <div class="container py-5">
         <div class="text-center mb-5 animate-fade-in-up">
             <h1 class="display-4 fw-bold mb-3 text-gradient">Upload hồ sơ</h1>
-            <p class="text-muted fs-5 mb-2">
+            <p class="fs-5 mb-2">
                 <i class="fas fa-building text-primary me-2"></i>Phường: <strong>{{ $donVi->ten_don_vi }}</strong> | 
                 <i class="fas fa-concierge-bell text-success me-2"></i>Dịch vụ: <strong>{{ $dichVu->ten_dich_vu }}</strong>
             </p>
-            <p class="text-muted mb-2">
+            <p class="mb-2">
                 <i class="fas fa-calendar text-info me-2"></i>Ngày hẹn: <strong>{{ \Carbon\Carbon::parse($ngayHen)->format('d/m/Y') }}</strong> 
                 lúc <strong>{{ $gioHen }}</strong>
             </p>
-            <p class="text-muted">Bước 4: Điền thông tin và upload giấy tờ cần thiết</p>
+            <p class="text-dark">Bước 4: Điền thông tin và upload giấy tờ cần thiết</p>
         </div>
 
         <!-- Progress Steps -->
@@ -78,13 +78,13 @@
                                     <div class="col-md-4">
                                         <p class="mb-2">
                                             <strong class="text-primary">Dịch vụ:</strong><br>
-                                            <span class="text-muted">{{ $dichVu->ten_dich_vu }}</span>
+                                            <span class="text-dark">{{ $dichVu->ten_dich_vu }}</span>
                                         </p>
                                     </div>
                                     <div class="col-md-4">
                                         <p class="mb-2">
                                             <strong class="text-primary">Mô tả:</strong><br>
-                                            <span class="text-muted">{{ $dichVu->mo_ta }}</span>
+                                            <span class="text-dark">{{ $dichVu->mo_ta }}</span>
                                         </p>
                                     </div>
                                     <div class="col-md-4">
@@ -122,7 +122,7 @@
                                                    value="{{ old($field->ten_truong) }}"
                                                    @if($field->bat_buoc) required @endif>
                                             @if($field->goi_y)
-                                                <small class="form-text text-muted">{{ $field->goi_y }}</small>
+                                                <small class="form-text text-info">{{ $field->goi_y }}</small>
                                             @endif
                                             @error($field->ten_truong)
                                                 <div class="invalid-feedback">{{ $message }}</div>
@@ -136,7 +136,7 @@
                                                    value="{{ old($field->ten_truong) }}"
                                                    @if($field->bat_buoc) required @endif>
                                             @if($field->goi_y)
-                                                <small class="form-text text-muted">{{ $field->goi_y }}</small>
+                                                <small class="form-text text-info">{{ $field->goi_y }}</small>
                                             @endif
                                             @error($field->ten_truong)
                                                 <div class="invalid-feedback">{{ $message }}</div>
@@ -149,7 +149,7 @@
                                                       placeholder="{{ $field->placeholder }}"
                                                       @if($field->bat_buoc) required @endif>{{ old($field->ten_truong) }}</textarea>
                                             @if($field->goi_y)
-                                                <small class="form-text text-muted">{{ $field->goi_y }}</small>
+                                                <small class="form-text text-info">{{ $field->goi_y }}</small>
                                             @endif
                                             @error($field->ten_truong)
                                                 <div class="invalid-feedback">{{ $message }}</div>
@@ -179,9 +179,9 @@
                                                    accept=".pdf,.doc,.docx,.jpg,.jpeg,.png"
                                                    @if($field->bat_buoc) required @endif>
                                             @if($field->goi_y)
-                                                <small class="form-text text-muted">{{ $field->goi_y }}</small>
+                                                <small class="form-text text-info">{{ $field->goi_y }}</small>
                                             @endif
-                                            <small class="form-text text-muted">Định dạng: PDF, DOC, DOCX, JPG, PNG (Tối đa 5MB)</small>
+                                            <small class="form-text text-info">Định dạng: PDF, DOC, DOCX, JPG, PNG (Tối đa 5MB)</small>
                                             @error($field->ten_truong)
                                                 <div class="invalid-feedback">{{ $message }}</div>
                                             @enderror
@@ -247,5 +247,50 @@ document.getElementById('uploadForm').addEventListener('submit', function(e) {
     submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Đang xử lý...';
 });
 </script>
+
+<style>
+/* Đảm bảo text hiển thị rõ ràng */
+.text-dark {
+    color: #212529 !important;
+    opacity: 1 !important;
+}
+
+.form-label {
+    color: #495057 !important;
+    font-weight: 600 !important;
+}
+
+.form-control, .form-select {
+    color: #495057 !important;
+}
+
+.text-info {
+    color: #0dcaf0 !important;
+}
+
+/* Override muted text */
+.text-muted {
+    color: #6c757d !important;
+    opacity: 0.8 !important;
+}
+
+/* Đảm bảo các element quan trọng không bị mờ */
+h1, h2, h3, h4, h5, h6, p, span, label, input, select, textarea {
+    opacity: 1 !important;
+}
+
+/* Card content */
+.card-body {
+    color: #212529 !important;
+}
+
+.alert {
+    opacity: 1 !important;
+}
+
+.alert span, .alert p {
+    opacity: 1 !important;
+}
+</style>
 @endsection
 

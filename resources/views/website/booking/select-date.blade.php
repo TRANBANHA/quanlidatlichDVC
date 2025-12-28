@@ -91,10 +91,21 @@
                                                     {{ $dateInfo['schedule']->gio_bat_dau }} - {{ $dateInfo['schedule']->gio_ket_thuc }}
                                                 </strong>
                                             </div>
-                                            <div class="mb-4">
-                                                <span class="badge bg-gradient-info text-white rounded-beautiful px-3 py-2" style="font-size: 0.9rem;">
-                                                    <i class="fas fa-users me-1"></i>Còn {{ $dateInfo['available_slots'] }} chỗ
-                                                </span>
+                                            <div class="mb-3 p-3 bg-light rounded-beautiful">
+                                                <small class="text-muted d-block mb-1">
+                                                    <i class="fas fa-users text-primary me-1"></i>Số chỗ:
+                                                </small>
+                                                <div>
+                                                    <strong class="text-info">
+                                                        Tối đa: {{ $dateInfo['so_luong_toi_da'] ?? $servicePhuong->so_luong_toi_da }} chỗ
+                                                    </strong>
+                                                    @if(isset($dateInfo['booked_count']) && $dateInfo['booked_count'] > 0)
+                                                        <br><small class="text-muted">Đã đặt: {{ $dateInfo['booked_count'] }} chỗ</small>
+                                                    @endif
+                                                    <br><strong class="text-success">
+                                                        Còn: {{ $dateInfo['available_slots'] }} chỗ
+                                                    </strong>
+                                                </div>
                                             </div>
                                             <button type="button" class="btn btn-primary btn-sm w-100 shadow-beautiful select-date-btn" 
                                                     data-date="{{ $dateInfo['date'] }}"

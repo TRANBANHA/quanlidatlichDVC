@@ -93,7 +93,7 @@
                                                     <i class="fas fa-users text-primary me-2"></i>Số lượng/ngày:
                                                 </span>
                                                 <strong class="text-info">
-                                                    <i class="fas fa-user-check me-1"></i>{{ $servicePhuong->so_luong_toi_da }} người
+                                                    <i class="fas fa-user-check me-1"></i>Tối đa {{ $servicePhuong->so_luong_toi_da }} chỗ
                                                 </strong>
                                             </div>
                                             <div class="d-flex justify-content-between align-items-center p-3 bg-light rounded-beautiful">

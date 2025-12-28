@@ -4,11 +4,13 @@ namespace App\Http\Controllers\Admin;
 
 use Carbon\Carbon;
 use App\Models\HoSo;
+use App\Models\Service;
 use App\Models\Comment;
 use App\Models\ThongBao;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 class FileController extends Controller
 {
@@ -22,20 +24,54 @@ class FileController extends Controller
         
         $currentUser = Auth::guard('admin')->user();
         
+        // Phân quyền xem hồ sơ
         if ($currentUser->isAdmin()) {
             // Admin tổng: Xem tất cả hồ sơ
-            $ho_so = $query->paginate(10);
         } elseif ($currentUser->isAdminPhuong()) {
             // Admin phường: Xem hồ sơ của phường mình
-            $ho_so = $query->where('don_vi_id', $currentUser->don_vi_id)
-                ->paginate(10);
+            $query->where('don_vi_id', $currentUser->don_vi_id);
         } else {
             // Cán bộ: Xem hồ sơ được phân công
-            $ho_so = $query->where('quan_tri_vien_id', $currentUser->id)
-                ->paginate(10);
+            $query->where('quan_tri_vien_id', $currentUser->id);
         }
         
-        return view('backend.files.index', compact('ho_so'));
+        // Filter theo dịch vụ
+        if ($request->filled('dich_vu_id')) {
+            $query->where('dich_vu_id', $request->dich_vu_id);
+        }
+        
+        // Lấy danh sách dịch vụ để hiển thị filter
+        $services = Service::orderBy('ten_dich_vu')->get();
+        
+        // Tính số lượng hồ sơ theo dịch vụ (cho Admin phường và Cán bộ)
+        $serviceCounts = [];
+        if ($currentUser->isAdminPhuong() || $currentUser->isCanBo()) {
+            $countQuery = HoSo::whereDate('ngay_hen', $date_new);
+            
+            // Áp dụng quyền
+            if ($currentUser->isAdminPhuong()) {
+                $countQuery->where('don_vi_id', $currentUser->don_vi_id);
+            } else {
+                $countQuery->where('quan_tri_vien_id', $currentUser->id);
+            }
+            
+            // Đếm theo dịch vụ
+            $counts = $countQuery->selectRaw('dich_vu_id, COUNT(*) as count')
+                ->groupBy('dich_vu_id')
+                ->pluck('count', 'dich_vu_id')
+                ->toArray();
+            
+            foreach ($services as $service) {
+                $serviceCounts[$service->id] = $counts[$service->id] ?? 0;
+            }
+            
+            // Tổng số hồ sơ
+            $serviceCounts['all'] = $countQuery->count();
+        }
+        
+        $ho_so = $query->paginate(10)->withQueryString();
+        
+        return view('backend.files.index', compact('ho_so', 'services', 'serviceCounts', 'currentUser'));
     }
 
 

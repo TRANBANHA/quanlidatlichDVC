@@ -22,6 +22,7 @@ class User extends Authenticatable
         'don_vi_id',
         'dia_chi',
         'code',
+        'loai_phuong',
     ];
     public function getAuthPassword()
     {

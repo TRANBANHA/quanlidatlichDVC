@@ -22,6 +22,11 @@ class RedirectIfAuthenticated
         foreach ($guards as $guard) {
             if (Auth::guard($guard)->check()) {
                 if ($guard == 'admin') {
+                    $admin = Auth::guard('admin')->user();
+                    // Admin phường và Cán bộ redirect vào báo cáo
+                    if ($admin && ($admin->isAdminPhuong() || $admin->isCanBo())) {
+                        return redirect()->route('reports.index');
+                    }
                     return redirect(RouteServiceProvider::ADMIN);
                 }
             }

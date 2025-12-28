@@ -29,6 +29,7 @@ class RegisterRequest extends FormRequest
             'mat_khau' => ['required', 'string', 'min:6'],
             'don_vi_id' => ['required', 'integer', 'exists:don_vi,id'],
             'dia_chi' => ['required', 'string', 'max:500'],
+            'loai_phuong' => ['required', 'string', 'in:tạm trú,tạm vắng'],
         ];
     }
 
@@ -49,6 +50,8 @@ class RegisterRequest extends FormRequest
             'cccd.unique' => 'CCCD này đã được đăng ký.',
             'mat_khau.required' => 'Vui lòng nhập mật khẩu.',
             'mat_khau.min' => 'Mật khẩu phải có ít nhất 6 ký tự.',
+            'loai_phuong.required' => 'Vui lòng chọn loại phường.',
+            'loai_phuong.in' => 'Loại phường không hợp lệ.',
         ];
     }
 }
