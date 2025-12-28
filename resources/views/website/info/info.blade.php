@@ -233,7 +233,7 @@
                                 </div>
                                 
                                 <div class="mt-4">
-                                    {{ $thongBaos->links() }}
+                                    {{ $thongBaos->appends(request()->query())->links() }}
                                 </div>
                             @else
                                 <div class="text-center py-5">

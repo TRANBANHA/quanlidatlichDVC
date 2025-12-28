@@ -232,7 +232,7 @@
         @if ($ho_so->hasPages())
             <div class="card-footer bg-white border-top">
                 <div class="d-flex justify-content-center">
-                    {{ $ho_so->links() }}
+                    {{ $ho_so->appends(request()->query())->links() }}
                 </div>
             </div>
         @endif
