@@ -9,6 +9,7 @@ use App\Models\Service;
 use Illuminate\Http\Request;
 use App\Models\ServiceSchedule;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 class RegisterServiceController extends Controller
 {
@@ -134,55 +135,127 @@ class RegisterServiceController extends Controller
                 return back()->withErrors(['file_path' => 'Lỗi khi upload file: ' . $e->getMessage()])->withInput();
             }
         }
-        // Tự động phân công cán bộ: Random đều cho tất cả cán bộ của phường (không theo dịch vụ)
-        $selectedCanBoId = null;
         
-        // Lấy tất cả cán bộ của phường
-        $canBoPhuong = \App\Models\Admin::where('don_vi_id', $request->don_vi_id)
-            ->where('quyen', \App\Models\Admin::CAN_BO) // Chỉ cán bộ
-            ->pluck('id')
-            ->toArray();
-        
-        if (!empty($canBoPhuong)) {
-            // Đếm số hồ sơ của từng cán bộ trong ngày (tất cả dịch vụ)
-            $canBoWorkloads = [];
-            foreach ($canBoPhuong as $canBoId) {
-                $workload = HoSo::where('quan_tri_vien_id', $canBoId)
-                    ->where('ngay_hen', $request->date)
-                    ->where('trang_thai', '!=', HoSo::STATUS_CANCELLED)
-                    ->count();
-                $canBoWorkloads[$canBoId] = $workload;
+        // ✅ Bước 3: Sử dụng transaction và lock để tránh race condition
+        DB::beginTransaction();
+        try {
+            // Normalize ngày để đảm bảo format đúng (chỉ lấy phần date, bỏ time)
+            $ngayHen = Carbon::parse($request->date)->format('Y-m-d');
+            
+            // Log để debug
+            \Log::info('Bắt đầu tính số thứ tự', [
+                'dich_vu_id' => $request->service,
+                'don_vi_id' => $request->don_vi_id,
+                'ngay_hen' => $ngayHen,
+                'date_raw' => $request->date
+            ]);
+            
+            // Tính số thứ tự: Đếm số lượng hồ sơ đã có (không tính các hồ sơ đã hủy)
+            // Sử dụng lockForUpdate để tránh race condition
+            $bookedCount = HoSo::where('dich_vu_id', $request->service)
+                ->where('don_vi_id', $request->don_vi_id)
+                ->whereDate('ngay_hen', $ngayHen) // Sử dụng whereDate để so sánh chỉ phần ngày
+                ->where('trang_thai', '!=', HoSo::STATUS_CANCELLED)
+                ->lockForUpdate() // Lock để đảm bảo tính nhất quán
+                ->count();
+            
+            // Tính số thứ tự (số lượng đã đăng ký + 1)
+            $soThuTu = $bookedCount + 1;
+            
+            \Log::info('Tính số thứ tự - lần 1', [
+                'bookedCount' => $bookedCount,
+                'so_thu_tu' => $soThuTu
+            ]);
+            
+            // Tự động phân công cán bộ: Random đều cho tất cả cán bộ của phường (không theo dịch vụ)
+            $selectedCanBoId = null;
+            
+            // Lấy tất cả cán bộ của phường
+            $canBoPhuong = \App\Models\Admin::where('don_vi_id', $request->don_vi_id)
+                ->where('quyen', \App\Models\Admin::CAN_BO) // Chỉ cán bộ
+                ->pluck('id')
+                ->toArray();
+            
+            if (!empty($canBoPhuong)) {
+                // Đếm số hồ sơ của từng cán bộ trong ngày (tất cả dịch vụ)
+                $canBoWorkloads = [];
+                foreach ($canBoPhuong as $canBoId) {
+                    $workload = HoSo::where('quan_tri_vien_id', $canBoId)
+                        ->whereDate('ngay_hen', $ngayHen) // Sử dụng whereDate
+                        ->where('trang_thai', '!=', HoSo::STATUS_CANCELLED)
+                        ->count();
+                    $canBoWorkloads[$canBoId] = $workload;
+                }
+                
+                // Tìm cán bộ có ít hồ sơ nhất trong ngày
+                if (!empty($canBoWorkloads)) {
+                    $minWorkload = min($canBoWorkloads);
+                    // Lấy tất cả cán bộ có workload thấp nhất
+                    $canBoWithMinWorkload = array_keys($canBoWorkloads, $minWorkload);
+                    
+                    // Random chọn trong số các cán bộ có workload thấp nhất để chia đều
+                    $randomIndex = array_rand($canBoWithMinWorkload);
+                    $selectedCanBoId = $canBoWithMinWorkload[$randomIndex];
+                } else {
+                    // Nếu không có hồ sơ nào, random chọn trong tất cả cán bộ phường
+                    $selectedCanBoId = $canBoPhuong[array_rand($canBoPhuong)];
+                }
             }
             
-            // Tìm cán bộ có ít hồ sơ nhất trong ngày
-            if (!empty($canBoWorkloads)) {
-                $minWorkload = min($canBoWorkloads);
-                // Lấy tất cả cán bộ có workload thấp nhất
-                $canBoWithMinWorkload = array_keys($canBoWorkloads, $minWorkload);
-                
-                // Random chọn trong số các cán bộ có workload thấp nhất để chia đều
-                $randomIndex = array_rand($canBoWithMinWorkload);
-                $selectedCanBoId = $canBoWithMinWorkload[$randomIndex];
-            } else {
-                // Nếu không có hồ sơ nào, random chọn trong tất cả cán bộ phường
-                $selectedCanBoId = $canBoPhuong[array_rand($canBoPhuong)];
-            }
+            // Kiểm tra lại lần cuối trước khi tạo hồ sơ (double check pattern)
+            // Đảm bảo không có request nào khác đã tạo hồ sơ trong lúc xử lý
+            $finalBookedCount = HoSo::where('dich_vu_id', $request->service)
+                ->where('don_vi_id', $request->don_vi_id)
+                ->whereDate('ngay_hen', $ngayHen) // Sử dụng whereDate
+                ->where('trang_thai', '!=', HoSo::STATUS_CANCELLED) // Sửa: != thay vì =
+                ->lockForUpdate()
+                ->count();
+            
+            // Cập nhật lại số thứ tự dựa trên số lượng thực tế
+            $soThuTu = $finalBookedCount + 1;
+            
+            // Log để debug
+            \Log::info('Tính số thứ tự - final', [
+                'dich_vu_id' => $request->service,
+                'don_vi_id' => $request->don_vi_id,
+                'ngay_hen' => $ngayHen,
+                'finalBookedCount' => $finalBookedCount,
+                'so_thu_tu_calculated' => $soThuTu,
+                'all_records' => HoSo::where('dich_vu_id', $request->service)
+                    ->where('don_vi_id', $request->don_vi_id)
+                    ->whereDate('ngay_hen', $ngayHen)
+                    ->where('trang_thai', '!=', HoSo::STATUS_CANCELLED)
+                    ->get(['id', 'so_thu_tu', 'ma_ho_so', 'ngay_hen'])
+                    ->toArray()
+            ]);
+            
+            // Tạo mã hồ sơ trước
+            $maHoSo = HoSo::generateCode();
+            
+            // ✅ Bước 4: Lưu dữ liệu   
+            $hoSo = HoSo::create([
+                'ma_ho_so' => $maHoSo,
+                'dich_vu_id' => $request->service,
+                'nguoi_dung_id' => Auth::user()->id,
+                'don_vi_id' => $request->don_vi_id,
+                'gio_hen' => $request->time,
+                'ngay_hen' => $ngayHen, // Sử dụng ngày đã normalize
+                'so_thu_tu' => $soThuTu,
+                'ghi_chu' => $request->ghi_chu,
+                'trang_thai' => HoSo::STATUS_RECEIVED,
+                'file_path' => $filePath,
+                'quan_tri_vien_id' => $selectedCanBoId, // Thêm cán bộ được chọn
+            ]);
+            
+            // Commit transaction
+            DB::commit();
+            
+            return back()->with('success', 'Đăng ký thành công! Số thứ tự của bạn: ' . $soThuTu);
+        } catch (\Exception $e) {
+            // Rollback nếu có lỗi
+            DB::rollBack();
+            return back()->withErrors(['error' => 'Có lỗi xảy ra khi đăng ký: ' . $e->getMessage()])->withInput();
         }
-        // ✅ Bước 3: Lưu dữ liệu   
-        HoSo::create([
-            'ma_ho_so' => HoSo::generateCode(),
-            'dich_vu_id' => $request->service,
-            'nguoi_dung_id' => Auth::user()->id,
-            'don_vi_id' => $request->don_vi_id,
-            'gio_hen' => $request->time,
-            'ngay_hen' => $request->date,
-            'ghi_chu' => $request->ghi_chu,
-            'trang_thai' => HoSo::STATUS_RECEIVED,
-            'file_path' => $filePath,
-            'quan_tri_vien_id' => $selectedCanBoId, // Thêm cán bộ được chọn
-        ]);
-
-        return back()->with('success', 'Đăng ký thành công!');
     }
 
 

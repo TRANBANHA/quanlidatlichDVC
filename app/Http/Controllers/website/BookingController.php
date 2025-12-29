@@ -222,10 +222,13 @@ class BookingController extends Controller
                 ->lockForUpdate() // Lock row để tránh race condition
                 ->firstOrFail();
 
+            // Normalize ngày để đảm bảo format đúng (chỉ lấy phần date, bỏ time)
+            $ngayHen = \Carbon\Carbon::parse($request->ngay_hen)->format('Y-m-d');
+            
             // Đếm số lượng đã đặt với lock để đảm bảo tính nhất quán
             $bookedCount = HoSo::where('dich_vu_id', $request->dich_vu_id)
                 ->where('don_vi_id', $request->don_vi_id)
-                ->where('ngay_hen', $request->ngay_hen)
+                ->whereDate('ngay_hen', $ngayHen) // Sử dụng whereDate để so sánh chỉ phần ngày
                 ->where('trang_thai', '!=', HoSo::STATUS_CANCELLED)
                 ->lockForUpdate() // Lock để đảm bảo đếm chính xác
                 ->count();
@@ -258,7 +261,7 @@ class BookingController extends Controller
                 $canBoWorkloads = [];
                 foreach ($canBoPhuong as $canBoId) {
                     $workload = HoSo::where('quan_tri_vien_id', $canBoId)
-                        ->where('ngay_hen', $request->ngay_hen)
+                        ->whereDate('ngay_hen', $ngayHen) // Sử dụng whereDate
                         ->where('trang_thai', '!=', HoSo::STATUS_CANCELLED)
                         ->count();
                     $canBoWorkloads[$canBoId] = $workload;
@@ -298,7 +301,7 @@ class BookingController extends Controller
             // Đảm bảo không có request nào khác đã tạo hồ sơ trong lúc xử lý
             $finalBookedCount = HoSo::where('dich_vu_id', $request->dich_vu_id)
                 ->where('don_vi_id', $request->don_vi_id)
-                ->where('ngay_hen', $request->ngay_hen)
+                ->whereDate('ngay_hen', $ngayHen) // Sử dụng whereDate
                 ->where('trang_thai', '!=', HoSo::STATUS_CANCELLED)
                 ->lockForUpdate()
                 ->count();
@@ -315,6 +318,16 @@ class BookingController extends Controller
             
             // Cập nhật lại số thứ tự dựa trên số lượng thực tế
             $soThuTu = $finalBookedCount + 1;
+            
+            // Log để debug
+            \Log::info('Tính số thứ tự - BookingController', [
+                'dich_vu_id' => $request->dich_vu_id,
+                'don_vi_id' => $request->don_vi_id,
+                'ngay_hen' => $ngayHen,
+                'ngay_hen_raw' => $request->ngay_hen,
+                'finalBookedCount' => $finalBookedCount,
+                'so_thu_tu' => $soThuTu
+            ]);
 
             // Tạo mã hồ sơ trước
             $maHoSo = HoSo::generateCode();
@@ -325,7 +338,7 @@ class BookingController extends Controller
                 'dich_vu_id' => $request->dich_vu_id,
                 'nguoi_dung_id' => $user->id,
                 'don_vi_id' => $request->don_vi_id,
-                'ngay_hen' => $request->ngay_hen,
+                'ngay_hen' => $ngayHen, // Sử dụng ngày đã normalize
                 'gio_hen' => $request->gio_hen,
                 'so_thu_tu' => $soThuTu,
                 'ghi_chu' => $request->ghi_chu,

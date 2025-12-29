@@ -77,4 +77,76 @@ class StaffRatingReportController extends Controller
 
         return response()->json($chartData);
     }
+
+    /**
+     * Hiển thị chi tiết đánh giá của một nhân viên
+     */
+    public function show($staffId)
+    {
+        $currentUser = Auth::guard('admin')->user();
+
+        // Lấy thông tin nhân viên
+        $staff = Admin::findOrFail($staffId);
+
+        // Kiểm tra quyền truy cập
+        if ($currentUser->isCanBo()) {
+            // Cán bộ: chỉ xem được đánh giá của chính mình
+            if ($staff->id != $currentUser->id) {
+                abort(403, 'Bạn không có quyền xem đánh giá của nhân viên này.');
+            }
+        } elseif ($currentUser->isAdminPhuong()) {
+            // Admin phường: chỉ xem được cán bộ trong phường của họ
+            if ($staff->don_vi_id != $currentUser->don_vi_id) {
+                abort(403, 'Bạn không có quyền xem đánh giá của nhân viên này.');
+            }
+        }
+        // Admin tổng: xem được tất cả (không cần kiểm tra)
+
+        // Lấy tất cả đánh giá của nhân viên này
+        $ratings = Rating::where('quan_tri_vien_id', $staffId)
+            ->whereNotNull('quan_tri_vien_id')
+            ->with(['hoSo.dichVu', 'hoSo.donVi', 'nguoiDung'])
+            ->orderBy('created_at', 'desc')
+            ->paginate(15);
+
+        // Tính thống kê
+        $stats = [
+            'total_ratings' => Rating::where('quan_tri_vien_id', $staffId)
+                ->whereNotNull('quan_tri_vien_id')
+                ->count(),
+            'average_rating' => Rating::where('quan_tri_vien_id', $staffId)
+                ->whereNotNull('quan_tri_vien_id')
+                ->avg('diem') ?? 0,
+            'avg_thai_do' => Rating::where('quan_tri_vien_id', $staffId)
+                ->whereNotNull('quan_tri_vien_id')
+                ->whereNotNull('diem_thai_do')
+                ->avg('diem_thai_do') ?? 0,
+            'avg_thoi_gian' => Rating::where('quan_tri_vien_id', $staffId)
+                ->whereNotNull('quan_tri_vien_id')
+                ->whereNotNull('diem_thoi_gian')
+                ->avg('diem_thoi_gian') ?? 0,
+            'five_star' => Rating::where('quan_tri_vien_id', $staffId)
+                ->whereNotNull('quan_tri_vien_id')
+                ->where('diem', 5)
+                ->count(),
+            'four_star' => Rating::where('quan_tri_vien_id', $staffId)
+                ->whereNotNull('quan_tri_vien_id')
+                ->where('diem', 4)
+                ->count(),
+            'three_star' => Rating::where('quan_tri_vien_id', $staffId)
+                ->whereNotNull('quan_tri_vien_id')
+                ->where('diem', 3)
+                ->count(),
+            'two_star' => Rating::where('quan_tri_vien_id', $staffId)
+                ->whereNotNull('quan_tri_vien_id')
+                ->where('diem', 2)
+                ->count(),
+            'one_star' => Rating::where('quan_tri_vien_id', $staffId)
+                ->whereNotNull('quan_tri_vien_id')
+                ->where('diem', 1)
+                ->count(),
+        ];
+
+        return view('backend.reports.staff-rating-detail', compact('staff', 'stats', 'ratings'));
+    }
 }
