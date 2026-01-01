@@ -9,6 +9,11 @@
             <h4 class="mb-1 fw-bold text-primary">Hồ sơ cá nhân</h4>
             <p class="text-muted mb-0">Quản lý và theo dõi các hồ sơ đăng ký dịch vụ của bạn</p>
         </div>
+        <div class="d-flex gap-2">
+            <a href="{{ route('payment.index') }}" class="btn btn-success" style="color: white;">
+                <i class="bi bi-credit-card-fill me-2"></i>Danh sách thanh toán
+            </a>
+        </div>
     </div>
 
     <!-- Hiển thị thông báo -->
@@ -55,7 +60,7 @@
                             <th class="fw-semibold">Trạng thái</th>
                             <th class="fw-semibold">File đính kèm</th>
                             <th class="fw-semibold">Lý do hủy</th>
-                            <th class="fw-semibold text-center">Hành động</th>
+                            <th class="fw-semibold text-center" style="min-width: 200px;">Hành động</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -75,7 +80,18 @@
                                 <td>{{ $item->donVi->ten_don_vi ?? '-' }}</td>
                                 <td>{{ $item->gio_hen }}</td>
                                 <td>{{ \Carbon\Carbon::parse($item->ngay_hen)->format('d/m/Y') }}</td>
-                                <td><span class="text-muted small">{{ Str::limit($item->ghi_chu, 20) }}</span></td>
+                                <td>
+                                    @if ($item->ghi_chu)
+                                        <button type="button"
+                                            class="btn btn-sm btn-outline-primary"
+                                            data-bs-toggle="modal"
+                                            data-bs-target="#ghiChuModal{{ $item->id }}">
+                                            Xem
+                                        </button>
+                                    @else
+                                        <span class="text-muted small">-</span>
+                                    @endif
+                                </td>
                                 <td>
                                     @php
                                         $statusConfig = [
@@ -147,7 +163,7 @@
                                         <span class="text-muted">-</span>
                                     @endif
                                 </td>
-                                <td>
+                                <td style="min-width: 200px;">
                                     <div class="d-flex gap-2 justify-content-center flex-wrap">
                                         <!-- Nút gửi thông tin -->
                                         <button type="button"
@@ -238,6 +254,32 @@
         @endif
     </div>
 </div>
+
+{{-- Modals xem ghi chú (đặt ngoài table để tránh ảnh hưởng CSS bảng) --}}
+        @foreach ($ho_so as $item)
+            @if ($item->ghi_chu)
+                <div class="modal fade" id="ghiChuModal{{ $item->id }}" tabindex="-1"
+                    aria-labelledby="ghiChuModalLabel{{ $item->id }}" aria-hidden="true">
+                    <div class="modal-dialog modal-dialog-centered">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="ghiChuModalLabel{{ $item->id }}">
+                                    Ghi chú hồ sơ {{ $item->ma_ho_so }}
+                                </h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                    aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                                <p class="mb-0">{!! nl2br(e($item->ghi_chu)) !!}</p>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            @endif
+        @endforeach
 
 <!-- Modal xem đánh giá (đặt ngoài table để tránh bị ảnh hưởng bởi CSS table) -->
 @foreach ($ho_so as $item)

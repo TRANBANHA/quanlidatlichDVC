@@ -3,12 +3,14 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Mail\NotificationMail;
 use App\Models\HoSo;
 use App\Models\Service;
 use App\Models\ThongBao;
 use App\Models\DonVi;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Mail;
 
 class HoSoController extends Controller
 {
@@ -421,7 +423,7 @@ class HoSoController extends Controller
         if ($oldStatus != $request->trang_thai) {
             $message = $this->getStatusChangeMessage($request->trang_thai, $hoSo->ma_ho_so);
             
-            ThongBao::create([
+            $thongBao = ThongBao::create([
                 'ho_so_id' => $hoSo->id,
                 'nguoi_dung_id' => $hoSo->nguoi_dung_id,
                 'dich_vu_id' => $hoSo->dich_vu_id,
@@ -429,6 +431,17 @@ class HoSoController extends Controller
                 'message' => $message,
                 'is_read' => false, // Mặc định chưa đọc
             ]);
+
+            // Load relationships và gửi email thông báo cho người dùng
+            try {
+                $thongBao->load(['NguoiDung', 'hoSo', 'dichVu']);
+                if ($thongBao->NguoiDung && $thongBao->NguoiDung->email) {
+                    Mail::to($thongBao->NguoiDung->email)->send(new NotificationMail($thongBao));
+                }
+            } catch (\Exception $e) {
+                \Log::error('Lỗi gửi email thông báo: ' . $e->getMessage());
+                // Không throw exception để không ảnh hưởng đến flow chính
+            }
         }
 
         return back()->with('success', 'Cập nhật trạng thái hồ sơ thành công!');
@@ -517,13 +530,24 @@ class HoSoController extends Controller
         $hoSo->save();
 
         // Gửi thông báo
-        ThongBao::create([
+        $thongBao = ThongBao::create([
             'ho_so_id' => $hoSo->id,
             'nguoi_dung_id' => $hoSo->nguoi_dung_id,
             'dich_vu_id' => $hoSo->dich_vu_id,
             'ngay_hen' => $hoSo->ngay_hen,
             'message' => "Hồ sơ {$hoSo->ma_ho_so} đã bị hủy. Lý do: {$request->ly_do_huy}",
         ]);
+
+        // Load relationships và gửi email thông báo cho người dùng
+        try {
+            $thongBao->load(['NguoiDung', 'hoSo', 'dichVu']);
+            if ($thongBao->NguoiDung && $thongBao->NguoiDung->email) {
+                Mail::to($thongBao->NguoiDung->email)->send(new NotificationMail($thongBao));
+            }
+        } catch (\Exception $e) {
+            \Log::error('Lỗi gửi email thông báo: ' . $e->getMessage());
+            // Không throw exception để không ảnh hưởng đến flow chính
+        }
 
         return back()->with('success', 'Hủy hồ sơ thành công!');
     }

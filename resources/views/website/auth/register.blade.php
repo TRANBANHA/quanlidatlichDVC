@@ -88,6 +88,20 @@
                                 @enderror
                             </div>
 
+                            {{-- Loại phường (Tạm trú/Tạm vắng) --}}
+                            <div class="mb-3">
+                                <label class="form-label">Loại phường <span class="text-danger">*</span></label>
+                                <select name="loai_phuong" class="form-select" required>
+                                    <option value="">-- Chọn loại phường --</option>
+                                    <option value="tạm trú" {{ old('loai_phuong') == 'tạm trú' ? 'selected' : '' }}>Tạm trú</option>
+                                    <option value="tạm vắng" {{ old('loai_phuong') == 'tạm vắng' ? 'selected' : '' }}>Tạm vắng</option>
+                                </select>
+                                <small class="form-text text-muted">Chọn loại phường của bạn (mặc định khi đặt lịch sẽ là tạm trú)</small>
+                                @error('loai_phuong')
+                                    <div class="text-danger mt-1">{{ $message }}</div>
+                                @enderror
+                            </div>
+                            
                             {{-- Phường --}}
                             <div class="mb-3">
                                 <label class="form-label">Phường <span class="text-danger">*</span></label>
@@ -114,19 +128,7 @@
                                 @enderror
                             </div>
 
-                            {{-- Loại phường (Tạm trú/Tạm vắng) --}}
-                            <div class="mb-3">
-                                <label class="form-label">Loại phường <span class="text-danger">*</span></label>
-                                <select name="loai_phuong" class="form-select" required>
-                                    <option value="">-- Chọn loại phường --</option>
-                                    <option value="tạm trú" {{ old('loai_phuong') == 'tạm trú' ? 'selected' : '' }}>Tạm trú</option>
-                                    <option value="tạm vắng" {{ old('loai_phuong') == 'tạm vắng' ? 'selected' : '' }}>Tạm vắng</option>
-                                </select>
-                                <small class="form-text text-muted">Chọn loại phường của bạn (mặc định khi đặt lịch sẽ là tạm trú)</small>
-                                @error('loai_phuong')
-                                    <div class="text-danger mt-1">{{ $message }}</div>
-                                @enderror
-                            </div>
+                           
 
                             <button type="submit" class="btn btn-primary w-100">Đăng ký</button>
 

@@ -3,9 +3,11 @@
 namespace App\Http\Controllers\Website;
 
 use App\Http\Controllers\Controller;
+use App\Mail\NotificationMail;
 use App\Models\HoSo;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Mail;
 use Carbon\Carbon;
 
 class MyBookingsController extends Controller
@@ -101,13 +103,23 @@ class MyBookingsController extends Controller
         ]);
 
         // Tạo thông báo
-        \App\Models\ThongBao::create([
+        $thongBao = \App\Models\ThongBao::create([
             'ho_so_id' => $hoSo->id,
             'nguoi_dung_id' => $hoSo->nguoi_dung_id,
             'dich_vu_id' => $hoSo->dich_vu_id,
             'ngay_hen' => $hoSo->ngay_hen,
             'message' => 'Bạn đã hủy lịch hẹn. Mã hồ sơ: ' . $hoSo->ma_ho_so,
         ]);
+
+        // Load relationships và gửi email thông báo cho người dùng
+        try {
+            $thongBao->load(['NguoiDung', 'hoSo', 'dichVu']);
+            if ($thongBao->NguoiDung && $thongBao->NguoiDung->email) {
+                Mail::to($thongBao->NguoiDung->email)->send(new NotificationMail($thongBao));
+            }
+        } catch (\Exception $e) {
+            \Log::error('Lỗi gửi email thông báo: ' . $e->getMessage());
+        }
 
         return redirect()->route('my-bookings.index')
             ->with('success', 'Đã hủy lịch hẹn thành công');

@@ -6,16 +6,18 @@
 <div class="container py-4">
     <!-- Header -->
     <div class="page-header mb-4">
-        <div class="d-flex align-items-center justify-content-between">
-            <div>
+        <div class="d-flex align-items-center justify-content-between w-100">
+            <div class="flex-grow-1">
                 <h2 class="fw-bold mb-2 text-primary">
                     <i class="fas fa-user-circle me-2"></i>Chi Tiết Đánh Giá: {{ $staff->ho_ten }}
                 </h2>
                 <p class="text-muted mb-0">Xem tất cả đánh giá chi tiết của nhân viên này</p>
             </div>
+            <div class="flex-shrink-0 ms-3" style="margin-right: 50px;">
             <a href="{{ route('admin.reports.staff-rating') }}" class="btn btn-secondary">
                 <i class="fas fa-arrow-left me-2"></i>Quay lại
             </a>
+            </div>
         </div>
     </div>
 

@@ -138,7 +138,7 @@
                                             <div class="avatar-sm bg-primary bg-opacity-10 rounded-circle d-flex align-items-center justify-content-center me-2">
                                                 <i class="fas fa-user text-primary"></i>
                                             </div>
-                                            <strong>{{ $rating->ho_ten ?? 'N/A' }}</strong>
+                                            <strong>{{ $rating->ten ?? 'N/A' }}</strong>
                                         </div>
                                     </td>
                                     <td class="text-center">

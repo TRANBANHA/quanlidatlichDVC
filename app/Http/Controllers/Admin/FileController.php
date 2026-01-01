@@ -87,13 +87,24 @@ class FileController extends Controller
 
         // Ví dụ: gửi tin nhắn qua SMS, Zalo, hoặc chỉ lưu log
         // Ở đây demo là chỉ lưu thông báo vào database
-        ThongBao::create([
+        $thongBao = ThongBao::create([
             'nguoi_dung_id' => $request->nguoi_dung_id,
             'ho_so_id' => $request->ho_so_id,
             'dich_vu_id' => $request->dich_vu_id,
             'ngay_hen' => $request->ngay_hen,
             'message' => $request->message,
         ]);
+
+        // Load relationships và gửi email thông báo cho người dùng
+        try {
+            $thongBao->load(['NguoiDung', 'hoSo', 'dichVu']);
+            if ($thongBao->NguoiDung && $thongBao->NguoiDung->email) {
+                \Illuminate\Support\Facades\Mail::to($thongBao->NguoiDung->email)
+                    ->send(new \App\Mail\NotificationMail($thongBao));
+            }
+        } catch (\Exception $e) {
+            \Log::error('Lỗi gửi email thông báo: ' . $e->getMessage());
+        }
 
         return back()->with('success', 'Đã gửi thông tin nhắc nhở cho người dùng.');
     }

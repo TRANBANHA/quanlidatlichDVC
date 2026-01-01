@@ -71,13 +71,13 @@
                                              && $menu['name'] !== 'Hồ sơ';
                                 }
                             }
-                            // Admin phường (quyen = 2): Xem menu có show_all hoặc menu quản lý, KHÔNG thấy "Cấu hình website", "Thông báo", "Chat"
+                            // Admin phường (quyen = 2): Xem menu có show_all hoặc menu quản lý, KHÔNG thấy "Cấu hình website", "Thông báo", "Chat", "Quản lý đơn vị/phường"
                             elseif ($admin->quyen === 2) {
-                                // Admin phường KHÔNG thấy "Cấu hình website", "Thông báo", "Chat"
-                                if ($menu['name'] === 'Cấu hình website' || $menu['name'] === 'Thông báo' || $menu['name'] === 'Chat') {
+                                // Admin phường KHÔNG thấy "Cấu hình website", "Thông báo", "Chat", "Quản lý đơn vị/phường"
+                                if ($menu['name'] === 'Cấu hình website' || $menu['name'] === 'Thông báo' || $menu['name'] === 'Chat' || $menu['name'] === 'Quản lý đơn vị/phường') {
                                     $showMenu = false;
                                 } else {
-                                    $showMenu = isset($menu['show_all']) || in_array($menu['name'], ['Quản lý đơn vị/phường', 'Quản trị hệ thống', 'Hồ sơ', 'Dịch vụ phường', 'Báo cáo', 'Thanh toán']);
+                                    $showMenu = isset($menu['show_all']) || in_array($menu['name'], ['Quản trị hệ thống', 'Hồ sơ', 'Dịch vụ phường', 'Báo cáo', 'Thanh toán']);
                                 }
                             }
                             // Cán bộ (quyen = 0): Xem Hồ sơ, Chat, Tài khoản, Báo cáo, KHÔNG thấy "Cấu hình website", "Thông báo", "Thanh toán"
@@ -161,7 +161,7 @@
 <style>
     /* Menu cha active */
     .nav-item.active {
-        background-color: rgba(255, 255, 255, 0.1);
+        background-color: rgba(0, 83, 179, 0.1);
     }
     
     .nav-item.active > a,

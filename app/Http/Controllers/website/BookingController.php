@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Website;
 
 use App\Http\Controllers\Controller;
+use App\Mail\NotificationMail;
 use App\Models\DonVi;
 use App\Models\Service;
 use App\Models\ServicePhuong;
@@ -15,6 +16,7 @@ use App\Models\ThongBao;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Carbon\Carbon;
@@ -636,13 +638,24 @@ class BookingController extends Controller
             }
 
             // Tạo thông báo
-            ThongBao::create([
+            $thongBao = ThongBao::create([
                 'ho_so_id' => $hoSo->id,
                 'nguoi_dung_id' => $user->id,
                 'dich_vu_id' => $request->dich_vu_id,
                 'ngay_hen' => $request->ngay_hen,
                 'message' => 'Đặt lịch thành công! Mã hồ sơ: ' . $hoSo->ma_ho_so . '. Số thứ tự: ' . $soThuTu . '. Vui lòng đến đúng giờ hẹn.',
             ]);
+
+            // Load relationships và gửi email thông báo cho người dùng
+            try {
+                $thongBao->load(['NguoiDung', 'hoSo', 'dichVu']);
+                if ($thongBao->NguoiDung && $thongBao->NguoiDung->email) {
+                    Mail::to($thongBao->NguoiDung->email)->send(new NotificationMail($thongBao));
+                }
+            } catch (\Exception $e) {
+                \Log::error('Lỗi gửi email thông báo: ' . $e->getMessage());
+                // Không throw exception để không ảnh hưởng đến flow chính
+            }
 
             DB::commit();
 

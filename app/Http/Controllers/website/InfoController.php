@@ -2,14 +2,16 @@
 
 namespace App\Http\Controllers\website;
 
+use App\Http\Controllers\Controller;
+use App\Mail\NotificationMail;
 use App\Models\HoSo;
 use App\Models\User;
 use App\Models\DonVi;
 use App\Models\ThongBao;
 use Illuminate\Http\Request;
-use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\ValidationException;
 
@@ -202,7 +204,7 @@ class InfoController extends Controller
                     $message .= ". Lý do: {$lyDoHuy}";
                 }
                 
-                ThongBao::create([
+                $thongBao = ThongBao::create([
                     'ho_so_id' => $hoSo->id,
                     'nguoi_dung_id' => $hoSo->nguoi_dung_id,
                     'dich_vu_id' => $hoSo->dich_vu_id,
@@ -210,6 +212,16 @@ class InfoController extends Controller
                     'message' => $message,
                     'is_read' => false, // Mặc định chưa đọc
                 ]);
+
+                // Load relationships và gửi email thông báo cho người dùng
+                try {
+                    $thongBao->load(['NguoiDung', 'hoSo', 'dichVu']);
+                    if ($thongBao->NguoiDung && $thongBao->NguoiDung->email) {
+                        Mail::to($thongBao->NguoiDung->email)->send(new NotificationMail($thongBao));
+                    }
+                } catch (\Exception $emailException) {
+                    \Log::error('Lỗi gửi email thông báo: ' . $emailException->getMessage());
+                }
             } catch (\Exception $e) {
                 // Bỏ qua lỗi tạo thông báo, vẫn redirect thành công
                 \Log::warning('Failed to create ThongBao', ['error' => $e->getMessage()]);
