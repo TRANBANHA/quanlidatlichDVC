@@ -77,16 +77,16 @@
                                 if ($menu['name'] === 'Cấu hình website' || $menu['name'] === 'Thông báo' || $menu['name'] === 'Chat' || $menu['name'] === 'Quản lý đơn vị/phường') {
                                     $showMenu = false;
                                 } else {
-                                    $showMenu = isset($menu['show_all']) || in_array($menu['name'], ['Quản trị hệ thống', 'Hồ sơ', 'Dịch vụ phường', 'Báo cáo', 'Thanh toán']);
+                                    $showMenu = isset($menu['show_all']) || in_array($menu['name'], ['Quản trị hệ thống', 'Hồ sơ', 'Dịch vụ phường', 'Báo cáo', 'Thanh toán','Nghỉ phép cán bộ']);
                                 }
                             }
-                            // Cán bộ (quyen = 0): Xem Hồ sơ, Chat, Tài khoản, Báo cáo, KHÔNG thấy "Cấu hình website", "Thông báo", "Thanh toán"
+                            // Cán bộ (quyen = 0): Xem Hồ sơ, Chat, Tài khoản, Báo cáo, Cán bộ báo nghỉ
                             else {
                                 // Cán bộ KHÔNG thấy "Cấu hình website", "Thông báo", "Thanh toán"
                                 if ($menu['name'] === 'Cấu hình website' || $menu['name'] === 'Thông báo' || $menu['name'] === 'Thanh toán') {
                                     $showMenu = false;
                                 } else {
-                                    $showMenu = in_array($menu['name'], ['Hồ sơ', 'Chat', 'Tài khoản', 'Báo cáo']);
+                                    $showMenu = in_array($menu['name'], ['Hồ sơ', 'Chat', 'Tài khoản', 'Báo cáo', 'Nghỉ phép cán bộ']);
                                 }
                             }
                         }

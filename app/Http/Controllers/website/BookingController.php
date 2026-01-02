@@ -252,9 +252,13 @@ class BookingController extends Controller
             // Tự động phân công cán bộ: Random đều cho tất cả cán bộ của phường (không theo dịch vụ)
             $quanTriVienId = null;
             
-            // Lấy tất cả cán bộ của phường
+            // Lấy danh sách cán bộ nghỉ trong ngày
+            $canBoNghiIds = \App\Models\CanBoNghi::danhSachCanBoNghiTrongNgay($ngayHen, $request->don_vi_id);
+            
+            // Lấy tất cả cán bộ của phường (loại trừ cán bộ nghỉ)
             $canBoPhuong = Admin::where('don_vi_id', $request->don_vi_id)
                 ->where('quyen', Admin::CAN_BO) // Chỉ cán bộ
+                ->whereNotIn('id', $canBoNghiIds) // Loại trừ cán bộ nghỉ
                 ->pluck('id')
                 ->toArray();
             

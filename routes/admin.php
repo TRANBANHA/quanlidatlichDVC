@@ -27,9 +27,10 @@ use App\Http\Controllers\Admin\ServicePhuongController;
 use App\Http\Controllers\Admin\AdminPhuongController;
 use App\Http\Controllers\Admin\StatisticsController;
 use App\Http\Controllers\Admin\SettingController;
-use App\Http\Controllers\Admin\NotificationAdminController;
+// use App\Http\Controllers\Admin\NotificationAdminController; // File không tồn tại
 use App\Http\Controllers\Admin\PaymentController;
 use App\Http\Controllers\Admin\QrCodeController;
+use App\Http\Controllers\Admin\CanBoNghiController;
 
 // Route với middleware 'auth:admin'
 Route::middleware(['auth:admin', 'role.access'])->group(function () {
@@ -125,15 +126,15 @@ Route::middleware(['auth:admin', 'role.access'])->group(function () {
         Route::put('/', [SettingController::class, 'update'])->name('update');
     });
 
-    // Quản lý thông báo (Admin tổng)
-    Route::prefix('notifications')->name('admin.notifications.')->group(function() {
-        Route::get('/', [NotificationAdminController::class, 'index'])->name('index');
-        Route::get('/create', [NotificationAdminController::class, 'create'])->name('create');
-        Route::post('/', [NotificationAdminController::class, 'store'])->name('store');
-        Route::get('/{id}/edit', [NotificationAdminController::class, 'edit'])->name('edit');
-        Route::put('/{id}', [NotificationAdminController::class, 'update'])->name('update');
-        Route::delete('/{id}', [NotificationAdminController::class, 'destroy'])->name('destroy');
-    });
+    // Quản lý thông báo (Admin tổng) - Tạm thời comment vì controller chưa tồn tại
+    // Route::prefix('notifications')->name('admin.notifications.')->group(function() {
+    //     Route::get('/', [NotificationAdminController::class, 'index'])->name('index');
+    //     Route::get('/create', [NotificationAdminController::class, 'create'])->name('create');
+    //     Route::post('/', [NotificationAdminController::class, 'store'])->name('store');
+    //     Route::get('/{id}/edit', [NotificationAdminController::class, 'edit'])->name('edit');
+    //     Route::put('/{id}', [NotificationAdminController::class, 'update'])->name('update');
+    //     Route::delete('/{id}', [NotificationAdminController::class, 'destroy'])->name('destroy');
+    // });
 
     // Quản lý dịch vụ phường (Admin phường)
     Route::prefix('service-phuong')->name('service-phuong.')->group(function() {
@@ -176,6 +177,17 @@ Route::middleware(['auth:admin', 'role.access'])->group(function () {
     Route::prefix('staff-ratings')->name('staff-ratings.')->group(function() {
         Route::get('/', [\App\Http\Controllers\Admin\StaffRatingController::class, 'index'])->name('index');
         Route::get('/{id}', [\App\Http\Controllers\Admin\StaffRatingController::class, 'show'])->name('show');
+    });
+
+    // Quản lý cán bộ báo nghỉ
+    Route::prefix('can-bo-nghi')->name('admin.can-bo-nghi.')->group(function() {
+        Route::get('/', [CanBoNghiController::class, 'index'])->name('index');
+        Route::get('/create', [CanBoNghiController::class, 'create'])->name('create');
+        Route::post('/', [CanBoNghiController::class, 'store'])->name('store');
+        Route::post('/admin-bao-nghi', [CanBoNghiController::class, 'storeByAdmin'])->name('store-by-admin');
+        Route::post('/{id}/duyet', [CanBoNghiController::class, 'duyet'])->name('duyet');
+        Route::post('/{id}/tu-choi', [CanBoNghiController::class, 'tuChoi'])->name('tu-choi');
+        Route::delete('/{id}', [CanBoNghiController::class, 'destroy'])->name('destroy');
     });
 
     // Quản lý thanh toán (Admin tổng và Admin phường)

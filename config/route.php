@@ -22,7 +22,7 @@ return [
                 ],
             ]
         ],
-        
+
         // ========== PHẦN 2: QUẢN LÝ DỊCH VỤ ==========
         [
             'name' => 'Dịch vụ',
@@ -58,7 +58,7 @@ return [
                 ],
             ]
         ],
-        
+
         // ========== PHẦN 3: QUẢN LÝ NGHIỆP VỤ ==========
         [
             'name' => 'Hồ sơ',
@@ -97,7 +97,7 @@ return [
                 ],
             ]
         ],
-        
+
         // ========== PHẦN 4: BÁO CÁO ==========
         [
             'name' => 'Báo cáo',
@@ -115,7 +115,7 @@ return [
                 ],
             ]
         ],
-        
+
         // ========== PHẦN 5: CẤU HÌNH (CHỈ ADMIN TỔNG) ==========
         [
             'name' => 'Cấu hình website',
@@ -124,8 +124,15 @@ return [
             'show_all' => false,
             'single' => true,
         ],
-       
-        
+        // Menu: Cán bộ báo nghỉ (Admin phường và Cán bộ truy cập được)
+        [
+            'name' => 'Nghỉ phép cán bộ',
+            'icon' => 'fas fa-calendar-check',
+            'route' => 'admin/can-bo-nghi',
+            'show_all' => true,
+            'single' => true,
+        ],
+
         // ========== PHẦN 6: TÀI KHOẢN CÁ NHÂN ==========
         [
             'name' => 'Tài khoản',
