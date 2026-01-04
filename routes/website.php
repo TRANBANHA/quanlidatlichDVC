@@ -148,7 +148,13 @@ Route::prefix('payment')->name('payment.')->group(function () {
         Route::post('/upload-proof/{paymentId}', [\App\Http\Controllers\website\PaymentController::class, 'uploadProof'])->name('upload-proof');
         Route::get('/{id}', [\App\Http\Controllers\website\PaymentController::class, 'show'])->name('show');
     });
-    // VNPay callback và return
-    Route::get('/vnpay/return', [\App\Http\Controllers\website\PaymentController::class, 'vnpayReturn'])->name('vnpay.return');
-    Route::post('/vnpay/callback', [\App\Http\Controllers\website\PaymentController::class, 'vnpayCallback'])->name('vnpay.callback');
+    // VNPay callback và return (trong prefix payment)
+    // VNPay có thể gửi cả GET và POST, nên cần hỗ trợ cả hai
+    Route::match(['get', 'post'], '/vnpay/return', [\App\Http\Controllers\website\PaymentController::class, 'vnpayReturn'])->name('vnpay.return');
+    Route::match(['get', 'post'], '/vnpay/callback', [\App\Http\Controllers\website\PaymentController::class, 'vnpayCallback'])->name('vnpay.callback');
 });
+
+// VNPay callback và return (không có prefix payment - để VNPay có thể gọi trực tiếp)
+// VNPay có thể gửi cả GET và POST, nên cần hỗ trợ cả hai
+Route::match(['get', 'post'], '/vnpay/return', [\App\Http\Controllers\website\PaymentController::class, 'vnpayReturn'])->name('vnpay.return.direct');
+Route::match(['get', 'post'], '/vnpay/callback', [\App\Http\Controllers\website\PaymentController::class, 'vnpayCallback'])->name('vnpay.callback.direct');

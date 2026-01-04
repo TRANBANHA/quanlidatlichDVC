@@ -80,10 +80,10 @@ return [
                     'title' => 'Quản lý thanh toán',
                     'route' => 'admin/payments'
                 ],
-                [
-                    'title' => 'Cấu hình VNPay',
-                    'route' => 'admin/vnpay'
-                ],
+                // [
+                //     'title' => 'Cấu hình VNPay',
+                //     'route' => 'admin/vnpay'
+                // ],
             ]
         ],
         [

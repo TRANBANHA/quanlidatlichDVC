@@ -135,7 +135,7 @@
                                     <th>Số tiền</th>
                                     <th>Phương thức</th>
                                     <th>Trạng thái</th>
-                                    <th>Ảnh chứng từ</th>
+                                    <!-- <th>Ảnh chứng từ</th> -->
                                     <th>Ngày tạo</th>
                                     <th>Hành động</th>
                                 </tr>
@@ -201,7 +201,7 @@
                                             <span class="badge bg-secondary">{{ $payment->trang_thai_thanh_toan }}</span>
                                         @endif
                                     </td>
-                                    <td>
+                                    <!-- <td>
                                         @if($payment->hinh_anh)
                                             <button type="button" class="btn btn-sm btn-info" data-bs-toggle="modal" data-bs-target="#imageModal{{ $payment->id }}">
                                                 <i class="fas fa-image me-1"></i>Xem ảnh
@@ -209,7 +209,7 @@
                                         @else
                                             <span class="text-muted">Chưa có</span>
                                         @endif
-                                    </td>
+                                    </td> -->
                                     <td>{{ $payment->created_at->format('d/m/Y H:i') }}</td>
                                     <td>
                                         <a href="{{ route('admin.payments.show', $payment->id) }}" class="btn btn-sm btn-primary">

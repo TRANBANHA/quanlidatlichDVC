@@ -6,8 +6,10 @@ use App\Http\Controllers\Controller;
 use App\Models\Payment;
 use App\Models\HoSo;
 use App\Services\VNPayService;
+use App\Mail\PaymentInvoiceMail;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Str;
 
 class PaymentController extends Controller
@@ -118,7 +120,9 @@ class PaymentController extends Controller
         $result = $vnpayService->processPaymentResult($inputData);
 
         $vnp_TxnRef = $inputData['vnp_TxnRef'] ?? '';
-        $payment = Payment::where('ma_giao_dich', $vnp_TxnRef)->first();
+        $payment = Payment::with(['user', 'hoSo.dichVu', 'hoSo.donVi'])
+            ->where('ma_giao_dich', $vnp_TxnRef)
+            ->first();
 
         if (!$payment) {
             return redirect()->route('payment.index')
@@ -127,11 +131,27 @@ class PaymentController extends Controller
 
         if ($result['success']) {
             // Cập nhật trạng thái thanh toán thành công
+            $wasAlreadyPaid = $payment->trang_thai_thanh_toan == 'da_thanh_toan';
+            
             $payment->update([
                 'trang_thai_thanh_toan' => 'da_thanh_toan',
                 'ngay_thanh_toan' => now(),
                 'du_lieu_vnpay' => $result['data'],
             ]);
+
+            // Gửi email hóa đơn nếu chưa thanh toán trước đó
+            if (!$wasAlreadyPaid && $payment->user && $payment->user->email) {
+                try {
+                    Mail::to($payment->user->email)->send(new PaymentInvoiceMail($payment));
+                } catch (\Exception $e) {
+                    // Log lỗi nhưng không làm gián đoạn flow
+                    \Log::error('Failed to send payment invoice email', [
+                        'payment_id' => $payment->id,
+                        'user_email' => $payment->user->email,
+                        'error' => $e->getMessage()
+                    ]);
+                }
+            }
 
             return redirect()->route('payment.show', $payment->id)
                 ->with('success', 'Thanh toán thành công!');
@@ -158,7 +178,9 @@ class PaymentController extends Controller
         $result = $vnpayService->processPaymentResult($inputData);
 
         $vnp_TxnRef = $inputData['vnp_TxnRef'] ?? '';
-        $payment = Payment::where('ma_giao_dich', $vnp_TxnRef)->first();
+        $payment = Payment::with(['user', 'hoSo.dichVu', 'hoSo.donVi'])
+            ->where('ma_giao_dich', $vnp_TxnRef)
+            ->first();
 
         if (!$payment) {
             return response()->json([
@@ -175,17 +197,27 @@ class PaymentController extends Controller
                     'ngay_thanh_toan' => now(),
                     'du_lieu_vnpay' => $result['data'],
                 ]);
+
+                // Gửi email hóa đơn sau khi thanh toán thành công
+                if ($payment->user && $payment->user->email) {
+                    try {
+                        Mail::to($payment->user->email)->send(new PaymentInvoiceMail($payment));
+                    } catch (\Exception $e) {
+                        // Log lỗi nhưng không làm gián đoạn flow
+                        \Log::error('Failed to send payment invoice email', [
+                            'payment_id' => $payment->id,
+                            'user_email' => $payment->user->email,
+                            'error' => $e->getMessage()
+                        ]);
+                    }
+                }
             }
 
-            return response()->json([
-                'RspCode' => '00',
-                'Message' => 'Success'
-            ], 200);
+            return redirect()->route('payment.show', $payment->id)
+                ->with('error', $result['message']);
         } else {
-            return response()->json([
-                'RspCode' => '99',
-                'Message' => $result['message']
-            ], 200);
+            return redirect()->route('payment.create', $payment->ho_so_id)
+                ->with('error', $result['message']);    
         }
     }
 
