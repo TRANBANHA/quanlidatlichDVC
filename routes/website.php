@@ -144,11 +144,11 @@ Route::prefix('payment')->name('payment.')->group(function () {
     Route::middleware('auth:web')->group(function () {
         Route::get('/', [\App\Http\Controllers\website\PaymentController::class, 'index'])->name('index');
         Route::get('/create/{hoSoId}', [\App\Http\Controllers\website\PaymentController::class, 'create'])->name('create');
-        Route::post('/qr/{hoSoId}', [\App\Http\Controllers\website\PaymentController::class, 'createQRPayment'])->name('qr.create');
-        Route::get('/check-status/{paymentId}', [\App\Http\Controllers\website\PaymentController::class, 'checkQRPaymentStatus'])->name('qr.check-status');
+        Route::post('/vnpay/create/{hoSoId}', [\App\Http\Controllers\website\PaymentController::class, 'createVNPayPayment'])->name('vnpay.create');
         Route::post('/upload-proof/{paymentId}', [\App\Http\Controllers\website\PaymentController::class, 'uploadProof'])->name('upload-proof');
         Route::get('/{id}', [\App\Http\Controllers\website\PaymentController::class, 'show'])->name('show');
     });
-    // Xác nhận thanh toán QR code (không cần auth - được gọi từ app quét QR)
-    Route::post('/qr/confirm/{maGiaoDich}', [\App\Http\Controllers\website\PaymentController::class, 'confirmQRPayment'])->name('qr.confirm');
+    // VNPay callback và return
+    Route::get('/vnpay/return', [\App\Http\Controllers\website\PaymentController::class, 'vnpayReturn'])->name('vnpay.return');
+    Route::post('/vnpay/callback', [\App\Http\Controllers\website\PaymentController::class, 'vnpayCallback'])->name('vnpay.callback');
 });

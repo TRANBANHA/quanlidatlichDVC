@@ -40,8 +40,8 @@
                             <tr>
                                 <th>Phương thức:</th>
                                 <td>
-                                    @if($payment->phuong_thuc_thanh_toan == 'qr_code')
-                                        <span class="badge bg-success"><i class="fas fa-qrcode me-1"></i>QR Code</span>
+                                    @if($payment->phuong_thuc_thanh_toan == 'vnpay')
+                                        <span class="badge bg-primary"><i class="fas fa-credit-card me-1"></i>VNPay</span>
                                     @elseif($payment->phuong_thuc_thanh_toan == 'tien_mat')
                                         <span class="badge bg-secondary">Tiền mặt</span>
                                     @elseif($payment->phuong_thuc_thanh_toan == 'chuyen_khoan')

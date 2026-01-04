@@ -53,6 +53,7 @@
                             <th class="fw-semibold">Ngày hẹn</th>
                             <th class="fw-semibold">Ghi chú</th>
                             <th class="fw-semibold">Trạng thái</th>
+                            <th class="fw-semibold">Thanh toán</th>
                             <th class="fw-semibold">File đính kèm</th>
                             <th class="fw-semibold">Lý do hủy</th>
                             <th class="fw-semibold text-center">Hành động</th>
@@ -116,6 +117,54 @@
                                     <span class="badge rounded-pill px-3 py-2 {{ $config['class'] }}">
                                         {{ $config['text'] }}
                                     </span>
+                                </td>
+                                <td>
+                                    @php
+                                        $servicePhuong = $item->dichVu->getServiceForPhuong($item->don_vi_id);
+                                        $phiDichVu = $servicePhuong ? $servicePhuong->phi_dich_vu : 0;
+                                        $payment = \App\Models\Payment::where('ho_so_id', $item->id)
+                                            ->where('nguoi_dung_id', Auth::guard('web')->id())
+                                            ->first();
+                                    @endphp
+                                    @if($phiDichVu > 0)
+                                        @if($payment)
+                                            @if($payment->trang_thai_thanh_toan == 'da_thanh_toan')
+                                                <div class="d-flex flex-column gap-1">
+                                                    <span class="badge bg-success">Đã thanh toán</span>
+                                                    @if($payment->phuong_thuc_thanh_toan == 'vnpay')
+                                                        <span class="badge bg-primary" style="font-size: 0.7rem;">
+                                                            <i class="fas fa-credit-card me-1"></i>VNPay
+                                                        </span>
+                                                    @elseif($payment->phuong_thuc_thanh_toan == 'tien_mat')
+                                                        <span class="badge bg-secondary" style="font-size: 0.7rem;">Tiền mặt</span>
+                                                    @elseif($payment->phuong_thuc_thanh_toan == 'chuyen_khoan')
+                                                        <span class="badge bg-info" style="font-size: 0.7rem;">Chuyển khoản</span>
+                                                    @else
+                                                        <span class="badge bg-secondary" style="font-size: 0.7rem;">{{ $payment->phuong_thuc_thanh_toan ?? 'N/A' }}</span>
+                                                    @endif
+                                                </div>
+                                            @elseif($payment->trang_thai_thanh_toan == 'cho_thanh_toan')
+                                                <div class="d-flex flex-column gap-1">
+                                                    <span class="badge bg-warning">Chờ thanh toán</span>
+                                                    @if($payment->phuong_thuc_thanh_toan == 'vnpay')
+                                                        <span class="badge bg-primary" style="font-size: 0.7rem;">
+                                                            <i class="fas fa-credit-card me-1"></i>VNPay
+                                                        </span>
+                                                    @elseif($payment->phuong_thuc_thanh_toan == 'tien_mat')
+                                                        <span class="badge bg-secondary" style="font-size: 0.7rem;">Tiền mặt</span>
+                                                    @elseif($payment->phuong_thuc_thanh_toan == 'chuyen_khoan')
+                                                        <span class="badge bg-info" style="font-size: 0.7rem;">Chuyển khoản</span>
+                                                    @endif
+                                                </div>
+                                            @elseif($payment->trang_thai_thanh_toan == 'that_bai')
+                                                <span class="badge bg-danger">Thất bại</span>
+                                            @endif
+                                        @else
+                                            <span class="badge bg-warning">Chưa thanh toán</span>
+                                        @endif
+                                    @else
+                                        <span class="text-muted small">Miễn phí</span>
+                                    @endif
                                 </td>
                                 <td>
                                     @php
@@ -192,16 +241,12 @@
                                         @endif
 
                                         <!-- Nút thanh toán -->
-                                        @php
-                                            $servicePhuong = $item->dichVu->getServiceForPhuong($item->don_vi_id);
-                                            $phiDichVu = $servicePhuong ? $servicePhuong->phi_dich_vu : 0;
-                                            $payment = \App\Models\Payment::where('ho_so_id', $item->id)
-                                                ->where('nguoi_dung_id', Auth::guard('web')->id())
-                                                ->first();
-                                        @endphp
                                         @if($phiDichVu > 0)
                                             @if($payment && $payment->trang_thai_thanh_toan == 'da_thanh_toan')
-                                                <span class="badge bg-success">Đã thanh toán</span>
+                                                <a href="{{ route('payment.show', $payment->id) }}"
+                                                    class="btn btn-outline-success btn-sm rounded-pill" title="Xem chi tiết thanh toán">
+                                                    <i class="fas fa-eye me-1"></i>Chi tiết
+                                                </a>
                                             @else
                                                 <a href="{{ route('payment.create', $item->id) }}"
                                                     class="btn btn-success btn-sm rounded-pill">
@@ -218,7 +263,7 @@
 
                         @empty
                             <tr>
-                                <td colspan="13" class="text-center py-5">
+                                <td colspan="14" class="text-center py-5">
                                     <div class="text-muted">
                                         <p class="mb-0">Không có hồ sơ nào.</p>
                                     </div>

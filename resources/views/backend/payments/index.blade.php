@@ -109,7 +109,7 @@
                             <div class="col-md-3">
                                 <select name="phuong_thuc" class="form-select">
                                     <option value="">-- Tất cả phương thức --</option>
-                                    <option value="qr_code" {{ request('phuong_thuc') == 'qr_code' ? 'selected' : '' }}>QR Code</option>
+                                    <option value="vnpay" {{ request('phuong_thuc') == 'vnpay' ? 'selected' : '' }}>VNPay</option>
                                 </select>
                             </div>
                             <div class="col-md-4">
@@ -178,8 +178,12 @@
                                         <strong class="text-primary">{{ number_format($payment->so_tien) }} VNĐ</strong>
                                     </td>
                                     <td>
-                                        @if($payment->phuong_thuc_thanh_toan == 'qr_code')
-                                            <span class="badge bg-info">QR Code</span>
+                                        @if($payment->phuong_thuc_thanh_toan == 'vnpay')
+                                            <span class="badge bg-primary">VNPay</span>
+                                        @elseif($payment->phuong_thuc_thanh_toan == 'tien_mat')
+                                            <span class="badge bg-secondary">Tiền mặt</span>
+                                        @elseif($payment->phuong_thuc_thanh_toan == 'chuyen_khoan')
+                                            <span class="badge bg-info">Chuyển khoản</span>
                                         @else
                                             <span class="badge bg-secondary">{{ $payment->phuong_thuc_thanh_toan ?? 'N/A' }}</span>
                                         @endif

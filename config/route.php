@@ -81,9 +81,9 @@ return [
                     'route' => 'admin/payments'
                 ],
                 [
-                    'title' => 'Cấu hình QR Code',
-                    'route' => 'admin/qr-code'
-                ]
+                    'title' => 'Cấu hình VNPay',
+                    'route' => 'admin/vnpay'
+                ],
             ]
         ],
         [

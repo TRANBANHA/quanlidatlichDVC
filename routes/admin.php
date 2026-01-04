@@ -29,7 +29,7 @@ use App\Http\Controllers\Admin\StatisticsController;
 use App\Http\Controllers\Admin\SettingController;
 use App\Http\Controllers\Admin\NotificationAdminController;
 use App\Http\Controllers\Admin\PaymentController;
-use App\Http\Controllers\Admin\QrCodeController;
+use App\Http\Controllers\Admin\VNPayController;
 
 // Route với middleware 'auth:admin'
 Route::middleware(['auth:admin', 'role.access'])->group(function () {
@@ -186,11 +186,11 @@ Route::middleware(['auth:admin', 'role.access'])->group(function () {
         Route::post('/{id}/reject', [PaymentController::class, 'reject'])->name('reject');
     });
 
-    // Cấu hình QR code (Admin phường)
-    Route::prefix('qr-code')->name('admin.qr-code.')->group(function() {
-        Route::get('/', [QrCodeController::class, 'index'])->name('index');
-        Route::put('/', [QrCodeController::class, 'update'])->name('update');
+    // Cấu hình VNPay (Chỉ Admin tổng)
+    Route::prefix('vnpay')->name('admin.vnpay.')->group(function() {
+        Route::get('/', [VNPayController::class, 'index'])->name('index');
     });
+
 
 });
 
