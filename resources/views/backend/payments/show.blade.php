@@ -32,8 +32,12 @@
                                 <tr>
                                     <th>Phương thức:</th>
                                     <td>
-                                        @if($payment->phuong_thuc_thanh_toan == 'qr_code')
-                                            <span class="badge bg-info">QR Code</span>
+                                        @if($payment->phuong_thuc_thanh_toan == 'vnpay')
+                                            <span class="badge bg-primary">VNPay</span>
+                                        @elseif($payment->phuong_thuc_thanh_toan == 'tien_mat')
+                                            <span class="badge bg-secondary">Tiền mặt</span>
+                                        @elseif($payment->phuong_thuc_thanh_toan == 'chuyen_khoan')
+                                            <span class="badge bg-info">Chuyển khoản</span>
                                         @else
                                             <span class="badge bg-secondary">{{ $payment->phuong_thuc_thanh_toan ?? 'N/A' }}</span>
                                         @endif
@@ -119,6 +123,86 @@
                             </table>
                         </div>
                     </div>
+
+                    <!-- Thông tin VNPay (nếu có) -->
+                    @if($payment->phuong_thuc_thanh_toan == 'vnpay' && $payment->du_lieu_vnpay)
+                    <div class="row mt-4">
+                        <div class="col-12">
+                            <div class="card border-primary">
+                                <div class="card-header bg-primary text-white">
+                                    <h5 class="mb-0"><i class="fas fa-credit-card me-2"></i>Thông Tin Giao Dịch VNPay</h5>
+                                </div>
+                                <div class="card-body">
+                                    <table class="table table-bordered">
+                                        <tr>
+                                            <th width="30%">Mã giao dịch VNPay:</th>
+                                            <td><strong class="font-monospace">{{ $payment->du_lieu_vnpay['order_id'] ?? $payment->ma_giao_dich }}</strong></td>
+                                        </tr>
+                                        @if(isset($payment->du_lieu_vnpay['bank_code']))
+                                        <tr>
+                                            <th>Ngân hàng:</th>
+                                            <td><strong>{{ $payment->du_lieu_vnpay['bank_code'] }}</strong></td>
+                                        </tr>
+                                        @endif
+                                        @if(isset($payment->du_lieu_vnpay['bank_tran_no']))
+                                        <tr>
+                                            <th>Mã giao dịch ngân hàng:</th>
+                                            <td><strong class="font-monospace">{{ $payment->du_lieu_vnpay['bank_tran_no'] }}</strong></td>
+                                        </tr>
+                                        @endif
+                                        @if(isset($payment->du_lieu_vnpay['card_type']))
+                                        <tr>
+                                            <th>Loại thẻ:</th>
+                                            <td>{{ $payment->du_lieu_vnpay['card_type'] }}</td>
+                                        </tr>
+                                        @endif
+                                        @if(isset($payment->du_lieu_vnpay['pay_date']))
+                                        <tr>
+                                            <th>Ngày thanh toán VNPay:</th>
+                                            <td>
+                                                @php
+                                                    $payDate = $payment->du_lieu_vnpay['pay_date'];
+                                                    // Format: YYYYMMDDHHmmss
+                                                    if(strlen($payDate) == 14) {
+                                                        $formattedDate = \Carbon\Carbon::createFromFormat('YmdHis', $payDate)->format('d/m/Y H:i:s');
+                                                    } else {
+                                                        $formattedDate = $payDate;
+                                                    }
+                                                @endphp
+                                                <strong class="text-success">{{ $formattedDate }}</strong>
+                                            </td>
+                                        </tr>
+                                        @endif
+                                        @if(isset($payment->du_lieu_vnpay['response_code']))
+                                        <tr>
+                                            <th>Mã phản hồi:</th>
+                                            <td>
+                                                @if($payment->du_lieu_vnpay['response_code'] == '00')
+                                                    <span class="badge bg-success">{{ $payment->du_lieu_vnpay['response_code'] }} - Thành công</span>
+                                                @else
+                                                    <span class="badge bg-danger">{{ $payment->du_lieu_vnpay['response_code'] }} - Thất bại</span>
+                                                @endif
+                                            </td>
+                                        </tr>
+                                        @endif
+                                        @if(isset($payment->du_lieu_vnpay['transaction_status']))
+                                        <tr>
+                                            <th>Trạng thái giao dịch:</th>
+                                            <td>
+                                                @if($payment->du_lieu_vnpay['transaction_status'] == '00')
+                                                    <span class="badge bg-success">Thành công</span>
+                                                @else
+                                                    <span class="badge bg-danger">Thất bại</span>
+                                                @endif
+                                            </td>
+                                        </tr>
+                                        @endif
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    @endif
 
                     <!-- Ảnh chứng từ -->
                     @if($payment->hinh_anh)

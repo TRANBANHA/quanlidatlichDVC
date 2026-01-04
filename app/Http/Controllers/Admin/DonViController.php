@@ -132,11 +132,6 @@ class DonViController extends Controller
         $request->validate([
             'ten_don_vi' => 'required|string|max:255|unique:don_vi,ten_don_vi,' . $id,
             'mo_ta' => 'nullable|string|max:500',
-            // QR code fields (chỉ Admin phường mới có thể cập nhật)
-            'qr_bank_name' => 'nullable|string|max:255',
-            'qr_account_number' => 'nullable|string|max:50',
-            'qr_account_name' => 'nullable|string|max:255',
-            'qr_image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
         ], [
             'ten_don_vi.required' => 'Vui lòng nhập tên đơn vị/phường.',
             'ten_don_vi.unique' => 'Tên đơn vị/phường đã tồn tại.',
@@ -147,21 +142,6 @@ class DonViController extends Controller
             'ten_don_vi' => $request->ten_don_vi,
             'mo_ta' => $request->mo_ta,
         ];
-
-        // Chỉ Admin phường mới có thể cập nhật QR code
-        if ($currentUser->isAdminPhuong() || $currentUser->isAdmin()) {
-            $updateData['qr_bank_name'] = $request->qr_bank_name;
-            $updateData['qr_account_number'] = $request->qr_account_number;
-            $updateData['qr_account_name'] = $request->qr_account_name;
-
-            // Xử lý upload QR code image
-            if ($request->hasFile('qr_image')) {
-                $qrImage = $request->file('qr_image');
-                $qrImageName = 'qr_code_' . $donVi->id . '_' . time() . '.' . $qrImage->getClientOriginalExtension();
-                $qrImagePath = $qrImage->storeAs('qr_codes', $qrImageName, 'public');
-                $updateData['qr_image'] = $qrImagePath;
-            }
-        }
 
         $donVi->update($updateData);
 

@@ -198,11 +198,11 @@ Route::middleware(['auth:admin', 'role.access'])->group(function () {
         Route::post('/{id}/reject', [PaymentController::class, 'reject'])->name('reject');
     });
 
-    // Cấu hình QR code (Admin phường)
-    Route::prefix('qr-code')->name('admin.qr-code.')->group(function() {
-        Route::get('/', [QrCodeController::class, 'index'])->name('index');
-        Route::put('/', [QrCodeController::class, 'update'])->name('update');
+    // Cấu hình VNPay (Chỉ Admin tổng)
+    Route::prefix('vnpay')->name('admin.vnpay.')->group(function() {
+        Route::get('/', [VNPayController::class, 'index'])->name('index');
     });
+
 
 });
 

@@ -109,7 +109,7 @@
                             <div class="col-md-3">
                                 <select name="phuong_thuc" class="form-select">
                                     <option value="">-- Tất cả phương thức --</option>
-                                    <option value="qr_code" {{ request('phuong_thuc') == 'qr_code' ? 'selected' : '' }}>QR Code</option>
+                                    <option value="vnpay" {{ request('phuong_thuc') == 'vnpay' ? 'selected' : '' }}>VNPay</option>
                                 </select>
                             </div>
                             <div class="col-md-4">
@@ -135,7 +135,7 @@
                                     <th>Số tiền</th>
                                     <th>Phương thức</th>
                                     <th>Trạng thái</th>
-                                    <th>Ảnh chứng từ</th>
+                                    <!-- <th>Ảnh chứng từ</th> -->
                                     <th>Ngày tạo</th>
                                     <th>Hành động</th>
                                 </tr>
@@ -178,8 +178,12 @@
                                         <strong class="text-primary">{{ number_format($payment->so_tien) }} VNĐ</strong>
                                     </td>
                                     <td>
-                                        @if($payment->phuong_thuc_thanh_toan == 'qr_code')
-                                            <span class="badge bg-info">QR Code</span>
+                                        @if($payment->phuong_thuc_thanh_toan == 'vnpay')
+                                            <span class="badge bg-primary">VNPay</span>
+                                        @elseif($payment->phuong_thuc_thanh_toan == 'tien_mat')
+                                            <span class="badge bg-secondary">Tiền mặt</span>
+                                        @elseif($payment->phuong_thuc_thanh_toan == 'chuyen_khoan')
+                                            <span class="badge bg-info">Chuyển khoản</span>
                                         @else
                                             <span class="badge bg-secondary">{{ $payment->phuong_thuc_thanh_toan ?? 'N/A' }}</span>
                                         @endif
@@ -197,7 +201,7 @@
                                             <span class="badge bg-secondary">{{ $payment->trang_thai_thanh_toan }}</span>
                                         @endif
                                     </td>
-                                    <td>
+                                    <!-- <td>
                                         @if($payment->hinh_anh)
                                             <button type="button" class="btn btn-sm btn-info" data-bs-toggle="modal" data-bs-target="#imageModal{{ $payment->id }}">
                                                 <i class="fas fa-image me-1"></i>Xem ảnh
@@ -205,7 +209,7 @@
                                         @else
                                             <span class="text-muted">Chưa có</span>
                                         @endif
-                                    </td>
+                                    </td> -->
                                     <td>{{ $payment->created_at->format('d/m/Y H:i') }}</td>
                                     <td>
                                         <a href="{{ route('admin.payments.show', $payment->id) }}" class="btn btn-sm btn-primary">

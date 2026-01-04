@@ -14,10 +14,6 @@ class DonVi extends Model
     protected $fillable = [
         'ten_don_vi',
         'mo_ta',
-        'qr_bank_name',
-        'qr_account_number',
-        'qr_account_name',
-        'qr_image',
     ];
 
     public function admins()
