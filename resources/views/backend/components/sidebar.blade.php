@@ -68,6 +68,8 @@
                                     $showMenu = $menu['name'] !== 'Dịch vụ' 
                                              && $menu['name'] !== 'Dịch vụ phường' 
                                              && $menu['name'] !== 'Thanh toán' 
+                                             && $menu['name'] !== 'Chat'
+                                             && $menu['name'] !== 'Nghỉ phép cán bộ'
                                              && $menu['name'] !== 'Hồ sơ';
                                 }
                             }
