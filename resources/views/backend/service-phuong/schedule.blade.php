@@ -96,10 +96,10 @@
                                 <label for="gio_ket_thuc" class="form-label">Giờ kết thúc <span class="text-danger">*</span></label>
                                 <input type="time" name="gio_ket_thuc" id="gio_ket_thuc" class="form-control" value="17:00" required>
                             </div>
-                            <div class="col-md-4 mb-3">
+                            <!-- <div class="col-md-4 mb-3">
                                 <label for="so_luong_toi_da" class="form-label">Số lượng tối đa <span class="text-danger">*</span></label>
                                 <input type="number" name="so_luong_toi_da" id="so_luong_toi_da" class="form-control" value="10" min="1" required>
-                            </div>
+                            </div> -->
                         </div>
                         <div class="mb-3">
                             <label for="ghi_chu" class="form-label">Ghi chú</label>
@@ -136,7 +136,7 @@
                                             <tr>
                                                 <th>Thứ</th>
                                                 <th>Giờ làm việc</th>
-                                                <th>Số lượng tối đa</th>
+                                                <!-- <th>Số lượng tối đa</th> -->
                                                 <th>Ghi chú</th>
                                                 <th>Thao tác</th>
                                             </tr>
@@ -151,7 +151,7 @@
                                                         <span class="badge bg-primary">{{ $dayNames[$schedule->thu_trong_tuan] ?? 'N/A' }}</span>
                                                     </td>
                                                     <td>{{ $schedule->gio_bat_dau }} - {{ $schedule->gio_ket_thuc }}</td>
-                                                    <td><span class="badge bg-success">{{ $schedule->so_luong_toi_da }} hồ sơ</span></td>
+                                                    <!-- <td><span class="badge bg-success">{{ $schedule->so_luong_toi_da }} hồ sơ</span></td> -->
                                                     <td>{{ $schedule->ghi_chu ?? '-' }}</td>
                                                     <td>
                                                         @if(Auth::guard('admin')->user()->isAdminPhuong() || Auth::guard('admin')->user()->isCanBo())
@@ -204,10 +204,10 @@
                                     <input type="time" name="gio_ket_thuc" class="form-control" value="{{ $schedule->gio_ket_thuc }}" required>
                                 </div>
                             </div>
-                            <div class="mb-3">
+                            <!-- <div class="mb-3">
                                 <label class="form-label">Số lượng tối đa <span class="text-danger">*</span></label>
                                 <input type="number" name="so_luong_toi_da" class="form-control" value="{{ $schedule->so_luong_toi_da }}" min="1" required>
-                            </div>
+                            </div> -->
                             <div class="mb-3">
                                 <label class="form-label">Ghi chú</label>
                                 <textarea name="ghi_chu" class="form-control" rows="2">{{ $schedule->ghi_chu }}</textarea>

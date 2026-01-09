@@ -40,6 +40,8 @@ class InfoController extends Controller
             }
         ])
         ->where('nguoi_dung_id', Auth::user()->id)
+        ->orderBy('created_at', 'desc')
+        ->orderBy('id', 'desc')
         ->paginate(10);
         
         // Lấy thông báo cho tab4

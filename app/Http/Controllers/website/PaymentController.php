@@ -214,7 +214,7 @@ class PaymentController extends Controller
             }
 
             return redirect()->route('payment.show', $payment->id)
-                ->with('error', $result['message']);
+                ->with('success', $result['message']);
         } else {
             return redirect()->route('payment.create', $payment->ho_so_id)
                 ->with('error', $result['message']);    

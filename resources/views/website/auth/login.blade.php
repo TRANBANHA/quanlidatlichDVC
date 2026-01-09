@@ -111,10 +111,8 @@
                         </div>
                         <div class="col-lg-6 d-flex align-items-center gradient-custom-2">
                             <div class=" px-3 py-4 p-md-5 mx-md-4">
-                                <h4 class="mb-4">We are more than just a company</h4>
-                                <p class="small mb-0">Join us to access seamless services including citizen
-                                    registration, temporary residence, and more. Manage your tasks efficiently with our
-                                    platform.</p>
+                                <h4 class="mb-4">Hệ thống đăng ký và nhận kết quả dịch vụ công tại Đà Nẵng</h4>
+                                <p class="small mb-0">Nền tảng được xây dựng nhằm hỗ trợ người dân thực hiện các thủ tục hành chính công như đăng ký lịch làm việc, quản lý hồ sơ cư trú, theo dõi tiến trình xử lý và nhận kết quả trực tuyến. Hệ thống góp phần nâng cao hiệu quả quản lý, giảm thời gian chờ đợi và tăng tính minh bạch trong hoạt động hành chính công.</p>
                             </div>
                         </div>
                     </div>

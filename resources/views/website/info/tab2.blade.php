@@ -51,7 +51,7 @@
                             <th class="fw-semibold">#</th>
                             <th class="fw-semibold">Mã hồ sơ</th>
                             <th class="fw-semibold">Dịch vụ</th>
-                            <th class="fw-semibold">Người dùng</th>
+                            <th class="fw-semibold">Số thứ tự</th>
                             <th class="fw-semibold">Số điện thoại</th>
                             <th class="fw-semibold">Đơn vị</th>
                             <th class="fw-semibold">Giờ hẹn</th>
@@ -76,7 +76,7 @@
                                 <td><span
                                         class="badge bg-light text-dark">{{ $item->dichVu->ten_dich_vu ?? '-' }}</span>
                                 </td>
-                                <td>{{ $item->nguoiDung->ten ?? '-' }}</td>
+                                <td>{{ $item->so_thu_tu ?? '-' }}</td>
                                 <td>{{ $item->nguoiDung->so_dien_thoai ?? '-' }}</td>
                                 <td>{{ $item->donVi->ten_don_vi ?? '-' }}</td>
                                 <td>{{ $item->gio_hen }}</td>

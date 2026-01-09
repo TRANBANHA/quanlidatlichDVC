@@ -30,21 +30,45 @@
                             @csrf
 
                             <div class="mb-3">
-                                <label for="ngay_nghi" class="form-label">
-                                    Ngày nghỉ <span class="text-danger">*</span>
+                                <label class="form-label">
+                                    Ngày nghỉ (chọn nhiều) <span class="text-danger">*</span>
                                 </label>
-                                <input type="date" 
-                                       class="form-control @error('ngay_nghi') is-invalid @enderror" 
-                                       id="ngay_nghi" 
-                                       name="ngay_nghi" 
-                                       value="{{ old('ngay_nghi') }}"
-                                       min="{{ date('Y-m-d') }}"
-                                       required>
+                                <div id="date-list">
+                                    <div class="mb-2 date-item">
+                                        <input type="date" 
+                                               class="form-control @error('ngay_nghi') is-invalid @enderror @error('ngay_nghi.*') is-invalid @enderror" 
+                                               name="ngay_nghi[]" 
+                                               value="{{ old('ngay_nghi.0') }}"
+                                               min="{{ date('Y-m-d') }}"
+                                               required>
+                                    </div>
+                                    @if(old('ngay_nghi'))
+                                        @foreach(old('ngay_nghi') as $idx => $ngay)
+                                            @if($idx > 0)
+                                                <div class="mb-2 date-item">
+                                                    <input type="date" 
+                                                           class="form-control @error('ngay_nghi') is-invalid @enderror @error('ngay_nghi.*') is-invalid @enderror" 
+                                                           name="ngay_nghi[]" 
+                                                           value="{{ $ngay }}"
+                                                           min="{{ date('Y-m-d') }}"
+                                                           required>
+                                                    <button type="button" class="btn btn-sm btn-outline-danger mt-1" onclick="this.parentElement.remove()">Xóa</button>
+                                                </div>
+                                            @endif
+                                        @endforeach
+                                    @endif
+                                </div>
+                                <button type="button" class="btn btn-sm btn-outline-primary" onclick="addDateInput()">
+                                    <i class="fas fa-plus me-1"></i>Thêm ngày
+                                </button>
                                 @error('ngay_nghi')
-                                    <div class="invalid-feedback">{{ $message }}</div>
+                                    <div class="invalid-feedback d-block">{{ $message }}</div>
                                 @enderror
-                                <small class="form-text text-muted">
-                                    Chọn ngày bạn sẽ nghỉ. Hệ thống sẽ tự động chuyển hồ sơ của bạn sang cán bộ khác.
+                                @error('ngay_nghi.*')
+                                    <div class="invalid-feedback d-block">{{ $message }}</div>
+                                @enderror
+                                <small class="form-text text-muted d-block mt-2">
+                                    Chỉ được đăng ký từ tuần kế tiếp trở đi; không được trùng ngày đã đăng ký trước.
                                 </small>
                             </div>
 
@@ -88,4 +112,18 @@
         </div>
     </div>
 </div>
+@push('scripts')
+<script>
+    function addDateInput() {
+        const container = document.getElementById('date-list');
+        const div = document.createElement('div');
+        div.className = 'mb-2 date-item';
+        div.innerHTML = `
+            <input type="date" class="form-control" name="ngay_nghi[]" min="{{ date('Y-m-d') }}" required>
+            <button type="button" class="btn btn-sm btn-outline-danger mt-1" onclick="this.parentElement.remove()">Xóa</button>
+        `;
+        container.appendChild(div);
+    }
+</script>
+@endpush
 @endsection

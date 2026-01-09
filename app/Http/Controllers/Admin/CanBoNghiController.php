@@ -25,14 +25,14 @@ class CanBoNghiController extends Controller
     public function index(Request $request)
     {
         $currentUser = Auth::guard('admin')->user();
-        
+
         $query = CanBoNghi::with(['canBo.donVi', 'nguoiDuyet'])
             ->orderBy('ngay_nghi', 'desc')
             ->orderBy('created_at', 'desc');
 
         // Phân quyền: Admin phường chỉ xem cán bộ của phường mình
         if ($currentUser->isAdminPhuong()) {
-            $query->whereHas('canBo', function($q) use ($currentUser) {
+            $query->whereHas('canBo', function ($q) use ($currentUser) {
                 $q->where('don_vi_id', $currentUser->don_vi_id);
             });
         } elseif ($currentUser->isCanBo()) {
@@ -81,7 +81,7 @@ class CanBoNghiController extends Controller
     public function create()
     {
         $currentUser = Auth::guard('admin')->user();
-        
+
         // Chỉ cán bộ mới được báo nghỉ
         if (!$currentUser->isCanBo()) {
             abort(403, 'Chỉ cán bộ mới có thể báo nghỉ.');
@@ -96,14 +96,16 @@ class CanBoNghiController extends Controller
     public function store(Request $request)
     {
         $currentUser = Auth::guard('admin')->user();
-        
+
         $request->validate([
-            'ngay_nghi' => 'required|date|after_or_equal:today',
-            'ly_do' => 'nullable|string|max:500',
+            'ngay_nghi'   => 'required|array|min:1',
+            'ngay_nghi.*' => 'required|date',
+            'ly_do'       => 'nullable|string|max:500',
         ], [
-            'ngay_nghi.required' => 'Vui lòng chọn ngày nghỉ.',
-            'ngay_nghi.after_or_equal' => 'Ngày nghỉ phải từ hôm nay trở đi.',
-            'ly_do.max' => 'Lý do không được quá 500 ký tự.',
+            'ngay_nghi.required'   => 'Vui lòng chọn ít nhất một ngày nghỉ.',
+            'ngay_nghi.array'      => 'Định dạng ngày không hợp lệ.',
+            'ngay_nghi.*.date'     => 'Định dạng ngày không hợp lệ.',
+            'ly_do.max'            => 'Lý do không được quá 500 ký tự.',
         ]);
 
         // Chỉ cán bộ mới được báo nghỉ
@@ -111,102 +113,129 @@ class CanBoNghiController extends Controller
             return back()->withErrors(['error' => 'Chỉ cán bộ mới có thể báo nghỉ.'])->withInput();
         }
 
-        // Kiểm tra đã báo nghỉ chưa
-        $daBaoNghi = CanBoNghi::where('can_bo_id', $currentUser->id)
-            ->whereDate('ngay_nghi', $request->ngay_nghi)
-            ->exists();
+        // Chuẩn hóa và loại trùng
+        $dates = collect($request->ngay_nghi)
+            ->map(fn($d) => Carbon::parse($d)->startOfDay())
+            ->unique()
+            ->values();
 
-        if ($daBaoNghi) {
-            return back()->withErrors(['ngay_nghi' => 'Bạn đã báo nghỉ ngày này rồi.'])->withInput();
+        // Ràng buộc: chỉ cho phép từ thứ Hai tuần tới
+        $nextMonday = Carbon::now()->next(Carbon::MONDAY)->startOfDay();
+        $invalid = $dates->first(fn($d) => $d->lt($nextMonday));
+        if ($invalid) {
+            return back()->withErrors([
+                'ngay_nghi' => 'Ngày nghỉ phải từ tuần kế tiếp (từ ' . $nextMonday->format('d/m/Y') . ').'
+            ])->withInput();
         }
 
-        // Tạo báo nghỉ ở trạng thái chờ duyệt
-        $canBoNghi = CanBoNghi::create([
-            'can_bo_id' => $currentUser->id,
-            'ngay_nghi' => $request->ngay_nghi,
-            'ly_do' => $request->ly_do,
-            'da_chuyen_ho_so' => false,
-            'trang_thai' => CanBoNghi::TRANG_THAI_CHO_DUYET, // Chờ duyệt
-        ]);
+        // Kiểm tra các ngày đã đăng ký trước đó
+        $dupes = CanBoNghi::where('can_bo_id', $currentUser->id)
+            ->whereIn('ngay_nghi', $dates->map->toDateString())
+            ->pluck('ngay_nghi')
+            ->map(fn($d) => Carbon::parse($d)->format('d/m/Y'));
+
+        if ($dupes->isNotEmpty()) {
+            return back()->withErrors([
+                'ngay_nghi' => 'Bạn đã đăng ký nghỉ ngày: ' . $dupes->implode(', ')
+            ])->withInput();
+        }
+
+        // Tạo báo nghỉ ở trạng thái chờ duyệt cho từng ngày
+        foreach ($dates as $d) {
+            CanBoNghi::create([
+                'can_bo_id'       => $currentUser->id,
+                'ngay_nghi'       => $d->toDateString(),
+                'ly_do'           => $request->ly_do,
+                'da_chuyen_ho_so' => false,
+                'trang_thai'      => CanBoNghi::TRANG_THAI_CHO_DUYET, // Chờ duyệt
+            ]);
+        }
 
         return redirect()->route('admin.can-bo-nghi.index')
             ->with('success', 'Đã gửi yêu cầu báo nghỉ. Vui lòng chờ admin phường duyệt.');
     }
 
     /**
-     * Admin phường báo nghỉ cho cán bộ
+     * Duyệt báo nghỉ
      */
-    public function storeByAdmin(Request $request)
+    public function duyet(Request $request, $id)
     {
         $currentUser = Auth::guard('admin')->user();
-        
-        $request->validate([
-            'can_bo_id' => 'required|exists:quan_tri_vien,id',
-            'ngay_nghi' => 'required|date|after_or_equal:today',
-            'ly_do' => 'nullable|string|max:500',
-        ], [
-            'can_bo_id.required' => 'Vui lòng chọn cán bộ.',
-            'can_bo_id.exists' => 'Cán bộ không tồn tại.',
-            'ngay_nghi.required' => 'Vui lòng chọn ngày nghỉ.',
-            'ngay_nghi.after_or_equal' => 'Ngày nghỉ phải từ hôm nay trở đi.',
-        ]);
 
-        // Chỉ admin phường và admin tổng mới được báo nghỉ cho cán bộ
         if (!$currentUser->isAdminPhuong() && !$currentUser->isAdmin()) {
-            return back()->withErrors(['error' => 'Bạn không có quyền báo nghỉ cho cán bộ.'])->withInput();
+            abort(403, 'Bạn không có quyền duyệt báo nghỉ.');
         }
 
-        $canBo = Admin::findOrFail($request->can_bo_id);
+        $canBoNghi = CanBoNghi::findOrFail($id);
 
-        // Admin phường chỉ được báo nghỉ cho cán bộ của phường mình
-        if ($currentUser->isAdminPhuong() && $canBo->don_vi_id != $currentUser->don_vi_id) {
-            return back()->withErrors(['error' => 'Bạn chỉ có thể báo nghỉ cho cán bộ của phường mình.'])->withInput();
+        if (!$canBoNghi->isChoDuyet()) {
+            return back()->withErrors(['error' => 'Báo nghỉ không ở trạng thái chờ duyệt.']);
         }
 
-        // Kiểm tra đã báo nghỉ chưa
-        $daBaoNghi = CanBoNghi::where('can_bo_id', $request->can_bo_id)
-            ->whereDate('ngay_nghi', $request->ngay_nghi)
-            ->exists();
-
-        if ($daBaoNghi) {
-            return back()->withErrors(['ngay_nghi' => 'Cán bộ này đã báo nghỉ ngày này rồi.'])->withInput();
-        }
-
-        // Admin phường báo nghỉ cho cán bộ - tự động duyệt luôn
-        $canBoNghi = CanBoNghi::create([
-            'can_bo_id' => $request->can_bo_id,
-            'ngay_nghi' => $request->ngay_nghi,
-            'ly_do' => $request->ly_do,
-            'da_chuyen_ho_so' => false,
-            'trang_thai' => CanBoNghi::TRANG_THAI_DA_DUYET, // Tự động duyệt
-            'nguoi_duyet_id' => $currentUser->id,
-            'ngay_duyet' => now(),
+        $request->validate([
+            'ghi_chu_duyet' => 'nullable|string|max:500',
         ]);
 
-        // Tự động chuyển hồ sơ vì đã được duyệt
+        $canBoNghi->trang_thai = CanBoNghi::TRANG_THAI_DA_DUYET;
+        $canBoNghi->nguoi_duyet_id = $currentUser->id;
+        $canBoNghi->ngay_duyet = now();
+        $canBoNghi->ghi_chu_duyet = $request->ghi_chu_duyet;
+        $canBoNghi->save();
+
+        // Chuyển hồ sơ sau khi duyệt
         $ketQua = $this->chuyenHoSoService->chuyenHoSoKhiCanBoNghi(
-            $request->can_bo_id,
-            $request->ngay_nghi
+            $canBoNghi->can_bo_id,
+            $canBoNghi->ngay_nghi
         );
 
         if ($ketQua['success']) {
-            $message = "Đã báo nghỉ cho cán bộ {$canBo->ho_ten} thành công!";
-            if ($ketQua['so_ho_so_chuyen'] > 0) {
+            $message = 'Đã duyệt báo nghỉ thành công.';
+            if (isset($ketQua['so_ho_so_chuyen']) && $ketQua['so_ho_so_chuyen'] > 0) {
                 $message .= " Đã tự động chuyển {$ketQua['so_ho_so_chuyen']} hồ sơ sang cán bộ khác.";
             }
             return redirect()->route('admin.can-bo-nghi.index')->with('success', $message);
-        } else {
-            return back()->withErrors(['error' => $ketQua['message']])->withInput();
         }
+
+        return redirect()->route('admin.can-bo-nghi.index')->with('success', 'Đã duyệt báo nghỉ thành công.');
     }
 
+    /**
+     * Từ chối báo nghỉ
+     */
+    public function tuChoi(Request $request, $id)
+    {
+        $currentUser = Auth::guard('admin')->user();
+
+        if (!$currentUser->isAdminPhuong() && !$currentUser->isAdmin()) {
+            abort(403, 'Bạn không có quyền từ chối báo nghỉ.');
+        }
+
+        $canBoNghi = CanBoNghi::findOrFail($id);
+
+        if (!$canBoNghi->isChoDuyet()) {
+            return back()->withErrors(['error' => 'Báo nghỉ không ở trạng thái chờ duyệt.']);
+        }
+
+        $request->validate([
+            'ly_do_tu_choi' => 'required|string|max:500',
+        ]);
+
+        $canBoNghi->trang_thai = CanBoNghi::TRANG_THAI_TU_CHOI;
+        $canBoNghi->nguoi_duyet_id = $currentUser->id;
+        $canBoNghi->ngay_duyet = now();
+        // Lưu lý do từ chối vào ghi_chu_duyet
+        $canBoNghi->ghi_chu_duyet = $request->ly_do_tu_choi;
+        $canBoNghi->save();
+
+        return redirect()->route('admin.can-bo-nghi.index')->with('success', 'Đã từ chối báo nghỉ.');
+    }
     /**
      * Xóa báo nghỉ
      */
     public function destroy($id)
     {
         $currentUser = Auth::guard('admin')->user();
-        
+
         $canBoNghi = CanBoNghi::findOrFail($id);
 
         // Kiểm tra quyền

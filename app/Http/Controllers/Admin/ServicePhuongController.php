@@ -105,28 +105,43 @@ class ServicePhuongController extends Controller
             abort(403, 'Bạn chỉ có thể sửa dịch vụ của phường mình.');
         }
 
-        $request->validate([
+        // Validate dữ liệu
+        $validated = $request->validate([
             'thoi_gian_xu_ly' => 'required|integer|min:1|max:365',
             'so_luong_toi_da' => 'required|integer|min:1|max:1000',
             'phi_dich_vu' => 'required|numeric|min:0',
-            'kich_hoat' => 'boolean',
+            'kich_hoat' => 'nullable', // Checkbox có thể không có trong request
             'ghi_chu' => 'nullable|string|max:500',
         ], [
             'thoi_gian_xu_ly.required' => 'Vui lòng nhập thời gian xử lý.',
+            'thoi_gian_xu_ly.integer' => 'Thời gian xử lý phải là số nguyên.',
             'thoi_gian_xu_ly.min' => 'Thời gian xử lý tối thiểu 1 ngày.',
+            'thoi_gian_xu_ly.max' => 'Thời gian xử lý tối đa 365 ngày.',
             'so_luong_toi_da.required' => 'Vui lòng nhập số lượng tối đa.',
+            'so_luong_toi_da.integer' => 'Số lượng tối đa phải là số nguyên.',
             'so_luong_toi_da.min' => 'Số lượng tối đa tối thiểu 1.',
+            'so_luong_toi_da.max' => 'Số lượng tối đa tối đa 1000.',
             'phi_dich_vu.required' => 'Vui lòng nhập phí dịch vụ.',
+            'phi_dich_vu.numeric' => 'Phí dịch vụ phải là số.',
             'phi_dich_vu.min' => 'Phí dịch vụ không được âm.',
+            'ghi_chu.max' => 'Ghi chú không được vượt quá 500 ký tự.',
         ]);
 
-        $servicePhuong->update([
-            'thoi_gian_xu_ly' => $request->thoi_gian_xu_ly,
-            'so_luong_toi_da' => $request->so_luong_toi_da,
-            'phi_dich_vu' => $request->phi_dich_vu,
-            'kich_hoat' => $request->has('kich_hoat'),
-            'ghi_chu' => $request->ghi_chu,
+        // Xử lý checkbox - nếu không có trong request thì là false
+        $kichHoat = $request->has('kich_hoat') ? true : false;
+
+        // Cập nhật dữ liệu
+        $updated = $servicePhuong->update([
+            'thoi_gian_xu_ly' => (int) $validated['thoi_gian_xu_ly'],
+            'so_luong_toi_da' => (int) $validated['so_luong_toi_da'],
+            'phi_dich_vu' => (float) $validated['phi_dich_vu'],
+            'kich_hoat' => $kichHoat,
+            'ghi_chu' => $validated['ghi_chu'] ?? null,
         ]);
+        
+        if (!$updated) {
+            return redirect()->back()->with('error', 'Có lỗi xảy ra khi cập nhật. Vui lòng thử lại.');
+        }
 
         return redirect()->back()->with('success', 'Cập nhật cấu hình dịch vụ thành công!');
     }
@@ -201,7 +216,7 @@ class ServicePhuongController extends Controller
             'thu_trong_tuan' => 'required|integer|between:1,7',
             'gio_bat_dau' => 'required',
             'gio_ket_thuc' => 'required',
-            'so_luong_toi_da' => 'required|integer|min:1',
+            // 'so_luong_toi_da' => 'required|integer|min:1',
         ]);
 
         // Kiểm tra dịch vụ thuộc phường
@@ -232,7 +247,7 @@ class ServicePhuongController extends Controller
             [
                 'gio_bat_dau' => $request->gio_bat_dau,
                 'gio_ket_thuc' => $request->gio_ket_thuc,
-                'so_luong_toi_da' => $request->so_luong_toi_da,
+                // 'so_luong_toi_da' => $request->so_luong_toi_da,
                 'trang_thai' => true,
                 'ghi_chu' => $request->ghi_chu,
             ]

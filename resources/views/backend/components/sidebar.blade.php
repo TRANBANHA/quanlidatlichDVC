@@ -70,16 +70,16 @@
                                              && $menu['name'] !== 'Thanh toán' 
                                              && $menu['name'] !== 'Chat'
                                              && $menu['name'] !== 'Nghỉ phép cán bộ'
-                                             && $menu['name'] !== 'Hồ sơ';
+                                             && $menu['name'] !== 'Hồ sơ';  
                                 }
                             }
                             // Admin phường (quyen = 2): Xem menu có show_all hoặc menu quản lý, KHÔNG thấy "Cấu hình website", "Thông báo", "Chat", "Quản lý đơn vị/phường"
                             elseif ($admin->quyen === 2) {
-                                // Admin phường KHÔNG thấy "Cấu hình website", "Thông báo", "Chat", "Quản lý đơn vị/phường"
-                                if ($menu['name'] === 'Cấu hình website' || $menu['name'] === 'Thông báo' || $menu['name'] === 'Chat' || $menu['name'] === 'Quản lý đơn vị/phường') {
+                                // Admin phường KHÔNG thấy "Cấu hình website", "Thông báo", "Quản lý đơn vị/phường"
+                                if ($menu['name'] === 'Cấu hình website' || $menu['name'] === 'Thông báo' || $menu['name'] === 'Quản lý đơn vị/phường') {
                                     $showMenu = false;
                                 } else {
-                                    $showMenu = isset($menu['show_all']) || in_array($menu['name'], ['Quản trị hệ thống', 'Hồ sơ', 'Dịch vụ phường', 'Báo cáo', 'Thanh toán','Nghỉ phép cán bộ']);
+                                    $showMenu = isset($menu['show_all']) || in_array($menu['name'], ['Quản trị hệ thống', 'Hồ sơ', 'Dịch vụ phường', 'Báo cáo', 'Thanh toán', 'Chat', 'Nghỉ phép cán bộ']);
                                 }
                             }
                             // Cán bộ (quyen = 0): Xem Hồ sơ, Chat, Tài khoản, Báo cáo, Cán bộ báo nghỉ

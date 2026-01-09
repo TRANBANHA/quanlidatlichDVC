@@ -28,6 +28,7 @@ use App\Http\Controllers\Admin\AdminPhuongController;
 use App\Http\Controllers\Admin\StatisticsController;
 use App\Http\Controllers\Admin\SettingController;
 // use App\Http\Controllers\Admin\NotificationAdminController; // File không tồn tại
+use App\Http\Controllers\Admin\VNPayController;
 use App\Http\Controllers\Admin\PaymentController;
 use App\Http\Controllers\Admin\QrCodeController;
 use App\Http\Controllers\Admin\CanBoNghiController;
@@ -141,13 +142,13 @@ Route::middleware(['auth:admin', 'role.access'])->group(function () {
         Route::get('/', [ServicePhuongController::class, 'index'])->name('index');
         Route::get('/create', [ServicePhuongController::class, 'create'])->name('create');
         Route::post('/', [ServicePhuongController::class, 'store'])->name('store');
+        Route::put('/{id}', [ServicePhuongController::class, 'update'])->name('update');
+        Route::delete('/{id}', [ServicePhuongController::class, 'destroy'])->name('destroy');
         Route::get('/{serviceId}/edit', [ServicePhuongController::class, 'edit'])->name('edit');
-        Route::put('/{serviceId}', [ServicePhuongController::class, 'updateService'])->name('update-service');
+        Route::put('/Service/{serviceId}', [ServicePhuongController::class, 'updateService'])->name('update-service');
         Route::get('/schedule', [ServicePhuongController::class, 'schedule'])->name('schedule');
         Route::post('/schedule', [ServicePhuongController::class, 'storeSchedule'])->name('schedule.store');
         Route::post('/copy/{serviceId}', [ServicePhuongController::class, 'copyFromTotal'])->name('copy');
-        Route::put('/{id}', [ServicePhuongController::class, 'update'])->name('update');
-        Route::delete('/{id}', [ServicePhuongController::class, 'destroy'])->name('destroy');
         
         // Form Fields Management
         Route::get('/{serviceId}/fields/create', [ServicePhuongController::class, 'createField'])->name('fields.create');
