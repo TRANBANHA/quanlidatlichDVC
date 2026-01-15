@@ -64,6 +64,11 @@ Route::get('/ho-so/{hoSo}/cancel', [InfoController::class, 'showCancelForm'])->n
 Route::post('/ho-so/{hoSo}/cancel', [InfoController::class, 'cancel'])->name('website.ho-so.cancel')->where('hoSo', '[0-9]+');
 Route::get('/ho-so/{id}/edit', [InfoController::class, 'editHoSo'])->name('ho-so.edit');
 Route::put('/ho-so/{id}', [InfoController::class, 'updateHoSo'])->name('ho-so.update');
+// Export giấy chứng nhận độc thân (chỉ cho người dùng đã đăng nhập và hồ sơ hoàn tất)
+Route::get('/ho-so/{id}/export-certificate', [InfoController::class, 'exportCertificatePdf'])
+    ->middleware('auth:web')
+    ->name('ho-so.export-certificate')
+    ->where('id', '[0-9]+');
 // Posts routes
 Route::get('/posts', [\App\Http\Controllers\website\PostController::class, 'index'])->name('posts.index');
 Route::get('/posts/{slug}', [\App\Http\Controllers\website\PostController::class, 'show'])->name('posts.show');

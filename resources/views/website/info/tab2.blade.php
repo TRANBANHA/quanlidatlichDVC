@@ -189,8 +189,19 @@
                                             return str_contains($field->gia_tri ?? '', 'ho-so/') ||
                                                 str_contains($field->gia_tri ?? '', 'storage/');
                                         });
+                                        $isCertService = trim($item->dichVu->id ?? '') == 3;
                                     @endphp
-                                    @if ($fileFields->count() > 0)
+
+                                    @if ($isCertService && trim($item->trang_thai) === HoSo::STATUS_COMPLETED)
+                                        @php
+                                            // Fallback: use named route if available, otherwise build URL directly (handles cached/missing routes)
+                                            $exportUrl = \Illuminate\Support\Facades\Route::has('ho-so.export-certificate') ? route('ho-so.export-certificate', $item->id) : url('/ho-so/'.$item->id.'/export-certificate');
+                                        @endphp
+                                        <a href="{{ $exportUrl }}" class="btn btn-sm btn-outline-primary rounded-pill px-2 py-1" 
+                                            style="font-size: 0.75rem; min-width: auto;">
+                                            <i class="fas fa-file-pdf me-1" style="font-size: 0.7rem;"></i>Xuất PDF
+                                        </a>
+                                    @elseif ($fileFields->count() > 0)
                                         <div class="d-flex gap-1 flex-wrap">
                                             @foreach ($fileFields as $fileField)
                                                 <a href="{{ asset('storage/' . $fileField->gia_tri) }}" target="_blank"

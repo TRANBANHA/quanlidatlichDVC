@@ -1,6 +1,6 @@
 <div class="sidebar" data-background-color="dark">
     <div class="sidebar-logo">
-        <div class="logo-header pb-2" style="height: 130px;background-color:black;">
+        <div class="logo-header pb-2" style="height: 130px;background-color:#002865;">
             @if(file_exists(public_path('images/logo.png')))
                 <img src="{{ asset('images/logo.png') }}" alt="Logo" class="img-fluid" style="max-height: 70px;">
             @else

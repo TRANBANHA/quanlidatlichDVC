@@ -14,6 +14,8 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\ValidationException;
+use Barryvdh\DomPDF\Facade\Pdf;
+use Illuminate\Support\Facades\Log;
 
 class InfoController extends Controller
 {
@@ -27,34 +29,34 @@ class InfoController extends Controller
         }
         $user = auth()->user();
         $donVis = DonVi::all();
-        
+
         // Load hồ sơ với rating được filter theo người dùng hiện tại
         $ho_so = HoSo::with([
-            'nguoiDung', 
-            'donVi', 
-            'dichVu', 
-            'thongBao', 
+            'nguoiDung',
+            'donVi',
+            'dichVu',
+            'thongBao',
             'hoSoFields',
-            'rating' => function($query) use ($user) {
+            'rating' => function ($query) use ($user) {
                 $query->where('nguoi_dung_id', $user->id);
             }
         ])
-        ->where('nguoi_dung_id', Auth::user()->id)
-        ->orderBy('created_at', 'desc')
-        ->orderBy('id', 'desc')
-        ->paginate(10);
-        
+            ->where('nguoi_dung_id', Auth::user()->id)
+            ->orderBy('created_at', 'desc')
+            ->orderBy('id', 'desc')
+            ->paginate(10);
+
         // Lấy thông báo cho tab4
         $thongBaos = ThongBao::where('nguoi_dung_id', $user->id)
             ->with(['hoSo', 'dichVu'])
             ->orderBy('created_at', 'desc')
             ->paginate(10);
-        
+
         // Đếm thông báo chưa đọc
         $unreadCount = ThongBao::where('nguoi_dung_id', $user->id)
             ->where('is_read', false)
             ->count();
-        
+
         return view('website.info.info', compact('user', 'donVis', 'ho_so', 'thongBaos', 'unreadCount'));
     }
 
@@ -116,25 +118,25 @@ class InfoController extends Controller
     {
         // Lấy ID nếu là model
         $hoSoId = is_numeric($hoSo) ? $hoSo : (is_object($hoSo) ? $hoSo->id : $hoSo);
-        
+
         // Kiểm tra quyền
         if (!Auth::check()) {
             return redirect()->route('login.form')->with('error', 'Vui lòng đăng nhập để tiếp tục.');
         }
-        
+
         // Lấy hồ sơ
         $hoSo = HoSo::with(['dichVu', 'donVi'])->findOrFail($hoSoId);
-        
+
         // Kiểm tra quyền sở hữu
         if ($hoSo->nguoi_dung_id !== Auth::id()) {
             abort(403, 'Bạn không có quyền hủy hồ sơ này.');
         }
-        
+
         // Kiểm tra có thể hủy không
         if (!$hoSo->canBeCancelled()) {
             return redirect('/info?action=tab2')->with('error', 'Hồ sơ này không thể hủy trong trạng thái hiện tại.');
         }
-        
+
         return view('website.info.cancel', compact('hoSo'));
     }
 
@@ -146,29 +148,29 @@ class InfoController extends Controller
         try {
             // Lấy ID nếu là model
             $hoSoId = is_numeric($hoSo) ? $hoSo : (is_object($hoSo) ? $hoSo->id : $hoSo);
-            
+
             // Kiểm tra quyền
             if (!Auth::check()) {
                 return redirect()->route('login.form')->with('error', 'Vui lòng đăng nhập để tiếp tục.');
             }
-            
+
             // Lấy hồ sơ
             $hoSo = HoSo::findOrFail($hoSoId);
-            
+
             // Kiểm tra quyền sở hữu
             if ($hoSo->nguoi_dung_id !== Auth::id()) {
                 abort(403, 'Bạn không có quyền hủy hồ sơ này.');
             }
-            
+
             // Kiểm tra có thể hủy không
             if (!$hoSo->canBeCancelled()) {
                 return redirect('/info?action=tab2')->with('error', 'Hồ sơ này không thể hủy trong trạng thái hiện tại.');
             }
-            
+
             // Lấy lý do hủy - KHÔNG validate, chỉ lấy giá trị
             $lyDoHuy = null;
             $lyDoHuyType = $request->input('ly_do_huy_type', '');
-            
+
             // Nếu không có lý do, để null (cho phép hủy không cần lý do)
             if (empty($lyDoHuyType)) {
                 $lyDoHuy = null;
@@ -183,12 +185,12 @@ class InfoController extends Controller
                 // Lấy lý do từ select
                 $lyDoHuy = $lyDoHuyType;
             }
-            
+
             // Giới hạn độ dài
             if ($lyDoHuy && strlen($lyDoHuy) > 255) {
                 $lyDoHuy = substr($lyDoHuy, 0, 255);
             }
-            
+
             // Cập nhật trực tiếp vào database (bỏ qua model validation)
             DB::table('ho_so')
                 ->where('id', $hoSo->id)
@@ -198,14 +200,14 @@ class InfoController extends Controller
                     'ly_do_huy' => $lyDoHuy,
                     'updated_at' => now(),
                 ]);
-            
+
             // Tạo thông báo (bỏ qua nếu có lỗi)
             try {
                 $message = "Bạn đã hủy lịch hẹn. Mã hồ sơ: {$hoSo->ma_ho_so}";
                 if ($lyDoHuy) {
                     $message .= ". Lý do: {$lyDoHuy}";
                 }
-                
+
                 $thongBao = ThongBao::create([
                     'ho_so_id' => $hoSo->id,
                     'nguoi_dung_id' => $hoSo->nguoi_dung_id,
@@ -228,10 +230,9 @@ class InfoController extends Controller
                 // Bỏ qua lỗi tạo thông báo, vẫn redirect thành công
                 \Log::warning('Failed to create ThongBao', ['error' => $e->getMessage()]);
             }
-            
+
             // Luôn redirect về tab2, không dùng back()
             return redirect('/info?action=tab2')->with('success', 'Đã hủy lịch hẹn thành công.');
-            
         } catch (\Exception $e) {
             \Log::error('Cancel ho so error', [
                 'error' => $e->getMessage(),
@@ -318,7 +319,7 @@ class InfoController extends Controller
             // Xử lý các trường động
             foreach ($hoSo->dichVu->serviceFields as $field) {
                 $fieldName = $field->ten_truong;
-                
+
                 if ($field->loai_truong === 'file') {
                     // Xử lý file upload
                     if ($request->hasFile($fieldName)) {
@@ -326,7 +327,7 @@ class InfoController extends Controller
                         $filename = time() . '_' . $file->getClientOriginalName();
                         // Lưu vào storage/app/public/ho-so/ với disk 'public'
                         $path = $file->storeAs('ho-so', $filename, 'public');
-                        
+
                         \Log::info('File uploaded', [
                             'field_name' => $fieldName,
                             'filename' => $filename,
@@ -334,7 +335,7 @@ class InfoController extends Controller
                             'file_exists' => Storage::disk('public')->exists($path),
                             'full_path' => storage_path('app/public/' . $path)
                         ]);
-                        
+
                         // Cập nhật hoặc tạo hoSoField
                         $hoSoField = $hoSo->hoSoFields()->where('ten_truong', $fieldName)->first();
                         if ($hoSoField) {
@@ -344,7 +345,7 @@ class InfoController extends Controller
                             }
                             $hoSoField->gia_tri = $path; // $path đã là 'ho-so/filename'
                             $hoSoField->save();
-                            
+
                             \Log::info('HoSoField updated', [
                                 'ho_so_id' => $hoSo->id,
                                 'ten_truong' => $fieldName,
@@ -355,7 +356,7 @@ class InfoController extends Controller
                                 'ten_truong' => $fieldName,
                                 'gia_tri' => $path, // $path đã là 'ho-so/filename'
                             ]);
-                            
+
                             \Log::info('HoSoField created', [
                                 'ho_so_id' => $hoSo->id,
                                 'ten_truong' => $fieldName,
@@ -366,7 +367,7 @@ class InfoController extends Controller
                 } else {
                     // Xử lý các trường text, email, number, date, textarea, select
                     $value = $request->input($fieldName);
-                    
+
                     $hoSoField = $hoSo->hoSoFields()->where('ten_truong', $fieldName)->first();
                     if ($hoSoField) {
                         $hoSoField->gia_tri = $value;
@@ -487,5 +488,47 @@ class InfoController extends Controller
     public function destroy(string $id)
     {
         //
+    }
+
+    /**
+     * Export Giấy chứng nhận độc thân as PDF for completed records
+     */
+    public function exportCertificatePdf($id)
+    {
+        if (!Auth::check()) {
+            return redirect()->route('login.form')->with('error', 'Vui lòng đăng nhập để tải chứng nhận.');
+        }
+
+        $hoSo = HoSo::with(['dichVu', 'nguoiDung', 'donVi'])->findOrFail($id);
+
+        if ($hoSo->nguoi_dung_id !== Auth::id()) {
+            abort(403, 'Bạn không có quyền tải chứng nhận này.');
+        }
+
+        if (trim($hoSo->trang_thai) !== HoSo::STATUS_COMPLETED) {
+            return redirect('/info?action=tab2')->with('error', 'Chỉ có thể xuất khi hồ sơ đã hoàn tất.');
+        }
+
+        if (trim($hoSo->dichVu->id) !== '3') {
+            return redirect('/info?action=tab2')->with('error', 'Chỉ áp dụng cho dịch vụ Cấp giấy chứng nhận độc thân.');
+        }
+        $fieldNames = $hoSo->hoSoFields->pluck('ten_truong')->toArray();
+        Log::info($fieldNames);
+
+        $data = [
+            'don_vi' => $hoSo->donVi->ten_don_vi,
+            'ho_ten' => $hoSo->hoSoFields->where('ten_truong', 'ho_ten_doc_than')->first()->gia_tri ?? '',
+            'gioi_tinh' => $hoSo->hoSoFields->where('ten_truong', 'gioi_tinh')->first()->gia_tri ?? '',
+            'ngay_sinh' => $hoSo->hoSoFields->where('ten_truong', 'ngay_sinh')->first() ? \Carbon\Carbon::parse($hoSo->hoSoFields->where('ten_truong', 'ngay_sinh')->first()->gia_tri)->format('d/m/Y') : '',
+            'noi_sinh' => $hoSo->hoSoFields->where('ten_truong', 'noi_sinh')->first()->gia_tri ?? '',
+            'dan_toc' => $hoSo->hoSoFields->where('ten_truong', 'dan_toc')->first()->gia_tri ?? '',
+            'quoc_tich' => $hoSo->hoSoFields->where('ten_truong', 'quoc_tich')->first()->gia_tri ?? '',
+            'cccd' => $hoSo->hoSoFields->where('ten_truong', 'cccd')->first()->gia_tri ?? '',
+            'dia_chi' => $hoSo->hoSoFields->where('ten_truong', 'noi_sinh')->first()->gia_tri ?? '',
+            'tinh_trang_hon_nhan' => $hoSo->hoSoFields->where('ten_truong', 'tinh_trang_hon_nhan')->first()->gia_tri ?? ''
+        ];
+
+        $pdf = Pdf::loadView('certificates.single-status', $data)->setPaper('A4', 'portrait');
+        return $pdf->stream("Giay_chung_nhan_doc_than_{$hoSo->ma_ho_so}.pdf");
     }
 }

@@ -10,19 +10,21 @@
                     <h2 class="fw-bold mb-2 text-primary">Quản lý cán bộ báo nghỉ</h2>
                     <p class="text-muted mb-0">Danh sách cán bộ đã báo nghỉ</p>
                 </div>
-                @if(auth('admin')->user()->isCanBo())
-                    <a href="{{ route('admin.can-bo-nghi.create') }}" class="btn btn-primary">
+                <ul class="breadcrumbs mt-3">
+                    <li class="nav-home">
+                        <a href="/admin"><i class="icon-home"></i></a>
+                    </li>
+                    <li class="separator"><i class="icon-arrow-right"></i></li>
+                    <li>Cán bộ báo nghỉ</li>
+                </ul>
+            </div>
+            <div class="d-flex align-items-center justify-content-end">
+            @if(auth('admin')->user()->isCanBo())
+                    <a href="{{ route('admin.can-bo-nghi.create') }}" class="btn btn-primary" style="margin-left: auto;">
                         <i class="fas fa-plus me-2"></i>Báo nghỉ
                     </a>
                 @endif
             </div>
-            <ul class="breadcrumbs mt-3">
-                <li class="nav-home">
-                    <a href="/admin"><i class="icon-home"></i></a>
-                </li>
-                <li class="separator"><i class="icon-arrow-right"></i></li>
-                <li>Cán bộ báo nghỉ</li>
-            </ul>
         </div>
 
         @if(session('success'))

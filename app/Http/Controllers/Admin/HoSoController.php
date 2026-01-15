@@ -20,27 +20,27 @@ class HoSoController extends Controller
     public function index(Request $request)
     {
         $currentUser = Auth::guard('admin')->user();
-        
+
         $baseQuery = HoSo::with(['dichVu', 'nguoiDung', 'donVi', 'quanTriVien']);
 
         // Phân quyền xem hồ sơ
         if ($currentUser->isCanBo()) {
             // Cán bộ: Chỉ xem hồ sơ được phân công cho mình, sắp xếp theo số thứ tự
             $baseQuery->where('quan_tri_vien_id', $currentUser->id)
-                      ->orderBy('ngay_hen', 'asc')
-                      ->orderBy('so_thu_tu', 'asc');
+                ->orderBy('ngay_hen', 'asc')
+                ->orderBy('so_thu_tu', 'asc');
         } elseif ($currentUser->isAdminPhuong()) {
             // Admin phường: Xem tất cả hồ sơ của phường, sắp xếp theo nhân viên
             $baseQuery->where('don_vi_id', $currentUser->don_vi_id)
-                      ->orderBy('quan_tri_vien_id', 'asc')
-                      ->orderBy('ngay_hen', 'asc')
-                      ->orderBy('so_thu_tu', 'asc');
+                ->orderBy('quan_tri_vien_id', 'asc')
+                ->orderBy('ngay_hen', 'asc')
+                ->orderBy('so_thu_tu', 'asc');
         } else {
             // Admin tổng: Phải chọn phường trước
             if ($request->filled('don_vi_id')) {
                 $baseQuery->where('don_vi_id', $request->don_vi_id)
-                          ->orderBy('ngay_hen', 'asc')
-                          ->orderBy('so_thu_tu', 'asc');
+                    ->orderBy('ngay_hen', 'asc')
+                    ->orderBy('so_thu_tu', 'asc');
             } else {
                 // Chưa chọn phường, không hiển thị hồ sơ nào
                 $baseQuery->whereRaw('1 = 0');
@@ -68,44 +68,44 @@ class HoSoController extends Controller
         // Tìm kiếm theo mã hồ sơ hoặc tên người dùng
         if ($request->filled('search')) {
             $search = $request->search;
-            $baseQuery->where(function($q) use ($search) {
+            $baseQuery->where(function ($q) use ($search) {
                 $q->where('ma_ho_so', 'like', "%{$search}%")
-                  ->orWhereHas('nguoiDung', function($q2) use ($search) {
-                      $q2->where('ten', 'like', "%{$search}%")
-                         ->orWhere('cccd', 'like', "%{$search}%");
-                  });
+                    ->orWhereHas('nguoiDung', function ($q2) use ($search) {
+                        $q2->where('ten', 'like', "%{$search}%")
+                            ->orWhere('cccd', 'like', "%{$search}%");
+                    });
             });
         }
 
         // Lấy dữ liệu và sắp xếp
         $hoSos = $baseQuery->get();
-        
+
         // Tách hồ sơ hôm nay
-        $hoSoHomNay = $hoSos->filter(function($hoSo) {
+        $hoSoHomNay = $hoSos->filter(function ($hoSo) {
             return $hoSo->ngay_hen && \Carbon\Carbon::parse($hoSo->ngay_hen)->isToday();
-        })->sortBy(function($hoSo) {
+        })->sortBy(function ($hoSo) {
             return [
                 $hoSo->so_thu_tu ?? 9999,
                 $hoSo->gio_hen ?? '23:59'
             ];
         });
-        
+
         // Hồ sơ các ngày khác
-        $hoSoCacNgayKhac = $hoSos->filter(function($hoSo) {
+        $hoSoCacNgayKhac = $hoSos->filter(function ($hoSo) {
             return !$hoSo->ngay_hen || !\Carbon\Carbon::parse($hoSo->ngay_hen)->isToday();
         });
 
         // Group theo ngày hẹn, sau đó trong mỗi ngày group theo cán bộ (Admin phường) hoặc dịch vụ (Cán bộ)
         $groupedHoSos = [];
         $groupedHoSosHomNay = [];
-        
+
         if ($currentUser->isAdmin()) {
             // Admin tổng: Group theo ngày
             $groupedHoSosHomNay = ['hom_nay' => $hoSoHomNay];
-            $groupedHoSos = $hoSoCacNgayKhac->groupBy(function($hoSo) {
+            $groupedHoSos = $hoSoCacNgayKhac->groupBy(function ($hoSo) {
                 return $hoSo->ngay_hen ? \Carbon\Carbon::parse($hoSo->ngay_hen)->format('Y-m-d') : 'khong_co_ngay';
-            })->map(function($hoSoGroup) {
-                return $hoSoGroup->sortBy(function($hoSo) {
+            })->map(function ($hoSoGroup) {
+                return $hoSoGroup->sortBy(function ($hoSo) {
                     return [
                         $hoSo->so_thu_tu ?? 9999,
                         $hoSo->gio_hen ?? '23:59'
@@ -115,10 +115,10 @@ class HoSoController extends Controller
         } elseif ($currentUser->isAdminPhuong()) {
             // Admin phường: Group theo ngày, trong mỗi ngày group theo cán bộ
             if ($hoSoHomNay->count() > 0) {
-                $groupedHoSosHomNay = $hoSoHomNay->groupBy(function($hoSo) {
+                $groupedHoSosHomNay = $hoSoHomNay->groupBy(function ($hoSo) {
                     return $hoSo->quan_tri_vien_id ?? 'null';
-                })->map(function($hoSoGroup) {
-                    return $hoSoGroup->sortBy(function($hoSo) {
+                })->map(function ($hoSoGroup) {
+                    return $hoSoGroup->sortBy(function ($hoSo) {
                         return [
                             $hoSo->so_thu_tu ?? 9999,
                             $hoSo->gio_hen ?? '23:59'
@@ -126,14 +126,14 @@ class HoSoController extends Controller
                     });
                 });
             }
-            
-            $groupedHoSos = $hoSoCacNgayKhac->groupBy(function($hoSo) {
+
+            $groupedHoSos = $hoSoCacNgayKhac->groupBy(function ($hoSo) {
                 return $hoSo->ngay_hen ? \Carbon\Carbon::parse($hoSo->ngay_hen)->format('Y-m-d') : 'khong_co_ngay';
-            })->map(function($hoSoGroup) {
-                return $hoSoGroup->groupBy(function($hoSo) {
+            })->map(function ($hoSoGroup) {
+                return $hoSoGroup->groupBy(function ($hoSo) {
                     return $hoSo->quan_tri_vien_id ?? 'null';
-                })->map(function($hoSoGroupByCanBo) {
-                    return $hoSoGroupByCanBo->sortBy(function($hoSo) {
+                })->map(function ($hoSoGroupByCanBo) {
+                    return $hoSoGroupByCanBo->sortBy(function ($hoSo) {
                         return [
                             $hoSo->so_thu_tu ?? 9999,
                             $hoSo->gio_hen ?? '23:59'
@@ -144,10 +144,10 @@ class HoSoController extends Controller
         } elseif ($currentUser->isCanBo()) {
             // Cán bộ: Group theo ngày, trong mỗi ngày group theo dịch vụ
             if ($hoSoHomNay->count() > 0) {
-                $groupedHoSosHomNay = $hoSoHomNay->groupBy(function($hoSo) {
+                $groupedHoSosHomNay = $hoSoHomNay->groupBy(function ($hoSo) {
                     return $hoSo->dich_vu_id ?? 'null';
-                })->map(function($hoSoGroup) {
-                    return $hoSoGroup->sortBy(function($hoSo) {
+                })->map(function ($hoSoGroup) {
+                    return $hoSoGroup->sortBy(function ($hoSo) {
                         return [
                             $hoSo->so_thu_tu ?? 9999,
                             $hoSo->gio_hen ?? '23:59'
@@ -155,14 +155,14 @@ class HoSoController extends Controller
                     });
                 });
             }
-            
-            $groupedHoSos = $hoSoCacNgayKhac->groupBy(function($hoSo) {
+
+            $groupedHoSos = $hoSoCacNgayKhac->groupBy(function ($hoSo) {
                 return $hoSo->ngay_hen ? \Carbon\Carbon::parse($hoSo->ngay_hen)->format('Y-m-d') : 'khong_co_ngay';
-            })->map(function($hoSoGroup) {
-                return $hoSoGroup->groupBy(function($hoSo) {
+            })->map(function ($hoSoGroup) {
+                return $hoSoGroup->groupBy(function ($hoSo) {
                     return $hoSo->dich_vu_id ?? 'null';
-                })->map(function($hoSoGroupByDichVu) {
-                    return $hoSoGroupByDichVu->sortBy(function($hoSo) {
+                })->map(function ($hoSoGroupByDichVu) {
+                    return $hoSoGroupByDichVu->sortBy(function ($hoSo) {
                         return [
                             $hoSo->so_thu_tu ?? 9999,
                             $hoSo->gio_hen ?? '23:59'
@@ -174,22 +174,26 @@ class HoSoController extends Controller
             $groupedHoSosHomNay = ['hom_nay' => $hoSoHomNay];
             $groupedHoSos = ['khac' => $hoSoCacNgayKhac];
         }
-        
+
         // Debug: Log số lượng group
         // Convert Collection thành array nếu cần
-        $groupedHoSosArray = $groupedHoSos instanceof \Illuminate\Support\Collection 
-            ? $groupedHoSos->toArray() 
+        $groupedHoSosArray = $groupedHoSos instanceof \Illuminate\Support\Collection
+            ? $groupedHoSos->toArray()
             : $groupedHoSos;
-        
+
         \Log::info('Grouped HoSo count', [
             'user_id' => $currentUser->id,
             'group_count' => count($groupedHoSos),
-            'group_keys' => $groupedHoSos instanceof \Illuminate\Support\Collection 
-                ? $groupedHoSos->keys()->toArray() 
+            'group_keys' => $groupedHoSos instanceof \Illuminate\Support\Collection
+                ? $groupedHoSos->keys()->toArray()
                 : array_keys($groupedHoSos),
             'group_sizes' => $groupedHoSos instanceof \Illuminate\Support\Collection
-                ? $groupedHoSos->map(function($group) { return $group->count(); })->toArray()
-                : array_map(function($group) { return $group->count(); }, $groupedHoSos)
+                ? $groupedHoSos->map(function ($group) {
+                    return $group->count();
+                })->toArray()
+                : array_map(function ($group) {
+                    return $group->count();
+                }, $groupedHoSos)
         ]);
 
         // Thống kê nhanh (theo quyền)
@@ -201,12 +205,12 @@ class HoSoController extends Controller
         } elseif ($currentUser->isAdmin() && $request->filled('don_vi_id')) {
             $statsQuery->where('don_vi_id', $request->don_vi_id);
         }
-        
+
         // Áp dụng filter dịch vụ cho thống kê
         if ($request->filled('dich_vu_id')) {
             $statsQuery->where('dich_vu_id', $request->dich_vu_id);
         }
-        
+
         $stats = [
             'tong' => $statsQuery->count(),
             'da_tiep_nhan' => (clone $statsQuery)->where('trang_thai', HoSo::STATUS_RECEIVED)->count(),
@@ -240,18 +244,18 @@ class HoSoController extends Controller
         $canBoStats = []; // Thống kê số hồ sơ đã xử lý của từng cán bộ
         if ($currentUser->isAdminPhuong() || ($currentUser->isAdmin() && $request->filled('don_vi_id'))) {
             $donViId = $currentUser->isAdminPhuong() ? $currentUser->don_vi_id : $request->don_vi_id;
-            
+
             // Lấy tất cả cán bộ của phường
             $canBoMap = \App\Models\Admin::where('don_vi_id', $donViId)
                 ->where('quyen', \App\Models\Admin::CAN_BO)
                 ->pluck('ho_ten', 'id')
                 ->toArray();
-            
+
             // Bổ sung: Lấy thêm các cán bộ có trong hồ sơ nhưng có thể không còn trong phường
             // (để đảm bảo hiển thị đầy đủ tên cán bộ)
             $quanTriVienIds = $hoSos->pluck('quan_tri_vien_id')->filter()->unique();
             $missingCanBoIds = $quanTriVienIds->diff(array_keys($canBoMap));
-            
+
             if ($missingCanBoIds->isNotEmpty()) {
                 $missingCanBos = \App\Models\Admin::whereIn('id', $missingCanBoIds)
                     ->where('quyen', \App\Models\Admin::CAN_BO)
@@ -259,18 +263,18 @@ class HoSoController extends Controller
                     ->toArray();
                 $canBoMap = array_merge($canBoMap, $missingCanBos);
             }
-            
+
             // Tính thống kê số hồ sơ đã xử lý (Hoàn tất) cho từng cán bộ
             // Áp dụng các filter tương tự như query chính (nếu có)
             $statsQuery = HoSo::where('don_vi_id', $donViId)
                 ->where('trang_thai', HoSo::STATUS_COMPLETED)
                 ->whereNotNull('quan_tri_vien_id');
-            
+
             // Áp dụng filter dịch vụ (nếu có)
             if ($request->filled('dich_vu_id')) {
                 $statsQuery->where('dich_vu_id', $request->dich_vu_id);
             }
-            
+
             // Áp dụng filter ngày (nếu có)
             if ($request->filled('tu_ngay')) {
                 $statsQuery->whereDate('ngay_hen', '>=', $request->tu_ngay);
@@ -278,14 +282,14 @@ class HoSoController extends Controller
             if ($request->filled('den_ngay')) {
                 $statsQuery->whereDate('ngay_hen', '<=', $request->den_ngay);
             }
-            
+
             // Đếm số hồ sơ đã xử lý theo từng cán bộ
             $canBoStats = $statsQuery->selectRaw('quan_tri_vien_id, COUNT(*) as so_ho_so_da_xu_ly')
                 ->groupBy('quan_tri_vien_id')
                 ->pluck('so_ho_so_da_xu_ly', 'quan_tri_vien_id')
                 ->toArray();
         }
-        
+
         // Debug: Log canBoMap để kiểm tra
         \Log::info('canBoMap for display', [
             'user_id' => $currentUser->id,
@@ -294,28 +298,28 @@ class HoSoController extends Controller
             'canBoMap' => $canBoMap,
             'canBoMap_keys' => array_keys($canBoMap),
             'quan_tri_vien_ids_in_hoso' => $hoSos->pluck('quan_tri_vien_id')->filter()->unique()->toArray(),
-            'grouped_keys' => $groupedHoSos instanceof \Illuminate\Support\Collection 
-                ? $groupedHoSos->keys()->toArray() 
+            'grouped_keys' => $groupedHoSos instanceof \Illuminate\Support\Collection
+                ? $groupedHoSos->keys()->toArray()
                 : array_keys($groupedHoSos),
             'ho_so_with_quan_tri_vien_7' => $hoSos->where('quan_tri_vien_id', 7)->count()
         ]);
 
         // Lấy danh sách dịch vụ để hiển thị filter
         $services = Service::orderBy('ten_dich_vu')->get();
-        
+
         // Tính số lượng hồ sơ theo dịch vụ (cho Admin phường và Cán bộ)
         $serviceCounts = [];
         if ($currentUser->isAdminPhuong() || $currentUser->isCanBo()) {
             // Tạo query riêng để đếm (không áp dụng filter dịch vụ, trạng thái, ngày, search)
             $countQuery = HoSo::query();
-            
+
             // Áp dụng quyền tương tự như query chính
             if ($currentUser->isCanBo()) {
                 $countQuery->where('quan_tri_vien_id', $currentUser->id);
             } elseif ($currentUser->isAdminPhuong()) {
                 $countQuery->where('don_vi_id', $currentUser->don_vi_id);
             }
-            
+
             // Đếm theo dịch vụ (chỉ đếm hồ sơ không bị hủy)
             $counts = (clone $countQuery)
                 ->where('trang_thai', '!=', HoSo::STATUS_CANCELLED)
@@ -324,12 +328,12 @@ class HoSoController extends Controller
                 ->groupBy('dich_vu_id')
                 ->pluck('count', 'dich_vu_id')
                 ->toArray();
-            
+
             // Gán số lượng cho từng dịch vụ
             foreach ($services as $service) {
                 $serviceCounts[$service->id] = $counts[$service->id] ?? 0;
             }
-            
+
             // Tổng số hồ sơ (không bị hủy và có dịch vụ)
             $serviceCounts['all'] = (clone $countQuery)
                 ->where('trang_thai', '!=', HoSo::STATUS_CANCELLED)
@@ -346,7 +350,7 @@ class HoSoController extends Controller
     public function show($id)
     {
         $currentUser = Auth::guard('admin')->user();
-        
+
         $hoSo = HoSo::with(['dichVu', 'nguoiDung', 'donVi', 'quanTriVien', 'hoSoFields', 'rating'])
             ->findOrFail($id);
 
@@ -362,7 +366,7 @@ class HoSoController extends Controller
         if ($hoSo->ngay_hen) {
             $ngayHen = \Carbon\Carbon::parse($hoSo->ngay_hen)->startOfDay();
             $ngayHienTai = \Carbon\Carbon::now()->startOfDay();
-            
+
             if ($ngayHienTai->lt($ngayHen)) {
                 abort(403, 'Chưa đến ngày xử lý hồ sơ. Ngày hẹn: ' . $ngayHen->format('d/m/Y'));
             }
@@ -379,6 +383,7 @@ class HoSoController extends Controller
         $request->validate([
             'trang_thai' => 'required|in:' . implode(',', HoSo::STATUS_OPTIONS),
             'ghi_chu_xu_ly' => 'nullable|string|max:1000',
+            'da_thanh_toan_tien_mat' => 'nullable|in:0,1',
         ], [
             'trang_thai.required' => 'Vui lòng chọn trạng thái.',
             'trang_thai.in' => 'Trạng thái không hợp lệ.',
@@ -401,7 +406,7 @@ class HoSoController extends Controller
         if ($hoSo->ngay_hen) {
             $ngayHen = \Carbon\Carbon::parse($hoSo->ngay_hen)->startOfDay();
             $ngayHienTai = \Carbon\Carbon::now()->startOfDay();
-            
+
             if ($ngayHienTai->lt($ngayHen)) {
                 return back()->withErrors(['error' => 'Chưa đến ngày xử lý hồ sơ. Ngày hẹn: ' . $ngayHen->format('d/m/Y')]);
             }
@@ -409,7 +414,46 @@ class HoSoController extends Controller
 
         $oldStatus = $hoSo->trang_thai;
         $hoSo->trang_thai = $request->trang_thai;
-        
+
+        // Cập nhật trạng thái thanh toán tiền mặt
+        if ($request->filled('da_thanh_toan_tien_mat')) {
+            $hoSo->da_thanh_toan_tien_mat = (int) $request->da_thanh_toan_tien_mat;
+
+            // Nếu cán bộ chọn "Đã thanh toán" tiền mặt, tự động tạo/cập nhật bản ghi Payment
+            if ($hoSo->da_thanh_toan_tien_mat == 1) {
+                // Lấy thông tin dịch vụ để tính phí
+                $servicePhuong = $hoSo->dichVu->getServiceForPhuong($hoSo->don_vi_id);
+                $phiDichVu = $servicePhuong ? $servicePhuong->phi_dich_vu : 0;
+
+                if ($phiDichVu > 0) {
+                    // Kiểm tra xem đã có bản ghi Payment nào chưa
+                    $payment = \App\Models\Payment::where('ho_so_id', $hoSo->id)
+                        ->where('nguoi_dung_id', $hoSo->nguoi_dung_id)
+                        ->first();
+
+                    if ($payment) {
+                        // Cập nhật bản ghi hiện có
+                        $payment->phuong_thuc_thanh_toan = 'tien_mat';
+                        $payment->trang_thai_thanh_toan = 'da_thanh_toan';
+                        $payment->ngay_thanh_toan = now();
+                        $payment->save();
+                    } else {
+                        // Tạo bản ghi Payment mới
+                        \App\Models\Payment::create([
+                            'ho_so_id' => $hoSo->id,
+                            'nguoi_dung_id' => $hoSo->nguoi_dung_id,
+                            'dich_vu_id' => $hoSo->dich_vu_id,
+                            'so_tien' => $phiDichVu,
+                            'phuong_thuc_thanh_toan' => 'tien_mat',
+                            'trang_thai_thanh_toan' => 'da_thanh_toan',
+                            'ngay_thanh_toan' => now(),
+                            'ma_giao_dich' => 'TM_' . $hoSo->ma_ho_so . '_' . now()->timestamp,
+                        ]);
+                    }
+                }
+            }
+        }
+
         // Thêm ghi chú xử lý vào ghi_chu hiện tại
         if ($request->filled('ghi_chu_xu_ly')) {
             $timestamp = now()->format('d/m/Y H:i');
@@ -422,7 +466,7 @@ class HoSoController extends Controller
         // Gửi thông báo cho người dùng
         if ($oldStatus != $request->trang_thai) {
             $message = $this->getStatusChangeMessage($request->trang_thai, $hoSo->ma_ho_so);
-            
+
             $thongBao = ThongBao::create([
                 'ho_so_id' => $hoSo->id,
                 'nguoi_dung_id' => $hoSo->nguoi_dung_id,
@@ -457,7 +501,7 @@ class HoSoController extends Controller
         ]);
 
         $currentUser = Auth::guard('admin')->user();
-        
+
         if (!$currentUser->isAdminPhuong() && !$currentUser->isAdmin()) {
             if ($request->ajax()) {
                 return response()->json(['success' => false, 'message' => 'Bạn không có quyền phân công hồ sơ.'], 403);
@@ -491,7 +535,7 @@ class HoSoController extends Controller
         if ($request->ajax()) {
             $canBoName = $hoSo->quanTriVien ? $hoSo->quanTriVien->ho_ten : 'Chưa phân công';
             return response()->json([
-                'success' => true, 
+                'success' => true,
                 'message' => 'Phân công hồ sơ thành công!',
                 'can_bo_name' => $canBoName
             ]);

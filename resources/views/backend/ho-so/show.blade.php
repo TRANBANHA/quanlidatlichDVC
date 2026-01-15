@@ -229,6 +229,20 @@
                                         <option value="Đã hủy" {{ $hoSo->trang_thai == 'Đã hủy' ? 'selected' : '' }}>Đã hủy</option>
                                     </select>
                                 </div>
+                                @php
+                                    // Lấy phí dịch vụ
+                                    $servicePhuong = $hoSo->dichVu->getServiceForPhuong($hoSo->don_vi_id);
+                                    $phiDichVu = $servicePhuong ? $servicePhuong->phi_dich_vu : 0;
+                                @endphp
+                                @if($phiDichVu > 0)
+                                <div class="mb-3">
+                                    <label class="form-label">Đã thanh toán tiền mặt</label>
+                                    <select name="da_thanh_toan_tien_mat" class="form-select" required {{ !$daDenNgay ? 'disabled' : '' }}>
+                                        <option value="0" {{ $hoSo->da_thanh_toan_tien_mat == 0 ? 'selected' : '' }}>Chưa thanh toán</option>
+                                        <option value="1" {{ $hoSo->da_thanh_toan_tien_mat == 1 ? 'selected' : '' }}>Đã thanh toán</option>
+                                    </select>
+                                </div>
+                                @endif
                                 <div class="mb-3">
                                     <label class="form-label">Ghi chú xử lý</label>
                                     <textarea name="ghi_chu_xu_ly" class="form-control" rows="3" placeholder="Nhập ghi chú..." {{ !$daDenNgay ? 'disabled' : '' }}></textarea>
