@@ -135,7 +135,7 @@ php artisan serve
 
 **Terminal 2 - Rasa (PowerShell):**
 ```powershell
-cd D:\laragon\www\quanlidatliyte\rasa
+cd rasa
 Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass
 .\venv\Scripts\activate
 rasa run --enable-api --cors "*" --port 5005

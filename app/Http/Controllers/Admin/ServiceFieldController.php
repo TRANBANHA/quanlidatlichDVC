@@ -9,21 +9,16 @@ use App\Http\Controllers\Controller;
 
 class ServiceFieldController extends Controller
 {
-    /**
-     * Hiển thị form để thêm field mới
-     */
+
     public function create($serviceId)
     {
         $service = Service::findOrFail($serviceId);
         return view('backend.services.fields.create', compact('service'));
     }
 
-    /**
-     * Lưu field mới
-     */
+
     public function store(Request $request, $serviceId)
     {
-        // Merge giá trị mặc định cho checkbox nếu không có
         $request->merge([
             'bat_buoc' => $request->has('bat_buoc') ? true : false
         ]);
@@ -36,10 +31,10 @@ class ServiceFieldController extends Controller
             'placeholder' => 'nullable|string|max:255',
             'goi_y' => 'nullable|string|max:500',
             'thu_tu' => 'nullable|integer|min:0',
-            'tuy_chon' => 'nullable|string', // JSON string cho select options
+            'tuy_chon' => 'nullable|string',
         ]);
 
-        // Kiểm tra service tồn tại
+
         $service = Service::findOrFail($serviceId);
 
         // Kiểm tra tên trường đã tồn tại chưa
@@ -51,14 +46,14 @@ class ServiceFieldController extends Controller
             return back()->withErrors(['ten_truong' => 'Tên trường này đã tồn tại cho dịch vụ này.'])->withInput();
         }
 
-        // Xử lý tùy chọn cho select
+
         $tuyChon = null;
         if ($request->loai_truong === 'select' && $request->tuy_chon) {
             $options = array_filter(array_map('trim', explode("\n", $request->tuy_chon)));
             $tuyChon = json_encode($options);
         }
 
-        // Lấy thứ tự mặc định
+
         $thuTu = $request->thu_tu ?? ServiceField::where('dich_vu_id', $serviceId)->max('thu_tu') + 1;
 
         ServiceField::create([
@@ -77,9 +72,7 @@ class ServiceFieldController extends Controller
             ->with('success', 'Thêm trường form thành công!');
     }
 
-    /**
-     * Hiển thị form để sửa field
-     */
+
     public function edit($serviceId, $fieldId)
     {
         $service = Service::findOrFail($serviceId);
@@ -89,9 +82,7 @@ class ServiceFieldController extends Controller
         return view('backend.services.fields.edit', compact('service', 'field'));
     }
 
-    /**
-     * Cập nhật field
-     */
+
     public function update(Request $request, $serviceId, $fieldId)
     {
         // Merge giá trị mặc định cho checkbox nếu không có
@@ -112,7 +103,7 @@ class ServiceFieldController extends Controller
         $field = ServiceField::where('dich_vu_id', $serviceId)
             ->findOrFail($fieldId);
 
-        // Xử lý tùy chọn cho select
+
         $tuyChon = null;
         if ($request->loai_truong === 'select' && $request->tuy_chon) {
             $options = array_filter(array_map('trim', explode("\n", $request->tuy_chon)));
@@ -133,9 +124,6 @@ class ServiceFieldController extends Controller
             ->with('success', 'Cập nhật trường form thành công!');
     }
 
-    /**
-     * Xóa field
-     */
     public function destroy($serviceId, $fieldId)
     {
         $field = ServiceField::where('dich_vu_id', $serviceId)
@@ -147,4 +135,3 @@ class ServiceFieldController extends Controller
             ->with('success', 'Xóa trường form thành công!');
     }
 }
-

@@ -31,7 +31,7 @@
                                 <i class="fa fa-search search-icon"></i>
                             </button>
                         </div>
-                        <input type="text" placeholder="Search ..." class="form-control" />
+                        <input type="text" placeholder="Tìm kiếm ..." class="form-control" />
                     </div>
                 </nav>
 
@@ -44,7 +44,7 @@
                         <ul class="dropdown-menu dropdown-search animated fadeIn">
                             <form class="navbar-left navbar-form nav-search">
                                 <div class="input-group">
-                                    <input type="text" placeholder="Search ..." class="form-control" />
+                                    <input type="text" placeholder="Tìm kiếm ..." class="form-control" />
                                 </div>
                             </form>
                         </ul>
@@ -53,7 +53,7 @@
                         <a class="dropdown-toggle profile-pic" data-bs-toggle="dropdown" href="#"
                             aria-expanded="false">
                             <span class="profile-username">
-                                <span class="op-7">Hi,</span>
+                                <span class="op-7">Xin chào,</span>
                                 <span class="fw-bold">{{ Auth::guard('admin')->user()->ho_ten }}
                                 </span>
                             </span>
@@ -70,7 +70,7 @@
                                     </div>
                                 </li>
                                 <li>
-                                    <a class="dropdown-item" href="{{ route('admin.logout') }}">Logout</a>
+                                    <a class="dropdown-item" href="{{ route('admin.logout') }}">Đăng xuất</a>
                                 </li>
                             </div>
                         </ul>

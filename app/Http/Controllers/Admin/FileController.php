@@ -85,8 +85,6 @@ class FileController extends Controller
             return back()->with('error', 'Không tìm thấy người dùng để gửi thông tin.');
         }
 
-        // Ví dụ: gửi tin nhắn qua SMS, Zalo, hoặc chỉ lưu log
-        // Ở đây demo là chỉ lưu thông báo vào database
         $thongBao = ThongBao::create([
             'nguoi_dung_id' => $request->nguoi_dung_id,
             'ho_so_id' => $request->ho_so_id,

@@ -52,7 +52,7 @@ Route::post('password/email', [AuthController::class, 'sendResetLinkEmail'])->na
 Route::get('/forgot-password', [ForgotPasswordController::class, 'showForm'])->name('password.request');
 Route::get('password/reset/{token}', [ResetPasswordController::class, 'showResetForm'])->name('password.reset');
 
-// Route để xử lý yêu cầu reset mật khẩu
+//reset mật khẩu
 Route::post('password/reset', [ResetPasswordController::class, 'reset'])->name('password.update');
 
 Route::get('info', [InfoController::class, 'index'])->name('info.index');
@@ -64,7 +64,7 @@ Route::get('/ho-so/{hoSo}/cancel', [InfoController::class, 'showCancelForm'])->n
 Route::post('/ho-so/{hoSo}/cancel', [InfoController::class, 'cancel'])->name('website.ho-so.cancel')->where('hoSo', '[0-9]+');
 Route::get('/ho-so/{id}/edit', [InfoController::class, 'editHoSo'])->name('ho-so.edit');
 Route::put('/ho-so/{id}', [InfoController::class, 'updateHoSo'])->name('ho-so.update');
-// Export giấy chứng nhận độc thân (chỉ cho người dùng đã đăng nhập và hồ sơ hoàn tất)
+// Export
 Route::get('/ho-so/{id}/export-certificate', [InfoController::class, 'exportCertificatePdf'])
     ->middleware('auth:web')
     ->name('ho-so.export-certificate')
@@ -98,7 +98,6 @@ Route::prefix('dat-lich')->name('booking.')->group(function () {
 });
 
 // Room chat (user)
-// QUAN TRỌNG: Đặt available-officers TRƯỚC {room} để tránh route conflict
 Route::get('room-chats/available-officers', [RoomChatController::class, 'getAvailableOfficers']);
 
 Route::prefix('room-chats')->group(function () {

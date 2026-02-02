@@ -21,24 +21,20 @@ class ServicePhuongController extends Controller
     public function index()
     {
         $currentUser = Auth::guard('admin')->user();
-        
-        // Cho phép Admin phường và Cán bộ phường xem
+
         if (!$currentUser->isAdminPhuong() && !$currentUser->isCanBo()) {
             abort(403, 'Chỉ Admin phường và Cán bộ phường mới có quyền xem dịch vụ phường.');
         }
 
-        // Lấy tất cả dịch vụ tổng
-        $allServices = Service::with(['servicePhuongs' => function($query) use ($currentUser) {
+        $allServices = Service::with(['servicePhuongs' => function ($query) use ($currentUser) {
             $query->where('don_vi_id', $currentUser->don_vi_id);
         }])->get();
 
-        // Lấy dịch vụ đã được cấu hình cho phường
         $servicePhuongs = ServicePhuong::where('don_vi_id', $currentUser->don_vi_id)
             ->with('dichVu')
             ->get()
             ->keyBy('dich_vu_id');
 
-        // Lấy lịch dịch vụ cho từng dịch vụ
         $schedulesByService = [];
         foreach ($servicePhuongs as $servicePhuong) {
             $schedulesByService[$servicePhuong->dich_vu_id] = ServiceSchedule::where('dich_vu_id', $servicePhuong->dich_vu_id)
@@ -56,15 +52,13 @@ class ServicePhuongController extends Controller
     public function copyFromTotal($serviceId)
     {
         $currentUser = Auth::guard('admin')->user();
-        
-        // Cho phép Admin phường và Cán bộ phường sao chép dịch vụ
+
         if (!$currentUser->isAdminPhuong() && !$currentUser->isCanBo()) {
             abort(403, 'Chỉ Admin phường và Cán bộ phường mới có quyền sao chép dịch vụ.');
         }
 
         $service = Service::findOrFail($serviceId);
 
-        // Kiểm tra xem đã có chưa
         $existing = ServicePhuong::where('dich_vu_id', $serviceId)
             ->where('don_vi_id', $currentUser->don_vi_id)
             ->first();
@@ -73,44 +67,41 @@ class ServicePhuongController extends Controller
             return redirect()->back()->with('error', 'Dịch vụ này đã được sao chép.');
         }
 
-        // Tạo bản sao với giá trị mặc định
         ServicePhuong::create([
             'dich_vu_id' => $serviceId,
             'don_vi_id' => $currentUser->don_vi_id,
-            'thoi_gian_xu_ly' => 7, // 7 ngày mặc định
-            'so_luong_toi_da' => 10, // 10 hồ sơ/ngày mặc định
-            'phi_dich_vu' => 0, // Miễn phí mặc định
+            'thoi_gian_xu_ly' => 7,
+            'so_luong_toi_da' => 10,
+            'phi_dich_vu' => 0,
             'kich_hoat' => true,
         ]);
 
         return redirect()->back()->with('success', 'Sao chép dịch vụ thành công!');
     }
 
-    /**
-     * Cập nhật cấu hình dịch vụ phường
-     */
+
     public function update(Request $request, $id)
     {
         $currentUser = Auth::guard('admin')->user();
-        
-        // Cho phép Admin phường và Cán bộ phường cập nhật
+
+
         if (!$currentUser->isAdminPhuong() && !$currentUser->isCanBo()) {
             abort(403, 'Chỉ Admin phường và Cán bộ phường mới có quyền cập nhật dịch vụ.');
         }
 
         $servicePhuong = ServicePhuong::findOrFail($id);
 
-        // Kiểm tra quyền
+
         if ($servicePhuong->don_vi_id != $currentUser->don_vi_id) {
             abort(403, 'Bạn chỉ có thể sửa dịch vụ của phường mình.');
         }
 
-        // Validate dữ liệu
+
         $validated = $request->validate([
             'thoi_gian_xu_ly' => 'required|integer|min:1|max:365',
             'so_luong_toi_da' => 'required|integer|min:1|max:1000',
             'phi_dich_vu' => 'required|numeric|min:0',
-            'kich_hoat' => 'nullable', // Checkbox có thể không có trong request
+            'kich_hoat' => 'nullable',
             'ghi_chu' => 'nullable|string|max:500',
         ], [
             'thoi_gian_xu_ly.required' => 'Vui lòng nhập thời gian xử lý.',
@@ -127,10 +118,8 @@ class ServicePhuongController extends Controller
             'ghi_chu.max' => 'Ghi chú không được vượt quá 500 ký tự.',
         ]);
 
-        // Xử lý checkbox - nếu không có trong request thì là false
         $kichHoat = $request->has('kich_hoat') ? true : false;
 
-        // Cập nhật dữ liệu
         $updated = $servicePhuong->update([
             'thoi_gian_xu_ly' => (int) $validated['thoi_gian_xu_ly'],
             'so_luong_toi_da' => (int) $validated['so_luong_toi_da'],
@@ -138,7 +127,7 @@ class ServicePhuongController extends Controller
             'kich_hoat' => $kichHoat,
             'ghi_chu' => $validated['ghi_chu'] ?? null,
         ]);
-        
+
         if (!$updated) {
             return redirect()->back()->with('error', 'Có lỗi xảy ra khi cập nhật. Vui lòng thử lại.');
         }
@@ -146,14 +135,12 @@ class ServicePhuongController extends Controller
         return redirect()->back()->with('success', 'Cập nhật cấu hình dịch vụ thành công!');
     }
 
-    /**
-     * Xóa dịch vụ khỏi phường (không xóa dịch vụ tổng)
-     */
+
     public function destroy($id)
     {
         $currentUser = Auth::guard('admin')->user();
-        
-        // Cho phép Admin phường và Cán bộ phường xóa
+
+
         if (!$currentUser->isAdminPhuong() && !$currentUser->isCanBo()) {
             abort(403, 'Chỉ Admin phường và Cán bộ phường mới có quyền xóa dịch vụ.');
         }
@@ -169,25 +156,22 @@ class ServicePhuongController extends Controller
         return redirect()->back()->with('success', 'Xóa dịch vụ khỏi phường thành công!');
     }
 
-    /**
-     * Quản lý lịch dịch vụ (Admin phường)
-     */
+
+    //Quản lý lịch dịch vụ (Admin phường)
     public function schedule()
     {
         $currentUser = Auth::guard('admin')->user();
-        
-        // Cho phép Admin phường và Cán bộ phường xem
+
+
         if (!$currentUser->isAdminPhuong() && !$currentUser->isCanBo()) {
             abort(403, 'Chỉ Admin phường và Cán bộ phường mới có quyền xem lịch dịch vụ.');
         }
 
-        // Lấy dịch vụ đã kích hoạt của phường
         $servicePhuongs = ServicePhuong::where('don_vi_id', $currentUser->don_vi_id)
             ->where('kich_hoat', true)
             ->with('dichVu')
             ->get();
 
-        // Lấy lịch dịch vụ cho từng dịch vụ
         $schedulesByService = [];
         foreach ($servicePhuongs as $servicePhuong) {
             $schedulesByService[$servicePhuong->dich_vu_id] = ServiceSchedule::where('dich_vu_id', $servicePhuong->dich_vu_id)
@@ -205,8 +189,7 @@ class ServicePhuongController extends Controller
     public function storeSchedule(Request $request)
     {
         $currentUser = Auth::guard('admin')->user();
-        
-        // Cho phép Admin phường và Cán bộ phường lưu/chỉnh sửa lịch
+
         if (!$currentUser->isAdminPhuong() && !$currentUser->isCanBo()) {
             abort(403, 'Chỉ Admin phường và Cán bộ phường mới có quyền quản lý lịch dịch vụ.');
         }
@@ -219,26 +202,22 @@ class ServicePhuongController extends Controller
             // 'so_luong_toi_da' => 'required|integer|min:1',
         ]);
 
-        // Kiểm tra dịch vụ thuộc phường
         $servicePhuong = ServicePhuong::where('dich_vu_id', $request->dich_vu_id)
             ->where('don_vi_id', $currentUser->don_vi_id)
             ->firstOrFail();
 
-        // Kiểm tra số lượng lịch hiện có cho dịch vụ này (tối đa 2 thứ)
         $existingSchedulesCount = ServiceSchedule::where('dich_vu_id', $request->dich_vu_id)
             ->where('trang_thai', true)
             ->count();
-        
-        // Nếu đang tạo mới (không phải cập nhật), kiểm tra số lượng
+
         $isUpdating = ServiceSchedule::where('dich_vu_id', $request->dich_vu_id)
             ->where('thu_trong_tuan', $request->thu_trong_tuan)
             ->exists();
-        
+
         if (!$isUpdating && $existingSchedulesCount >= 2) {
             return redirect()->back()->with('error', 'Mỗi dịch vụ chỉ có thể có tối đa 2 thứ trong tuần. Vui lòng xóa một thứ hiện có trước khi thêm mới.');
         }
 
-        // Tạo hoặc cập nhật lịch
         $schedule = ServiceSchedule::updateOrCreate(
             [
                 'dich_vu_id' => $request->dich_vu_id,
@@ -262,8 +241,7 @@ class ServicePhuongController extends Controller
     public function create()
     {
         $currentUser = Auth::guard('admin')->user();
-        
-        // Cho phép Admin phường và Cán bộ phường tạo dịch vụ
+
         if (!$currentUser->isAdminPhuong() && !$currentUser->isCanBo()) {
             abort(403, 'Chỉ Admin phường và Cán bộ phường mới có quyền tạo dịch vụ.');
         }
@@ -277,8 +255,7 @@ class ServicePhuongController extends Controller
     public function store(Request $request)
     {
         $currentUser = Auth::guard('admin')->user();
-        
-        // Cho phép Admin phường và Cán bộ phường tạo dịch vụ
+
         if (!$currentUser->isAdminPhuong() && !$currentUser->isCanBo()) {
             abort(403, 'Chỉ Admin phường và Cán bộ phường mới có quyền tạo dịch vụ.');
         }
@@ -288,19 +265,17 @@ class ServicePhuongController extends Controller
             'mo_ta' => 'nullable|string',
         ]);
 
-        // Tạo dịch vụ mới
         $service = Service::create([
             'ten_dich_vu' => $request->ten_dich_vu,
             'mo_ta' => $request->mo_ta,
         ]);
 
-        // Tự động tạo ServicePhuong cho phường này
         ServicePhuong::create([
             'dich_vu_id' => $service->id,
             'don_vi_id' => $currentUser->don_vi_id,
-            'thoi_gian_xu_ly' => 7, // 7 ngày mặc định
-            'so_luong_toi_da' => 10, // 10 hồ sơ/ngày mặc định
-            'phi_dich_vu' => 0, // Miễn phí mặc định
+            'thoi_gian_xu_ly' => 7,
+            'so_luong_toi_da' => 10,
+            'phi_dich_vu' => 0,
             'kich_hoat' => true,
         ]);
 
@@ -314,15 +289,13 @@ class ServicePhuongController extends Controller
     public function edit($serviceId)
     {
         $currentUser = Auth::guard('admin')->user();
-        
-        // Cho phép Admin phường và Cán bộ phường sửa dịch vụ
+
         if (!$currentUser->isAdminPhuong() && !$currentUser->isCanBo()) {
             abort(403, 'Chỉ Admin phường và Cán bộ phường mới có quyền sửa dịch vụ.');
         }
 
         $service = Service::with('serviceFields')->findOrFail($serviceId);
 
-        // Kiểm tra dịch vụ thuộc phường này
         $servicePhuong = ServicePhuong::where('dich_vu_id', $serviceId)
             ->where('don_vi_id', $currentUser->don_vi_id)
             ->first();
@@ -334,19 +307,14 @@ class ServicePhuongController extends Controller
         return view('backend.service-phuong.edit', compact('service', 'servicePhuong'));
     }
 
-    /**
-     * Cập nhật thông tin dịch vụ (Admin phường/Cán bộ)
-     */
     public function updateService(Request $request, $serviceId)
     {
         $currentUser = Auth::guard('admin')->user();
-        
-        // Cho phép Admin phường và Cán bộ phường cập nhật
+
         if (!$currentUser->isAdminPhuong() && !$currentUser->isCanBo()) {
             abort(403, 'Chỉ Admin phường và Cán bộ phường mới có quyền cập nhật dịch vụ.');
         }
 
-        // Kiểm tra dịch vụ thuộc phường này
         $servicePhuong = ServicePhuong::where('dich_vu_id', $serviceId)
             ->where('don_vi_id', $currentUser->don_vi_id)
             ->firstOrFail();
@@ -366,18 +334,14 @@ class ServicePhuongController extends Controller
             ->with('success', 'Cập nhật dịch vụ thành công!');
     }
 
-    /**
-     * Hiển thị form tạo field mới (Admin phường/Cán bộ)
-     */
     public function createField($serviceId)
     {
         $currentUser = Auth::guard('admin')->user();
-        
+
         if (!$currentUser->isAdminPhuong() && !$currentUser->isCanBo()) {
             abort(403);
         }
 
-        // Kiểm tra dịch vụ thuộc phường này
         $servicePhuong = ServicePhuong::where('dich_vu_id', $serviceId)
             ->where('don_vi_id', $currentUser->don_vi_id)
             ->firstOrFail();
@@ -392,7 +356,7 @@ class ServicePhuongController extends Controller
     public function storeField(Request $request, $serviceId)
     {
         $currentUser = Auth::guard('admin')->user();
-        
+
         if (!$currentUser->isAdminPhuong() && !$currentUser->isCanBo()) {
             abort(403);
         }
@@ -429,7 +393,6 @@ class ServicePhuongController extends Controller
             return back()->withErrors(['ten_truong' => 'Tên trường này đã tồn tại cho dịch vụ này.'])->withInput();
         }
 
-        // Xử lý tùy chọn cho select
         $tuyChon = null;
         if ($request->loai_truong === 'select' && $request->tuy_chon) {
             $options = array_filter(array_map('trim', explode("\n", $request->tuy_chon)));
@@ -461,7 +424,7 @@ class ServicePhuongController extends Controller
     public function editField($serviceId, $fieldId)
     {
         $currentUser = Auth::guard('admin')->user();
-        
+
         if (!$currentUser->isAdminPhuong() && !$currentUser->isCanBo()) {
             abort(403);
         }
@@ -484,17 +447,15 @@ class ServicePhuongController extends Controller
     public function updateField(Request $request, $serviceId, $fieldId)
     {
         $currentUser = Auth::guard('admin')->user();
-        
+
         if (!$currentUser->isAdminPhuong() && !$currentUser->isCanBo()) {
             abort(403);
         }
 
-        // Kiểm tra dịch vụ thuộc phường này
         $servicePhuong = ServicePhuong::where('dich_vu_id', $serviceId)
             ->where('don_vi_id', $currentUser->don_vi_id)
             ->firstOrFail();
 
-        // Merge giá trị mặc định cho checkbox nếu không có
         $request->merge([
             'bat_buoc' => $request->has('bat_buoc') ? true : false
         ]);
@@ -539,12 +500,11 @@ class ServicePhuongController extends Controller
     public function destroyField($serviceId, $fieldId)
     {
         $currentUser = Auth::guard('admin')->user();
-        
+
         if (!$currentUser->isAdminPhuong() && !$currentUser->isCanBo()) {
             abort(403);
         }
 
-        // Kiểm tra dịch vụ thuộc phường này
         $servicePhuong = ServicePhuong::where('dich_vu_id', $serviceId)
             ->where('don_vi_id', $currentUser->don_vi_id)
             ->firstOrFail();
@@ -558,4 +518,3 @@ class ServicePhuongController extends Controller
             ->with('success', 'Xóa trường form thành công!');
     }
 }
-

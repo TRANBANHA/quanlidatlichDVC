@@ -24,20 +24,20 @@ class ChuyenHoSoService
     public function chuyenHoSoKhiCanBoNghi($canBoId, $ngayNghi)
     {
         $ngayNghi = Carbon::parse($ngayNghi)->format('Y-m-d');
-        
+
         // Kiểm tra báo nghỉ đã được duyệt chưa
         $canBoNghiRecord = \App\Models\CanBoNghi::where('can_bo_id', $canBoId)
             ->whereDate('ngay_nghi', $ngayNghi)
             ->where('trang_thai', \App\Models\CanBoNghi::TRANG_THAI_DA_DUYET)
             ->first();
-        
+
         if (!$canBoNghiRecord) {
             return [
                 'success' => false,
                 'message' => 'Báo nghỉ chưa được duyệt hoặc không tồn tại',
             ];
         }
-        
+
         // Lấy cán bộ nghỉ
         $canBoNghi = Admin::find($canBoId);
         if (!$canBoNghi) {
@@ -69,7 +69,7 @@ class ChuyenHoSoService
             try {
                 // Tìm cán bộ thay thế (cùng phường, không nghỉ, có ít hồ sơ nhất)
                 $canBoThayThe = $this->timCanBoThayThe($hoSo->don_vi_id, $ngayNghi, $canBoId);
-                
+
                 if (!$canBoThayThe) {
                     $hoSoChuyenThatBai[] = [
                         'ho_so' => $hoSo,
@@ -80,7 +80,7 @@ class ChuyenHoSoService
 
                 // Lưu cán bộ cũ để thông báo
                 $canBoCu = $hoSo->quanTriVien;
-                
+
                 // Chuyển hồ sơ
                 $hoSo->quan_tri_vien_id = $canBoThayThe->id;
                 $hoSo->save();
@@ -101,13 +101,12 @@ class ChuyenHoSoService
                     'can_bo_moi_id' => $canBoThayThe->id,
                     'ngay_nghi' => $ngayNghi,
                 ]);
-
             } catch (\Exception $e) {
                 Log::error('Lỗi chuyển hồ sơ khi cán bộ nghỉ', [
                     'ho_so_id' => $hoSo->id,
                     'error' => $e->getMessage(),
                 ]);
-                
+
                 $hoSoChuyenThatBai[] = [
                     'ho_so' => $hoSo,
                     'ly_do' => $e->getMessage(),
@@ -150,7 +149,7 @@ class ChuyenHoSoService
             return null;
         }
 
-        // Đếm số hồ sơ của từng cán bộ trong ngày
+
         $canBoWorkloads = [];
         foreach ($canBoPhuong as $canBoId) {
             $workload = HoSo::where('quan_tri_vien_id', $canBoId)
@@ -164,11 +163,10 @@ class ChuyenHoSoService
         if (!empty($canBoWorkloads)) {
             $minWorkload = min($canBoWorkloads);
             $canBoWithMinWorkload = array_keys($canBoWorkloads, $minWorkload);
-            
-            // Random chọn trong số các cán bộ có workload thấp nhất
+
             $randomIndex = array_rand($canBoWithMinWorkload);
             $selectedCanBoId = $canBoWithMinWorkload[$randomIndex];
-            
+
             return Admin::find($selectedCanBoId);
         } else {
             // Nếu không có hồ sơ nào, random chọn trong tất cả cán bộ phường
